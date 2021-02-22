@@ -1,19 +1,44 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pinput/pin_put/pin_put.dart';
+
+import '../home.dart';
 
 class Signupotp extends StatefulWidget {
-  Signupotp();
-
+  final String phone;
+  Signupotp(this.phone);
   @override
   _SignupotpState createState() => _SignupotpState();
 }
 
 class _SignupotpState extends State<Signupotp> {
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+  String _verificationCode;
+  final TextEditingController _pinPutController = TextEditingController();
+  final FocusNode _pinPutFocusNode = FocusNode();
+  final BoxDecoration pinPutDecoration = BoxDecoration(
+      color: const Color.fromRGBO(242, 242, 242, 1),
+      borderRadius: BorderRadius.circular(5.0),
+      border: Border.all(
+        color: const Color.fromRGBO(108, 99, 255, 1),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey,
+          blurRadius: 25.0, // soften the shadow
+          spreadRadius: 5.0, //extend the shadow
+          offset: Offset(
+            15.0, // Move to right 10  horizontally
+            15.0, // Move to bottom 10 Vertically
+          ),
+        )
+      ]);
   @override
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.height;
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldkey,
       body: Center(
         child: SingleChildScrollView(
             child: Column(children: <Widget>[
@@ -68,26 +93,45 @@ class _SignupotpState extends State<Signupotp> {
                           height: h * 0.02,
                         ),
                         Container(
-                          width: 300,
-                          child: PinCodeTextField(
-                            length: 5,
-                            obscureText: false,
-                            animationType: AnimationType.fade,
-                            pinTheme: PinTheme(
-                              shape: PinCodeFieldShape.box,
-                              borderRadius: BorderRadius.circular(5),
-                              fieldHeight: 50,
-                              fieldWidth: 50,
-                              activeFillColor: Colors.white,
-                              inactiveFillColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: PinPut(
+                              fieldsCount: 6,
+                              textStyle: const TextStyle(
+                                  fontSize: 25.0, color: Colors.black),
+                              eachFieldWidth: 40.0,
+                              eachFieldHeight: 55.0,
+                              focusNode: _pinPutFocusNode,
+                              controller: _pinPutController,
+                              submittedFieldDecoration: pinPutDecoration,
+                              selectedFieldDecoration: pinPutDecoration,
+                              followingFieldDecoration: pinPutDecoration,
+                              //    eachFieldPadding: EdgeInsets.all(10),
+                              //   eachFieldMargin: EdgeInsets.all(0),
+                              pinAnimationType: PinAnimationType.fade,
+                              onSubmit: (pin) async {
+                                try {
+                                  await FirebaseAuth.instance
+                                      .signInWithCredential(
+                                          PhoneAuthProvider.credential(
+                                              verificationId: _verificationCode,
+                                              smsCode: pin))
+                                      .then((value) async {
+                                    if (value.user != null) {
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Home()),
+                                          (route) => false);
+                                    }
+                                  });
+                                } catch (e) {
+                                  FocusScope.of(context).unfocus();
+                                  _scaffoldkey.currentState.showSnackBar(
+                                      SnackBar(content: Text('invalid OTP')));
+                                }
+                              },
                             ),
-                            animationDuration: Duration(milliseconds: 300),
-                            backgroundColor: const Color(0xfff1f3f6),
-                            enableActiveFill: true,
-                            onCompleted: (v) {
-                              print("Completed");
-                            },
-                            onChanged: (value) {},
                           ),
                         ),
                         SizedBox(
@@ -136,11 +180,8 @@ class _SignupotpState extends State<Signupotp> {
                                           color: const Color(0xd93f3d56)),
                                     ),
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pushReplacementNamed(
-                                          context, '/home');
-                                    },
+                           /*       InkWell(
+                                    onTap: () {},
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -161,7 +202,7 @@ class _SignupotpState extends State<Signupotp> {
                                         )
                                       ],
                                     ),
-                                  ),
+                                  ),*/
                                 ],
                               ),
                             ),
@@ -193,5 +234,44 @@ class _SignupotpState extends State<Signupotp> {
         ])),
       ),
     );
+  }
+
+  _verifyPhone() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91${widget.phone}',
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value) async {
+            if (value.user != null) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home()),
+                  (route) => false);
+            }
+          });
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print(e.message);
+        },
+        codeSent: (String verficationID, int resendToken) {
+          setState(() {
+            _verificationCode = verficationID;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationID) {
+          setState(() {
+            _verificationCode = verificationID;
+          });
+        },
+        timeout: Duration(seconds: 120));
+  }
+
+  @override
+  void initState() {
+    // ignore: todo
+    // TODO: implement initState
+    super.initState();
+    _verifyPhone();
   }
 }
