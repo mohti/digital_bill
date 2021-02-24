@@ -25,11 +25,11 @@ class _SignupotpState extends State<Signupotp> {
       boxShadow: [
         BoxShadow(
           color: Colors.grey,
-          blurRadius: 25.0, // soften the shadow
+          blurRadius: 5.0, // soften the shadow
           spreadRadius: 5.0, //extend the shadow
           offset: Offset(
-            15.0, // Move to right 10  horizontally
-            15.0, // Move to bottom 10 Vertically
+            5.0, // Move to right 10  horizontally
+            5.0, // Move to bottom 10 Vertically
           ),
         )
       ]);
@@ -165,7 +165,7 @@ class _SignupotpState extends State<Signupotp> {
                               ),
                               textAlign: TextAlign.left,
                             ),
-                            SizedBox(
+                            /*      SizedBox(
                               width: 120.0,
                               height: 50.0,
                               child: Stack(
@@ -180,7 +180,7 @@ class _SignupotpState extends State<Signupotp> {
                                           color: const Color(0xd93f3d56)),
                                     ),
                                   ),
-                           /*       InkWell(
+                                  /*       InkWell(
                                     onTap: () {},
                                     child: Row(
                                       mainAxisAlignment:
@@ -205,7 +205,7 @@ class _SignupotpState extends State<Signupotp> {
                                   ),*/
                                 ],
                               ),
-                            ),
+                            ),*/
                           ],
                         )
                       ],

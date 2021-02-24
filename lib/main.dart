@@ -2,6 +2,7 @@ import 'package:digitalbillbook/home.dart';
 import 'package:digitalbillbook/plan/checkout.dart';
 import 'package:digitalbillbook/plan/plandetails.dart';
 import 'package:digitalbillbook/product/product1.dart';
+import 'package:digitalbillbook/reports/report1.dart';
 import 'package:digitalbillbook/settings/aboutus.dart';
 import 'package:digitalbillbook/settings/acceptableusepolicy.dart';
 import 'package:digitalbillbook/settings/invoicesettings.dart';
@@ -9,6 +10,8 @@ import 'package:digitalbillbook/settings/privacypolicy.dart';
 import 'package:digitalbillbook/settings/settings.dart';
 import 'package:digitalbillbook/settings/termsofservice.dart';
 import 'package:flutter/material.dart';
+import 'Invoicestyle.dart';
+import 'Support.dart';
 import 'signup_and_loginpages/signup.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -43,6 +46,9 @@ class MyApp extends StatelessWidget {
         '/.product1.dart': (BuildContext context) => Product1(),
         './plan.dart': (BuildContext context) => CurrentPlan(),
         './checkout': (BuildContext context) => Checkout(),
+        './invoicestyle.dart': (BuildContext context) => InvoiceStyle(),
+        './support': (BuildContext context) => Support(),
+        './report1': (BuildContext context) => Report1()
       },
     );
   }
