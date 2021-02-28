@@ -1,5 +1,6 @@
-import 'package:digitalbillbook/product/addnewproduct.dart';
 import 'package:flutter/material.dart';
+
+import 'addparty.dart';
 
 class Tab extends StatelessWidget {
   final String title;
@@ -47,9 +48,9 @@ class Tab extends StatelessWidget {
   }
 }
 
-class Product1 extends StatelessWidget {
+class Parties1 extends StatelessWidget {
   final String uid;
-  Product1(this.uid);
+  Parties1(this.uid);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
@@ -59,7 +60,7 @@ class Product1 extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Settings',
+          'Parties',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -76,13 +77,13 @@ class Product1 extends StatelessWidget {
           children: [
             Tab(
                 null,
-                ' Add New Product',
+                ' Add New Party',
                 () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Addproduct(uid))),
+                    MaterialPageRoute(builder: (context) => AddParty(uid))),
                 w),
             Tab(
                 null,
-                ' Product List',
+                ' Parties List',
                 null, //    () => Navigator.pushNamed(context, './invoicesettings'),
                 w),
           ],

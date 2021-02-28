@@ -121,7 +121,8 @@ class _SignupotpState extends State<Signupotp> {
                                       Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => Home()),
+                                              builder: (context) =>
+                                                  Home(value.user.uid)),
                                           (route) => false);
                                     }
                                   });
@@ -246,7 +247,7 @@ class _SignupotpState extends State<Signupotp> {
             if (value.user != null) {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => Home()),
+                  MaterialPageRoute(builder: (context) => Home(value.user.uid)),
                   (route) => false);
             }
           });

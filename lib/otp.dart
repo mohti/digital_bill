@@ -62,7 +62,10 @@ class _OTPScreenState extends State<OTPScreen> {
                     if (value.user != null) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => Home()),
+                          MaterialPageRoute(
+                              builder: (context) => Home(
+                                    FirebaseAuth.instance.currentUser.uid,
+                                  )),
                           (route) => false);
                     }
                   });
@@ -89,7 +92,7 @@ class _OTPScreenState extends State<OTPScreen> {
             if (value.user != null) {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => Home()),
+                  MaterialPageRoute(builder: (context) => Home(value.user.uid)),
                   (route) => false);
             }
           });

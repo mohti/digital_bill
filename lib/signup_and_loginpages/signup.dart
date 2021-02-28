@@ -85,10 +85,12 @@ class MyHomePage extends StatelessWidget {
 */
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     final double h = MediaQuery.of(context).size.height;
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Form(
+        key: _formKey,
         child: Center(
           child: SingleChildScrollView(
               child: Column(children: <Widget>[
@@ -153,6 +155,12 @@ class MyHomePage extends StatelessWidget {
                             child: TextFormField(
                               controller: _controller,
                               keyboardType: TextInputType.phone,
+                              validator: (value) {
+                                if (value.length != 10) {
+                                  return 'Phone Number should be of 10 digits';
+                                } else
+                                  return null;
+                              },
                               decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
                                       borderSide:
@@ -223,10 +231,23 @@ class MyHomePage extends StatelessWidget {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) => Signupotp(
-                                                    _controller.text)));
+                                        if (_formKey.currentState.validate()) {
+                                          // If the form is valid, display a Snackbar.
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Signupotp(
+                                                          _controller.text)));
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text('Sending OTP')));
+                                        } else {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      'Invalid Phone Number')));
+                                        }
                                       },
                                       child: Row(
                                         mainAxisAlignment:

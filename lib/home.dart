@@ -1,15 +1,16 @@
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:digitalbillbook/customwidgets/homepageicon.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:digitalbillbook/parties/parties1.dart';
+import 'package:digitalbillbook/product/product1.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'customwidgets/homepagetiles.dart';
 
 class Home extends StatefulWidget {
-  final User user;
-
-  Home({this.user});
+  final String uid;
+  Home(this.uid);
   @override
   _HomeState createState() => _HomeState();
 }
@@ -207,7 +208,10 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        null,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Parties1(widget.uid)),
+        ),
       ),
       Widgetfunction(
           SizedBox(
@@ -238,7 +242,10 @@ class _HomeState extends State<Home> {
           '<svg viewBox="145.0 682.0 30.0 32.0" ><path transform="translate(139.0, 679.0)" d="M 24.74999809265137 3.000000238418579 L 9.75 3.000000238418579 C 7.687499523162842 3.000000238418579 6.018750190734863 4.440000057220459 6.018750190734863 6.200000286102295 L 5.999999523162842 31.80000114440918 C 5.999999523162842 33.55999755859375 7.668749332427979 35 9.731249809265137 35 L 32.25 35 C 34.3125 35 36 33.55999755859375 36 31.80000114440918 L 36 12.60000133514404 L 24.74999809265137 3.000000238418579 Z M 28.49999809265137 25.39999961853027 L 22.87499809265137 25.39999961853027 L 22.87499809265137 30.20000267028809 L 19.12499809265137 30.20000267028809 L 19.12499809265137 25.39999961853027 L 13.5 25.39999961853027 L 13.5 22.19999885559082 L 19.12499809265137 22.19999885559082 L 19.12499809265137 17.39999961853027 L 22.87499809265137 17.39999961853027 L 22.87499809265137 22.19999885559082 L 28.49999809265137 22.19999885559082 L 28.49999809265137 25.39999961853027 Z M 22.87499809265137 14.20000076293945 L 22.87499809265137 5.400000095367432 L 33.1875 14.20000076293945 L 22.87499809265137 14.20000076293945 Z" fill="none" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
           allowDrawingOutsideViewBox: true,
         ),
-        () => Navigator.pushNamed(context, '/.product1.dart'),
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Product1(widget.uid)),
+        ),
       ),
       Widgetfunction(
         SvgPicture.string(
