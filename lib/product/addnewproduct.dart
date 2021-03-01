@@ -96,8 +96,8 @@ class _AddproductState extends State<Addproduct> {
   final hsncodeController = TextEditingController();
   final quantityController = TextEditingController();
 
-  final purchaserate = TextEditingController();
-  final sellingprice = TextEditingController();
+  final purchaserateController = TextEditingController();
+  final sellingpriceController = TextEditingController();
   var date = DateTime.now();
   final totalAmount = TextEditingController();
 
@@ -127,6 +127,8 @@ class _AddproductState extends State<Addproduct> {
       newProduct.cgst = cgst;
       newProduct.igst = igst;
       newProduct.date = date;
+      newProduct.purchaserate = purchaserateController.text;
+      newProduct.sellingprice = sellingpriceController.text;
       print(widget.uid.toString());
       newProduct.totalAmount = int.parse(totalAmount.text);
       // Call the user's CollectionReference to add a new user
@@ -285,8 +287,8 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 30,
               ),
-              Eachrow(
-                  purchaserate, "Purchase Rate", sellingprice, "Selling price"),
+              Eachrow(purchaserateController, "Purchase Rate",
+                  sellingpriceController, "Selling price"),
               SizedBox(
                 height: 30,
               ),
@@ -300,6 +302,7 @@ class _AddproductState extends State<Addproduct> {
                       height: 50,
                       child: TextField(
                         onTap: () => _selectDate(context),
+                        readOnly: true,
                         decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(2.0),

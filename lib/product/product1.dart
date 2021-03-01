@@ -1,4 +1,5 @@
 import 'package:digitalbillbook/product/addnewproduct.dart';
+import 'package:digitalbillbook/productList.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
@@ -83,7 +84,8 @@ class Product1 extends StatelessWidget {
             Tab(
                 null,
                 ' Product List',
-                null, //    () => Navigator.pushNamed(context, './invoicesettings'),
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProductList(uid))),
                 w),
           ],
         ),

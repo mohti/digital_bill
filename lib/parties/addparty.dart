@@ -182,7 +182,7 @@ class _AddPartyState extends State<AddParty> {
                     child: Card(
                       elevation: 4,
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
+                        width: 200,
                         height: 180,
                         child: SelectState(
                           // style: TextStyle(color: Colors.red),
@@ -205,34 +205,40 @@ class _AddPartyState extends State<AddParty> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          controller: pincodeController,
-                          decoration: InputDecoration(
-                            labelText: 'Pin Code',
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Card(
+                    elevation: 4,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      height: 50,
+                      child: TextFormField(
+                        controller: pincodeController,
+                        decoration: InputDecoration(
+                          labelText: 'Pin Code',
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(2.0),
                           ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.length != 6) {
-                              return 'Please Enter correct ' + 'Pin Code';
-                            }
-                            return null;
-                          },
                         ),
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value.length != 6) {
+                            return 'Please Enter correct ' + 'Pin Code';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
               SizedBox(
                 height: 30,
