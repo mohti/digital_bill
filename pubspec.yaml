@@ -21,7 +21,9 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  firebase_storage: ^7.0.0
   intl: ^0.16.1
+  file_picker: ^2.1.6
   fluttertoast: ^7.1.6
   country_state_city_picker: ^1.2.7
   pin_code_fields: ^6.1.0

@@ -83,9 +83,9 @@ class MyHomePage extends StatelessWidget {
         codeAutoRetrievalTimeout: null);
   }
 */
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     final double h = MediaQuery.of(context).size.height;
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
