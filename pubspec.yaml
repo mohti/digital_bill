@@ -26,7 +26,6 @@ dependencies:
   file_picker: ^2.1.6
   fluttertoast: ^7.1.6
   country_state_city_picker: ^1.2.7
-  pin_code_fields: ^6.1.0
   adobe_xd: ^1.1.0+1
   firebase_core: ^0.7.0
   cloud_firestore: "^0.16.0+1"

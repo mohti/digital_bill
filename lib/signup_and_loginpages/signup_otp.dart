@@ -11,11 +11,46 @@ class Signupotp extends StatefulWidget {
   _SignupotpState createState() => _SignupotpState();
 }
 
-class _SignupotpState extends State<Signupotp> {
+class _SignupotpState extends State<Signupotp>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  // ignore: unused_field
+  Animation _animation;
+
+  FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _verifyPhone();
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+
+    super.dispose();
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   String _verificationCode;
   final TextEditingController _pinPutController = TextEditingController();
-  final FocusNode _pinPutFocusNode = FocusNode();
+
   final BoxDecoration pinPutDecoration = BoxDecoration(
       color: const Color.fromRGBO(242, 242, 242, 1),
       borderRadius: BorderRadius.circular(5.0),
@@ -62,6 +97,7 @@ class _SignupotpState extends State<Signupotp> {
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
                           height: h * 0.025,
@@ -92,46 +128,58 @@ class _SignupotpState extends State<Signupotp> {
                         SizedBox(
                           height: h * 0.02,
                         ),
-                        Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: PinPut(
-                              fieldsCount: 6,
-                              textStyle: const TextStyle(
-                                  fontSize: 25.0, color: Colors.black),
-                              eachFieldWidth: 40.0,
-                              eachFieldHeight: 55.0,
-                              focusNode: _pinPutFocusNode,
-                              controller: _pinPutController,
-                              submittedFieldDecoration: pinPutDecoration,
-                              selectedFieldDecoration: pinPutDecoration,
-                              followingFieldDecoration: pinPutDecoration,
-                              //    eachFieldPadding: EdgeInsets.all(10),
-                              //   eachFieldMargin: EdgeInsets.all(0),
-                              pinAnimationType: PinAnimationType.fade,
-                              onSubmit: (pin) async {
-                                try {
-                                  await FirebaseAuth.instance
-                                      .signInWithCredential(
-                                          PhoneAuthProvider.credential(
-                                              verificationId: _verificationCode,
-                                              smsCode: pin))
-                                      .then((value) async {
-                                    if (value.user != null) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Home(value.user.uid)),
-                                          (route) => false);
-                                    }
-                                  });
-                                } catch (e) {
-                                  FocusScope.of(context).unfocus();
-                                  _scaffoldkey.currentState.showSnackBar(
-                                      SnackBar(content: Text('invalid OTP')));
-                                }
-                              },
+                        GestureDetector(
+                          onTap: () {
+                            print('hi');
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: PinPut(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                },
+                                fieldsCount: 6,
+                                keyboardType: TextInputType.text,
+                                textStyle: const TextStyle(
+                                    fontSize: 25.0, color: Colors.black),
+                                eachFieldWidth: 40.0,
+                                eachFieldHeight: 55.0,
+                                focusNode: _focusNode,
+                                controller: _pinPutController,
+                                submittedFieldDecoration: pinPutDecoration,
+                                selectedFieldDecoration: pinPutDecoration,
+                                followingFieldDecoration: pinPutDecoration,
+                                //    eachFieldPadding: EdgeInsets.all(10),
+                                //   eachFieldMargin: EdgeInsets.all(0),
+                                pinAnimationType: PinAnimationType.fade,
+                                onSubmit: (pin) async {
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .signInWithCredential(
+                                            PhoneAuthProvider.credential(
+                                                verificationId:
+                                                    _verificationCode,
+                                                smsCode: pin))
+                                        .then((value) async {
+                                      if (value.user != null) {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Home(value.user.uid)),
+                                            (route) => false);
+                                      }
+                                    });
+                                  } catch (e) {
+                                    FocusScope.of(context).unfocus();
+                                    _scaffoldkey.currentState.showSnackBar(
+                                        SnackBar(content: Text('invalid OTP')));
+                                  }
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -266,13 +314,5 @@ class _SignupotpState extends State<Signupotp> {
           });
         },
         timeout: Duration(seconds: 120));
-  }
-
-  @override
-  void initState() {
-    // ignore: todo
-    // TODO: implement initState
-    super.initState();
-    _verifyPhone();
   }
 }

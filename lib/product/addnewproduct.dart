@@ -18,7 +18,6 @@ class Eachrow extends StatelessWidget {
             elevation: 4,
             child: Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: 50,
               child: TextFormField(
                 controller: controller1,
                 decoration: InputDecoration(

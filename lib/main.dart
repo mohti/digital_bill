@@ -7,7 +7,7 @@ import 'package:digitalbillbook/settings/aboutus.dart';
 import 'package:digitalbillbook/settings/acceptableusepolicy.dart';
 import 'package:digitalbillbook/settings/invoicesettings.dart';
 import 'package:digitalbillbook/settings/privacypolicy.dart';
-import 'package:digitalbillbook/settings/settings.dart';
+
 import 'package:digitalbillbook/settings/termsofservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             ? Home(FirebaseAuth.instance.currentUser.uid)
             : MyHomePage(),
         //   '/signupotp': (BuildContext context) => Signupotp(),
-        './settings': (BuildContext context) => Settings(),
+
         './invoicesettings': (BuildContext context) => InvoiceSettings(),
         './AboutUs': (BuildContext context) => AboutUs(),
         './termsofservice': (BuildContext context) => TermsOfService(),
