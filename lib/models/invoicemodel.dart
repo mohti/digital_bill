@@ -1,3 +1,36 @@
+class InvoiceProduct {
+  String productCode;
+  String productName;
+  String hsncode;
+  String taxrate;
+  String quantity;
+  String unit;
+  String sellingrate;
+  String taxamount;
+  String totalamount;
+  InvoiceProduct(
+      this.productCode,
+      this.productName,
+      this.hsncode,
+      this.taxrate,
+      this.quantity,
+      this.unit,
+      this.sellingrate,
+      this.taxamount,
+      this.totalamount);
+  Map<String, dynamic> toJson() => {
+        'productCode': productCode,
+        'productName': productName,
+        'hsncode': hsncode,
+        'taxrate': taxrate,
+        'quantity': quantity,
+        'unit': unit,
+        'sellingrate': sellingrate,
+        'taxamount': taxamount,
+        'totalamount': totalamount
+      };
+}
+
 class InvoiceModel {
   String sname;
   String sphone;
@@ -15,14 +48,7 @@ class InvoiceModel {
   String bstate;
   String bcountry;
   String bpin;
-  String productCode;
-  String productName;
-  String hsncode;
-  String taxrate;
-  String quantity;
-  String sellingrate;
-  String taxamount;
-  String totalamount;
+  List<InvoiceProduct> listOfProducts = List<InvoiceProduct>();
   String transporterid;
   String transportername;
   String tracnsportdocno;
@@ -48,14 +74,7 @@ class InvoiceModel {
       this.bstate,
       this.bcountry,
       this.bpin,
-      this.productCode,
-      this.productName,
-      this.hsncode,
-      this.taxrate,
-      this.quantity,
-      this.sellingrate,
-      this.taxamount,
-      this.totalamount,
+      this.listOfProducts,
       this.transporterid,
       this.transportername,
       this.tracnsportdocno,
@@ -80,13 +99,9 @@ class InvoiceModel {
         'bstate': bstate,
         'bcountry': bcountry,
         'bpin': bpin,
-        'productCode': productCode,
-        'productName': productName,
-        'hsncode': hsncode,
-        'taxrate': taxrate,
-        'quantity': quantity,
-        'sellingrate': sellingrate,
-        'taxamount': taxamount,
+        'listOfProducts': listOfProducts
+            .map((listOfProduct) => listOfProduct.toJson())
+            .toList(),
         'transporterid': transporterid,
         'transportername': transportername,
         'tracnsportdocno': tracnsportdocno,

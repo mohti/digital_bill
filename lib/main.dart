@@ -2,10 +2,8 @@ import 'package:digitalbillbook/home.dart';
 import 'package:digitalbillbook/plan/checkout.dart';
 import 'package:digitalbillbook/plan/plandetails.dart';
 
-import 'package:digitalbillbook/reports/report1.dart';
 import 'package:digitalbillbook/settings/aboutus.dart';
 import 'package:digitalbillbook/settings/acceptableusepolicy.dart';
-import 'package:digitalbillbook/settings/invoicesettings.dart';
 import 'package:digitalbillbook/settings/privacypolicy.dart';
 
 import 'package:digitalbillbook/settings/termsofservice.dart';
@@ -39,7 +37,6 @@ class MyApp extends StatelessWidget {
             : MyHomePage(),
         //   '/signupotp': (BuildContext context) => Signupotp(),
 
-        './invoicesettings': (BuildContext context) => InvoiceSettings(),
         './AboutUs': (BuildContext context) => AboutUs(),
         './termsofservice': (BuildContext context) => TermsOfService(),
         './privacypolicy': (BuildContext context) => PrivacyPolicy(),
@@ -50,7 +47,6 @@ class MyApp extends StatelessWidget {
         './checkout': (BuildContext context) => Checkout(),
         './invoicestyle.dart': (BuildContext context) => InvoiceStyle(),
         './support': (BuildContext context) => Support(),
-        './report1': (BuildContext context) => Report1(),
       },
     );
   }

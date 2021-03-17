@@ -1,4 +1,5 @@
 import 'package:adobe_xd/pinned.dart';
+import 'package:digitalbillbook/settings/invoicesettings.dart';
 
 import 'package:digitalbillbook/settings/remindersettings.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,11 @@ class Settings extends StatelessWidget {
                   allowDrawingOutsideViewBox: true,
                 ),
                 ' Invoice Settings',
-                () => Navigator.pushNamed(context, './invoicesettings'),
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InvoiceSettings(uid)),
+                    ),
                 w),
             Tab(
                 SvgPicture.string(

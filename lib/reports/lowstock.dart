@@ -1,15 +1,15 @@
-import 'package:digitalbillbook/customwidgets/table.dart';
+import 'package:digitalbillbook/tables/lowstocktable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ProductList extends StatefulWidget {
+class LowStock extends StatefulWidget {
   final String uid;
-  ProductList(this.uid);
+  LowStock(this.uid);
   @override
-  _ProductListState createState() => _ProductListState();
+  _LowStockState createState() => _LowStockState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _LowStockState extends State<LowStock> {
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _ProductListState extends State<ProductList> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Products List',
+          'Low Stocks',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -62,7 +62,7 @@ class _ProductListState extends State<ProductList> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                'Product List',
+                'Low Stock Summary',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
                   fontSize: 18,
@@ -88,34 +88,26 @@ class _ProductListState extends State<ProductList> {
                 Card(
                   elevation: 4,
                   child: Container(
+                    alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width * 0.4,
                     height: 50,
-                    child: TextField(
-                      readOnly: true,
+                    child: InkWell(
                       onTap: () => selectDate1(context),
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          labelText: "From " +
-                              DateFormat('dd-MM-yyyy').format(initialdate)),
+                      child: Text("From " +
+                          DateFormat('dd-MM-yyyy').format(initialdate)),
                     ),
                   ),
                 ),
                 Card(
                   elevation: 4,
                   child: Container(
+                    alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width * 0.4,
                     height: 50,
-                    child: TextField(
-                      readOnly: true,
+                    child: InkWell(
                       onTap: () => selectDate2(context),
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          labelText: "to " +
-                              DateFormat('dd-MM-yyyy').format(finaldate)),
+                      child: Text(
+                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
                     ),
                   ),
                 ),
@@ -149,7 +141,7 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
-            Table1(widget.uid, initialdate, finaldate)
+            LowStockTable(widget.uid, initialdate, finaldate)
           ],
         ),
       ),

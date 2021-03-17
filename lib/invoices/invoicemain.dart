@@ -27,7 +27,7 @@ class Eachrow extends StatelessWidget {
                 // The validator receives the text that the user has entered.
                 validator: (value) {
                   if (value.isEmpty) {
-                    return 'Please Enter ' + s1;
+                    return null;
                   }
                   return null;
                 },
@@ -51,7 +51,7 @@ class Eachrow extends StatelessWidget {
                 // The validator receives the text that the user has entered.
                 validator: (value) {
                   if (value.isEmpty) {
-                    return 'Please Enter ' + s2;
+                    return null;
                   }
                   return null;
                 },
@@ -96,6 +96,18 @@ class InvoiceMain extends StatefulWidget {
   String vehicleno;
   String from;
 */
+class Customtexteditingcontroller {
+  final productCode = TextEditingController();
+  final productName = TextEditingController();
+  final hsncode = TextEditingController();
+  final taxrate = TextEditingController();
+  final quantity = TextEditingController();
+  final unit = TextEditingController();
+  final sellingrate = TextEditingController();
+  final taxamount = TextEditingController();
+  final totalamount = TextEditingController();
+}
+
 class _InvoiceMainState extends State<InvoiceMain> {
   final bname = TextEditingController();
   final bphone = TextEditingController();
@@ -118,6 +130,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
   final hsncode = TextEditingController();
   final taxrate = TextEditingController();
   final quantity = TextEditingController();
+  final unit = TextEditingController();
   final sellingrate = TextEditingController();
   final taxamount = TextEditingController();
   final totalamount = TextEditingController();
@@ -128,16 +141,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
   final vehiclemode = TextEditingController();
   final vehicleno = TextEditingController();
   final from = TextEditingController();
-  var date = DateTime.now();
 
+  List<Customtexteditingcontroller> t = List<Customtexteditingcontroller>();
+
+  var date = DateTime.now();
+  int noofproducts = 1;
+  var newProduct = new InvoiceProduct('', '', '', '', '', '', '', '', '');
   final newInvoice = new InvoiceModel(
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       null,
       null,
       null,
@@ -163,15 +173,55 @@ class _InvoiceMainState extends State<InvoiceMain> {
       null,
       null);
   final _keyForm = GlobalKey<FormState>();
+
   bool generalInvoiceornot = true;
   @override
   Widget build(BuildContext context) {
+    List<InvoiceProduct> listOfProducts = [];
+    void addproducts(int j) {
+      for (var i = 0; i < j; i++) {
+        setState(() {
+          print(t[i].productCode.text);
+          newProduct.productCode = t[i].productCode.text;
+          newProduct.productName = t[i].productName.text;
+          newProduct.hsncode = t[i].hsncode.text;
+          newProduct.quantity = t[i].quantity.text;
+          newProduct.sellingrate = t[i].sellingrate.text;
+          newProduct.taxamount = t[i].taxamount.text;
+          newProduct.taxrate = t[i].taxrate.text;
+          newProduct.unit = t[i].unit.text;
+          newProduct.totalamount = t[i].totalamount.text;
+        });
+        listOfProducts.add(newProduct);
+      }
+    }
+
     final db = FirebaseFirestore.instance;
-    Future<void> addproduct() {
+    // ignore: unused_local_variable
+    List<InvoiceProduct> l2 = List<InvoiceProduct>();
+    Future<void> generateInvoice() {
+      /* t.forEach((element) {
+        newProduct.productCode = element.productCode.text;
+        newProduct.productName = element.productName.text;
+        newProduct.hsncode = element.hsncode.text;
+        newProduct.quantity = element.quantity.text;
+        newProduct.sellingrate = element.sellingrate.text;
+        newProduct.taxamount = element.taxamount.text;
+        newProduct.taxrate = element.taxrate.text;
+        newProduct.unit = element.unit.text;
+        newProduct.totalamount = element.totalamount.text;
+        l2.add(newProduct);
+      });
+      l2.forEach((element) {
+        listOfProducts.add(element);
+        print(element.productCode);
+      });*/
+      addproducts(noofproducts);
       newInvoice.bname = bname.text;
       newInvoice.bphone = bphone.text;
       newInvoice.bgstn = bgstn.text;
       newInvoice.bdate = bdate.text;
+      newInvoice.listOfProducts = listOfProducts;
       newInvoice.bcity = bcity.text;
       newInvoice.bstate = bstate.text;
       newInvoice.bcountry = bcountry.text;
@@ -184,14 +234,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
       newInvoice.sstate = sstate.text;
       newInvoice.scountry = scountry.text;
       newInvoice.spin = spin.text;
-      newInvoice.productCode = productCode.text;
-      newInvoice.productName = productName.text;
-      newInvoice.hsncode = hsncode.text;
-      newInvoice.taxrate = taxrate.text;
-      newInvoice.quantity = quantity.text;
-      newInvoice.sellingrate = sellingrate.text;
-      newInvoice.taxamount = taxamount.text;
-      newInvoice.totalamount = totalamount.text;
+      newInvoice.from = from.text;
       newInvoice.transporterid = transporterid.text;
       newInvoice.transportername = transportername.text;
       newInvoice.tracnsportdocno = tracnsportdocno.text;
@@ -204,7 +247,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
           .collection("userData")
           .doc(widget.uid)
           .collection("Invoice")
-          .doc('')
+          .doc()
           .set(newInvoice.toJson());
     }
 
@@ -338,35 +381,100 @@ class _InvoiceMainState extends State<InvoiceMain> {
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Buyer's Details",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Eachrow(bname, "Name/Company Name", bphone, 'Phone Number'),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(bgstn, "GSTN", bdate, 'Date'),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(bcity, "City", bstate, 'State'),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(bcountry, "Country", bpin, 'Pin Code'),
+              generalInvoiceornot == false
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            "Consignee Details(Ship To)",
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 14,
+                              color: const Color(0xff2f2e41),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Eachrow(
+                            sname, "Name/Company Name", sphone, 'Phone Number'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(sgstn, "GSTN", sdate, 'Date'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(scity, "City", sstate, 'State'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(scountry, "Country", spin, 'Pin Code'),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            "Consignor Details(Bill To)",
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 14,
+                              color: const Color(0xff2f2e41),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Eachrow(
+                            bname, "Name/Company Name", bphone, 'Phone Number'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(bgstn, "GSTN", bdate, 'Date'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(bcity, "City", bstate, 'State'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(bcountry, "Country", bpin, 'Pin Code'),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            "Buyer's Details",
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 14,
+                              color: const Color(0xff2f2e41),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Eachrow(
+                            sname, "Name/Company Name", sphone, 'Phone Number'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(sgstn, "GSTN", sdate, 'Date'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(scity, "City", sstate, 'State'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Eachrow(scountry, "Country", spin, 'Pin Code'),
+                      ],
+                    ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
@@ -380,148 +488,288 @@ class _InvoiceMainState extends State<InvoiceMain> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          onChanged: (value) {
-                            FirebaseFirestore.instance
-                                .collection("userData")
-                                .doc(widget.uid)
-                                .collection("Product")
-                                .doc(value)
-                                .get()
-                                .then((value) {
-                              setState(() {
-                                productName.text = value.data()['productName'];
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: noofproducts,
+                itemBuilder: (context, index) {
+                  t.add(new Customtexteditingcontroller());
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    FirebaseFirestore.instance
+                                        .collection("userData")
+                                        .doc(widget.uid)
+                                        .collection("Product")
+                                        .doc(value)
+                                        .get()
+                                        .then((valuee) {
+                                      setState(() {
+                                        t[index].productName.text =
+                                            valuee.data()['productName'];
 
-                                hsncode.text = value.data()['hsncode'];
+                                        t[index].hsncode.text =
+                                            valuee.data()['hsncode'];
 
-                                sellingrate.text = value.data()['sellingprice'];
-                              });
+                                        t[index].sellingrate.text =
+                                            valuee.data()['sellingprice'];
+                                      });
+                                    });
+                                  },
+                                  controller: t[index].productCode,
+                                  decoration: InputDecoration(
+                                    labelText: "Product Code",
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  enabled: false,
+                                  controller: t[index].productName,
+                                  decoration: InputDecoration(
+                                    labelText: 'Product Name',
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: t[index].hsncode,
+                                  enabled: false,
+                                  decoration: InputDecoration(
+                                    labelText: "HSN Code",
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: t[index].taxrate,
+                                  decoration: InputDecoration(
+                                    labelText: 'tax Rate',
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: t[index].quantity,
+
+                                  decoration: InputDecoration(
+                                    labelText: "Quantity",
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: t[index].unit,
+
+                                  decoration: InputDecoration(
+                                    labelText: "Unit",
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                /*DropdownButtonFormField(
+                          value: unit.text,
+                          icon: Icon(Icons.arrow_downward),
+                          decoration: InputDecoration(
+                            labelText: "CGST + SGST",
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          items: [
+                            "14+14%",
+                            "9+9%",
+                            '6+6%',
+                            '4.5+4.5%',
+                            '2.5+2.5%',
+                            '1.5+1.5%'
+                          ].map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value.toString()),
+                            );
+                          }).toList(),
+                          onChanged: (String value) {
+                            setState(() {
+                              unit.text = value;
                             });
                           },
-                          controller: productCode,
-                          decoration: InputDecoration(
-                            labelText: "Product Code",
-                            fillColor: Colors.white,
-                          ),
-                          // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Please Enter ' + "Product Code";
+                              return 'Pease select CGST + SGST';
                             }
                             return null;
                           },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          controller: productName,
-                          decoration: InputDecoration(
-                            labelText: 'Product Name',
-                            fillColor: Colors.white,
+                        ),*/
+                              ),
+                            ),
                           ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Enter ' + 'Product Name';
-                            }
-                            return null;
-                          },
-                        ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          controller: hsncode,
-                          enabled: false,
-                          decoration: InputDecoration(
-                            labelText: "HSN Code",
-                            fillColor: Colors.white,
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Eachrow(t[index].sellingrate, 'Selling Rate',
+                          t[index].taxamount, "TAX Amount"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: TextFormField(
+                                  controller: t[index].totalamount,
+                                  decoration: InputDecoration(
+                                    labelText: "Total Amount",
+                                    fillColor: Colors.white,
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Enter ' + "Product Code";
-                            }
-                            return null;
-                          },
-                        ),
+                        ],
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          controller: taxrate,
-                          decoration: InputDecoration(
-                            labelText: 'tax Rate',
-                            fillColor: Colors.white,
-                          ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Enter ' + 'Product Name';
-                            }
-                            return null;
-                          },
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(quantity, "Quantity", sellingrate, 'Selling Rate'),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(taxamount, "TAX Amount", totalamount, 'Total Amount'),
-              SizedBox(
-                height: 10,
-              ),
-              Eachrow(taxamount, "TAX Amount", totalamount, 'Total Amount'),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: null,
+                    onTap: () => {
+                      setState(() {
+                        noofproducts = noofproducts + 1;
+                      })
+                    },
                     child: Container(
                       width: 60,
                       height: 30,
@@ -610,7 +858,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Please Enter ' + 'from';
+                              return null;
                             }
                             return null;
                           },
@@ -623,7 +871,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
-                    /*       if (_formKey.currentState.validate()) {
+                  /*       if (_formKey.currentState.validate()) {
                                           // If the form is valid, display a Snackbar.
                                           addproduct(),
                                           Navigator.of(context).push(
@@ -642,34 +890,32 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                )));
                                         }
                                       },*/
-                    onPressed: () {
-                      if (_keyForm.currentState.validate()) {
-                        // If the form is valid, display a Snackbar.
-                        addproduct();
-                        Navigator.pop(context);
-                        Scaffold.of(context)
-                            .showSnackBar(SnackBar(content: Text('')));
-                      } else {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Please fill all the fields')));
-                      }
-                    },
-                    child: Container(
-                      color: const Color(0xfff3F3D56),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Add Product',
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 16,
-                            color: const Color(0xffffffff),
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.left,
+                  onPressed: () {
+                    if (_keyForm.currentState.validate()) {
+                      // If the form is valid, display a Snackbar.
+                      generateInvoice();
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Please fill all the fields')));
+                    }
+                  },
+                  child: Container(
+                    color: const Color(0xfff3F3D56),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Generate Invoice',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 16,
+                          color: const Color(0xffffffff),
+                          fontWeight: FontWeight.w700,
                         ),
+                        textAlign: TextAlign.left,
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               )
             ],
           ),

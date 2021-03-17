@@ -1,3 +1,4 @@
+import 'package:digitalbillbook/reports/lowstock.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
@@ -47,6 +48,8 @@ class Tab extends StatelessWidget {
 }
 
 class Report1 extends StatelessWidget {
+  final String uid;
+  Report1(this.uid);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
@@ -84,11 +87,15 @@ class Report1 extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
             ),
-            Tab(null, ' Stocks Summary',
-                () => Navigator.pushNamed(context, './invoicesettings'), w),
+            Tab(null, ' Stocks Summary', null, w),
             Tab(null, ' Product List (Rate List)', null, w),
             Tab(null, ' Sales Summary', null, w),
-            Tab(null, ' Low Stock', null, w),
+            Tab(
+                null,
+                ' Low Stock',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LowStock(uid))),
+                w),
             Tab(null, ' Party List', null, w),
             Tab(null, ' Purchase Summary', null, w),
           ],

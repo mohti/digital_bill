@@ -27,7 +27,9 @@ dependencies:
   fluttertoast: ^7.1.6
   country_state_city_picker: ^1.2.7
   adobe_xd: ^1.1.0+1
+  printing: ^4.1.0
   firebase_core: ^0.7.0
+  pdf: ^2.1.0
   cloud_firestore: "^0.16.0+1"
   firebase_auth: ^0.20.1
   pinput: ^1.0.0

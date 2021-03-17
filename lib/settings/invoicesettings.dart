@@ -1,3 +1,5 @@
+import 'package:digitalbillbook/settings/invoicesettings/prefix.dart';
+import 'package:digitalbillbook/settings/invoicesettings/termsandconditions.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
@@ -46,6 +48,8 @@ class Tab extends StatelessWidget {
 }
 
 class InvoiceSettings extends StatelessWidget {
+  final String uid;
+  InvoiceSettings(this.uid);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
@@ -84,8 +88,20 @@ class InvoiceSettings extends StatelessWidget {
               ),
             ),
             Tab(null, 'Change Invoice Style', null, w),
-            Tab(null, 'Invoice Prefix & Sequence No.', null, w),
-            Tab(null, 'Show Product Description', null, w),
+            Tab(
+                null,
+                'Invoice Prefix & Sequence No.',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SetPrefix(uid))),
+                w),
+            Tab(
+                null,
+                'Show Product Description',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TermsAndCondition(uid))),
+                w),
             Tab(null, 'Free Quantity', null, w),
           ],
         ),

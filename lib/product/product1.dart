@@ -1,5 +1,5 @@
 import 'package:digitalbillbook/product/addnewproduct.dart';
-import 'package:digitalbillbook/productList.dart';
+import 'package:digitalbillbook/reports/productList.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
