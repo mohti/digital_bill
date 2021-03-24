@@ -9,7 +9,8 @@ class AddProduct {
   String sellingprice;
   DateTime date;
   int totalAmount;
-
+  int lowstockreminderat;
+  String unit;
   AddProduct(
       this.productCode,
       this.productName,
@@ -20,7 +21,9 @@ class AddProduct {
       this.purchaserate,
       this.sellingprice,
       this.date,
-      this.totalAmount);
+      this.totalAmount,
+      this.lowstockreminderat,
+      this.unit);
   Map<String, dynamic> toJson() => {
         'productCode': productCode,
         'productName': productName,
@@ -31,6 +34,8 @@ class AddProduct {
         'purchaserate': purchaserate,
         'sellingprice': sellingprice,
         'date': date,
-        'totalAmount': totalAmount
+        'totalAmount': totalAmount,
+        'lowstockreminderat': lowstockreminderat,
+        'unit': unit
       };
 }

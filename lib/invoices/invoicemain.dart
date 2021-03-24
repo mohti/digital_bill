@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:digitalbillbook/models/invoicemodel.dart';
+import 'package:digitalbillbook/pdf/pdfviewer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Eachrow extends StatelessWidget {
   final TextEditingController controller1, controller2;
@@ -109,6 +114,7 @@ class Customtexteditingcontroller {
 }
 
 class _InvoiceMainState extends State<InvoiceMain> {
+  final invoiceno = TextEditingController();
   final bname = TextEditingController();
   final bphone = TextEditingController();
   final bgstn = TextEditingController();
@@ -146,8 +152,19 @@ class _InvoiceMainState extends State<InvoiceMain> {
 
   var date = DateTime.now();
   int noofproducts = 1;
-  var newProduct = new InvoiceProduct('', '', '', '', '', '', '', '', '');
+  var newProduct = new InvoiceProduct(
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+  );
   final newInvoice = new InvoiceModel(
+      null,
       null,
       null,
       null,
@@ -173,8 +190,56 @@ class _InvoiceMainState extends State<InvoiceMain> {
       null,
       null);
   final _keyForm = GlobalKey<FormState>();
-
   bool generalInvoiceornot = true;
+
+  Uint8List logo, sign, stamp;
+  Future<void> downloadURLExamplesign() async {
+    await firebase_storage.FirebaseStorage.instance
+        .ref(widget.uid + '/business/sign.png')
+        .getData()
+        .then((value) => setState(() {
+              sign = value;
+            }))
+        .catchError((e) => setState(() {}));
+    // Within your widgets:
+    // Image.network(downloadURL);
+  }
+
+  Future<void> downloadURLExamplestamp() async {
+    await firebase_storage.FirebaseStorage.instance
+        .ref(widget.uid + '/business/stamp.png')
+        .getData()
+        .then((value) => setState(() {
+              stamp = value;
+            }))
+        .catchError((e) => setState(() {}));
+    // Within your widgets:
+    // Image.network(downloadURL);
+  }
+
+  Future<void> downloadURLExample() async {
+    await firebase_storage.FirebaseStorage.instance
+        .ref(widget.uid + '/business/logo.png')
+        .getData()
+        .then((value) => setState(() {
+              logo = value;
+            }))
+        .catchError((e) => setState(() {}));
+
+    // Within your widgets:
+    // Image.network(downloadURL);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ignore: todo
+    // TODO: implement initState
+    downloadURLExample();
+    downloadURLExamplesign();
+    downloadURLExamplestamp();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<InvoiceProduct> listOfProducts = [];
@@ -199,6 +264,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
     final db = FirebaseFirestore.instance;
     // ignore: unused_local_variable
     List<InvoiceProduct> l2 = List<InvoiceProduct>();
+
     Future<void> generateInvoice() {
       /* t.forEach((element) {
         newProduct.productCode = element.productCode.text;
@@ -217,6 +283,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
         print(element.productCode);
       });*/
       addproducts(noofproducts);
+      newInvoice.invoiceno = invoiceno.text;
       newInvoice.bname = bname.text;
       newInvoice.bphone = bphone.text;
       newInvoice.bgstn = bgstn.text;
@@ -247,7 +314,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
           .collection("userData")
           .doc(widget.uid)
           .collection("Invoice")
-          .doc()
+          .doc(invoiceno.text)
           .set(newInvoice.toJson());
     }
 
@@ -375,6 +442,35 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               },
                             )
                           ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          controller: invoiceno,
+                          decoration: InputDecoration(
+                            labelText: "Invoice No",
+                            fillColor: Colors.white,
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return null;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ),
@@ -518,10 +614,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       setState(() {
                                         t[index].productName.text =
                                             valuee.data()['productName'];
-
                                         t[index].hsncode.text =
                                             valuee.data()['hsncode'];
-
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
                                       });
@@ -644,6 +738,32 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     labelText: "Quantity",
                                     fillColor: Colors.white,
                                   ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      FirebaseFirestore.instance
+                                          .collection("userData")
+                                          .doc(widget.uid)
+                                          .collection("Product")
+                                          .doc(productCode.text)
+                                          .get()
+                                          .then((valuee) {
+                                        setState(() {
+                                          FirebaseFirestore.instance
+                                              .collection("userData")
+                                              .doc(widget.uid)
+                                              .collection("Product")
+                                              .doc(productCode.text)
+                                              .update({
+                                            'quantity': (double.parse(valuee
+                                                        .data()['quantity']
+                                                        .toString()) -
+                                                    double.parse(value))
+                                                .toString()
+                                          });
+                                        });
+                                      });
+                                    });
+                                  },
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -894,6 +1014,19 @@ class _InvoiceMainState extends State<InvoiceMain> {
                     if (_keyForm.currentState.validate()) {
                       // If the form is valid, display a Snackbar.
                       generateInvoice();
+
+                      Future.delayed(new Duration(milliseconds: 100), () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PdfViewer(
+                                    widget.uid,
+                                    generalInvoiceornot,
+                                    invoiceno.text,
+                                    sign,
+                                    stamp,
+                                    logo)));
+                      });
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text('Please fill all the fields')));

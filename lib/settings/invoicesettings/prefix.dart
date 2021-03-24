@@ -15,7 +15,6 @@ class SetPrefix extends StatelessWidget {
     Future<void> invoicebutton() {
       settings.invoiceprefix = invoicePrefixController.text;
       settings.startingserialno = startingserialnoController.text;
-
       // Call the user's CollectionReference to add a new user
       return db
           .collection("userData")

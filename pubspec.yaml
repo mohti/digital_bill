@@ -22,9 +22,11 @@ environment:
 
 dependencies:
   firebase_storage: ^7.0.0
+  http: ^0.12.2
   intl: ^0.16.1
   file_picker: ^2.1.6
   fluttertoast: ^7.1.6
+  number_to_words: ^0.0.1
   country_state_city_picker: ^1.2.7
   adobe_xd: ^1.1.0+1
   printing: ^4.1.0

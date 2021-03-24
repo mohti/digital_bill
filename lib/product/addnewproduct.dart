@@ -94,14 +94,15 @@ class _AddproductState extends State<Addproduct> {
   final productNameController = TextEditingController();
   final hsncodeController = TextEditingController();
   final quantityController = TextEditingController();
-
+  final lowstockreminderat = TextEditingController();
   final purchaserateController = TextEditingController();
+  final unitController = TextEditingController();
   final sellingpriceController = TextEditingController();
   var date = DateTime.now();
   final totalAmount = TextEditingController();
 
   final newProduct = new AddProduct(
-      null, null, null, null, null, null, null, null, null, null);
+      null, null, null, null, null, null, null, null, null, null, null, null);
   final _keyForm = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -126,9 +127,11 @@ class _AddproductState extends State<Addproduct> {
       newProduct.cgst = cgst;
       newProduct.igst = igst;
       newProduct.date = date;
+
       newProduct.purchaserate = purchaserateController.text;
       newProduct.sellingprice = sellingpriceController.text;
-      print(widget.uid.toString());
+      newProduct.lowstockreminderat = int.parse(lowstockreminderat.text);
+      newProduct.unit = unitController.text;
       newProduct.totalAmount = int.parse(totalAmount.text);
       // Call the user's CollectionReference to add a new user
       return db
@@ -336,6 +339,11 @@ class _AddproductState extends State<Addproduct> {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 30,
+              ),
+              Eachrow(unitController, "unit", lowstockreminderat,
+                  'Remind Low Stock at'),
               SizedBox(
                 height: 30,
               ),

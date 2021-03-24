@@ -8,16 +8,18 @@ class InvoiceProduct {
   String sellingrate;
   String taxamount;
   String totalamount;
+
   InvoiceProduct(
-      this.productCode,
-      this.productName,
-      this.hsncode,
-      this.taxrate,
-      this.quantity,
-      this.unit,
-      this.sellingrate,
-      this.taxamount,
-      this.totalamount);
+    this.productCode,
+    this.productName,
+    this.hsncode,
+    this.taxrate,
+    this.quantity,
+    this.unit,
+    this.sellingrate,
+    this.taxamount,
+    this.totalamount,
+  );
   Map<String, dynamic> toJson() => {
         'productCode': productCode,
         'productName': productName,
@@ -27,11 +29,12 @@ class InvoiceProduct {
         'unit': unit,
         'sellingrate': sellingrate,
         'taxamount': taxamount,
-        'totalamount': totalamount
+        'totalamount': totalamount,
       };
 }
 
 class InvoiceModel {
+  String invoiceno;
   String sname;
   String sphone;
   String sgstn;
@@ -58,6 +61,7 @@ class InvoiceModel {
   String from;
 
   InvoiceModel(
+      this.invoiceno,
       this.sname,
       this.sphone,
       this.sgstn,
@@ -83,6 +87,7 @@ class InvoiceModel {
       this.vehicleno,
       this.from);
   Map<String, dynamic> toJson() => {
+        'invoiceno': invoiceno,
         'sname': sname,
         'sphone': sphone,
         'sgstn': sgstn,

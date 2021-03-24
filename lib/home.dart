@@ -1,13 +1,15 @@
 import 'package:adobe_xd/adobe_xd.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/businessinfo.dart';
 import 'package:digitalbillbook/customwidgets/homepageicon.dart';
+import 'package:digitalbillbook/ewaybill/ewaybill1.dart';
 import 'package:digitalbillbook/invoices/invoicefirst.dart';
 import 'package:digitalbillbook/parties/parties1.dart';
-import 'package:digitalbillbook/pdf/pdfviewer.dart';
 
 import 'package:digitalbillbook/product/product1.dart';
 import 'package:digitalbillbook/reports/report1.dart';
 import 'package:digitalbillbook/settings/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -165,6 +167,67 @@ class HomeIcons extends StatelessWidget {
 
 class _HomeState extends State<Home> {
   @override
+  void initState() {
+    // ignore: todo
+    // TODO: implement initState
+    _getBusinessDetails(widget.uid);
+    super.initState();
+  }
+
+  final db = FirebaseFirestore.instance;
+  final businessNameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final authorisedSignatureController = TextEditingController();
+  final iconController = TextEditingController();
+  final signatureController = TextEditingController();
+  final businessStampController = TextEditingController();
+  final emailController = TextEditingController();
+  final gstNumberController = TextEditingController();
+  final businesAddressController = TextEditingController();
+  final industryTypeController = TextEditingController();
+  final businessTypeController = TextEditingController();
+  final bankNameController = TextEditingController();
+  final ifscCodeController = TextEditingController();
+  final accountNumberController = TextEditingController();
+  Future<Null> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  Future<Null> _getBusinessDetails(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("BusinessInfo")
+        .doc('businessName')
+        .get()
+        .then((valuee) {
+      setState(() {
+        bankNameController.text =
+            valuee.data()['bankName'] == null ? '' : valuee.data()['bankName'];
+        accountNumberController.text = valuee.data()['accountNumber'] == null
+            ? ''
+            : valuee.data()['accountNumber'];
+        ifscCodeController.text =
+            valuee.data()['ifscCode'] == null ? '' : valuee.data()['ifscCode'];
+
+        businessNameController.text = valuee.data()['businessName'] == null
+            ? ''
+            : valuee.data()['businessName'];
+        businesAddressController.text = valuee.data()['businessAddress'] == null
+            ? ''
+            : valuee.data()['businessAddress'];
+        gstNumberController.text = valuee.data()['gstNumber'] == null
+            ? ''
+            : valuee.data()['gstNumber'];
+        emailController.text =
+            valuee.data()['email'] == null ? '' : valuee.data()['email'];
+        phoneController.text =
+            valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widgetfunction> l = [
       Widgetfunction(
@@ -172,11 +235,7 @@ class _HomeState extends State<Home> {
           '<svg viewBox="44.7 585.0 38.0 36.0" ><path transform="translate(44.65, 582.75)" d="M 18.49512672424316 11.59286117553711 L 6.33277416229248 23.79645538330078 L 6.33277416229248 36.96765899658203 C 6.33277416229248 37.67781829833984 6.805325031280518 38.25351715087891 7.388247013092041 38.25351715087891 L 14.78051948547363 38.2302131652832 C 15.36138153076172 38.22667694091797 15.83072376251221 37.65200805664062 15.83071517944336 36.94435501098633 L 15.83071517944336 29.25251388549805 C 15.83071517944336 28.54235076904297 16.30326652526855 27.96665573120117 16.88619041442871 27.96665573120117 L 21.10808372497559 27.96665573120117 C 21.69100570678711 27.96665573120117 22.16355895996094 28.54235076904297 22.16355895996094 29.25251388549805 L 22.16355895996094 36.93872451782227 C 22.16267967224121 37.28045654296875 22.27349281311035 37.60855102539062 22.47152709960938 37.85056686401367 C 22.66956329345703 38.09258270263672 22.93852806091309 38.22860336303711 23.21903228759766 38.22860336303711 L 30.60866737365723 38.25351715087891 C 31.19158554077148 38.25351715087891 31.66414070129395 37.67781829833984 31.66414070129395 36.96765899658203 L 31.66414070129395 23.7876148223877 L 19.50442314147949 11.59286117553711 C 19.20987892150879 11.30361938476562 18.7896728515625 11.30361938476562 18.49512672424316 11.59286117553711 Z M 37.70672607421875 19.88744926452637 L 32.19187927246094 14.34941959381104 L 32.19187927246094 3.217909097671509 C 32.19187927246094 2.68528938293457 31.83746337890625 2.253515720367432 31.4002685546875 2.253515720367432 L 27.70611381530762 2.253515720367432 C 27.26892280578613 2.253515720367432 26.91450881958008 2.68528938293457 26.91450881958008 3.217909574508667 L 26.91450881958008 9.053291320800781 L 21.00847244262695 3.133524656295776 C 19.83958625793457 1.961693286895752 18.15336990356445 1.961693286895752 16.98448371887207 3.133524656295776 L 0.286230593919754 19.88744926452637 C -0.05089546367526054 20.2269115447998 -0.09816046059131622 20.83512687683105 0.1806834936141968 21.24563789367676 L 1.862844228744507 23.73698806762695 C 1.996382474899292 23.93480491638184 2.18902850151062 24.05978393554688 2.398293256759644 24.0843563079834 C 2.607558727264404 24.10893249511719 2.816252470016479 24.03108215332031 2.978348016738892 23.86798286437988 L 18.49512672424316 8.297849655151367 C 18.7896728515625 8.008610725402832 19.20987892150879 8.008610725402832 19.50442504882812 8.2978515625 L 35.02186965942383 23.86798286437988 C 35.35882949829102 24.20768928527832 35.85806655883789 24.15010833740234 36.13671112060547 23.7393970489502 L 37.81887054443359 21.248046875 C 37.95264053344727 21.04976844787598 38.01600646972656 20.79471397399902 37.99496459960938 20.53934860229492 C 37.97391510009766 20.28397750854492 37.87018203735352 20.04936599731445 37.70672988891602 19.88744926452637 Z" fill="none" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
           allowDrawingOutsideViewBox: true,
         ),
-        () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PdfViewer(widget.uid),
-            )),
+        null,
       ),
       Widgetfunction(
           SvgPicture.string(
@@ -269,7 +328,10 @@ class _HomeState extends State<Home> {
           '<svg viewBox="236.1 686.0 36.0 24.0" ><path transform="translate(236.1, 683.75)" d="M 34.94812774658203 13.24821472167969 L 31.65750122070312 10.11428546905518 C 30.98250198364258 9.471428871154785 30.06562423706055 9.112499237060547 29.109375 9.112499237060547 L 27 9.112499237060547 L 27 3.964285612106323 C 27 3.016071557998657 26.19562339782715 2.25 25.19999885559082 2.25 L 1.799999952316284 2.25 C 0.8043749928474426 2.25 0 3.016071557998657 0 3.964285612106323 L 0 21.96428489685059 C 0 24.33214378356934 2.013750076293945 26.25 4.5 26.25 C 5.979374885559082 26.25 7.278749465942383 25.55892944335938 8.09999942779541 24.51428604125977 C 8.921250343322754 25.56428527832031 10.22062587738037 26.25 11.69999980926514 26.25 C 14.18625068664551 26.25 16.19999885559082 24.33214378356934 16.19999885559082 21.96428489685059 C 16.19999885559082 21.66964340209961 16.16625022888184 21.38571548461914 16.11000061035156 21.10714340209961 L 25.28999900817871 21.10714340209961 C 25.22812652587891 21.38571548461914 25.20000076293945 21.66964340209961 25.20000076293945 21.96428489685059 C 25.20000076293945 24.33214378356934 27.2137508392334 26.25 29.69999885559082 26.25 C 32.18624877929688 26.25 34.20000076293945 24.33214378356934 34.20000076293945 21.96428489685059 C 34.20000076293945 21.66964340209961 34.16625213623047 21.38571548461914 34.11000061035156 21.10714340209961 L 35.09999847412109 21.10714340209961 C 35.59500122070312 21.10714340209961 36 20.72142791748047 36 20.25 L 36 15.66964244842529 C 36 14.7589282989502 35.62312698364258 13.89107131958008 34.94812774658203 13.24821472167969 Z M 4.5 23.6785717010498 C 3.509999752044678 23.6785717010498 2.699999809265137 22.90714263916016 2.699999809265137 21.96428489685059 C 2.699999809265137 21.02142906188965 3.509999752044678 20.25 4.5 20.25 C 5.490000247955322 20.25 6.299999713897705 21.02142906188965 6.299999713897705 21.96428489685059 C 6.299999713897705 22.90714263916016 5.490000247955322 23.6785717010498 4.5 23.6785717010498 Z M 11.69999980926514 23.6785717010498 C 10.70999908447266 23.6785717010498 9.899999618530273 22.90714263916016 9.899999618530273 21.96428489685059 C 9.899999618530273 21.02142906188965 10.70999908447266 20.25 11.69999980926514 20.25 C 12.6899995803833 20.25 13.5 21.02142906188965 13.5 21.96428489685059 C 13.5 22.90714263916016 12.6899995803833 23.6785717010498 11.69999980926514 23.6785717010498 Z M 27 11.6785717010498 L 29.109375 11.6785717010498 C 29.35125160217285 11.6785717010498 29.57625198364258 11.76964378356934 29.74500274658203 11.93035793304443 L 32.18062591552734 14.25 L 27 14.25 L 27 11.6785717010498 Z M 29.69999885559082 23.6785717010498 C 28.71000099182129 23.6785717010498 27.89999961853027 22.90714263916016 27.89999961853027 21.96428489685059 C 27.89999961853027 21.02142906188965 28.71000099182129 20.25 29.69999885559082 20.25 C 30.68999862670898 20.25 31.5 21.02142906188965 31.5 21.96428489685059 C 31.5 22.90714263916016 30.68999862670898 23.6785717010498 29.69999885559082 23.6785717010498 Z" fill="#2f2e41" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
           allowDrawingOutsideViewBox: true,
         ),
-        null,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Ewaybill1(widget.uid)),
+        ),
       ),
       Widgetfunction(
         // Adobe XD layer: 'Icon ionic-ios-pers…' (group)
@@ -338,7 +400,7 @@ class _HomeState extends State<Home> {
         () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Settings(widget.uid),
+            builder: (context) => Settings1(widget.uid),
           ),
         ),
       ),
@@ -372,7 +434,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          null),
+          () => _signOut()),
     ];
 
     final double w = MediaQuery.of(context).size.width;
@@ -391,14 +453,144 @@ class _HomeState extends State<Home> {
                 child: Card(
                   elevation: 6,
                   child: Container(
-                      alignment: Alignment.center,
                       width: w * 0.95,
-                      height: 200,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Buissiness Info',
+                              style: TextStyle(
+                                fontFamily: 'Bell MT',
+                                fontSize: 12,
+                                color: const Color(0xff707070),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: 200,
+                            child: Text(
+                              businessNameController.text,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 22,
+                                color: const Color(0xff2f2e41),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: 200,
+                            child: Text(
+                              businesAddressController.text,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 10,
+                                color: const Color(0xe5707070),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: 200,
+                            child: Text(
+                              gstNumberController.text,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 10,
+                                color: const Color(0xe5707070),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Container(
+                            width: 200,
+                            child: Text(
+                              phoneController.text,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 10,
+                                color: const Color(0xe5707070),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Text(
+                            emailController.text,
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xe5707070),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          Container(
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.all(10),
+                            child: InkWell(
+                              onTap: () =>
+                                  Navigator.pushNamed(context, './plan.dart'),
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 60,
+                                height: 20,
+                                child: Text(
+                                  'View More',
+                                  style: TextStyle(
+                                    fontFamily: 'Bell MT',
+                                    fontSize: 10,
+                                    color: const Color(0xe5dde8f8),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(11.0),
+                                  color: const Color(0xd902020a),
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: const Color(0xd93f3d56)),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                       color: Color.fromRGBO(241, 243, 246, 1)),
                 ),
               ),
               SizedBox(
-                height: 30,
+                height: 20,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    HomePageTiles(
+                        homescreentilesicon[1], 'title', null, null, null),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    HomePageTiles(
+                        homescreentilesicon[2], 'title', null, null, null),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    HomePageTiles(
+                        homescreentilesicon[3], 'title', null, null, null),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
               ),
               Container(
                 alignment: Alignment.center,
@@ -534,28 +726,6 @@ class _HomeState extends State<Home> {
                         ),
                       ]),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    HomePageTiles(
-                        homescreentilesicon[1], 'title', null, null, null),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    HomePageTiles(
-                        homescreentilesicon[2], 'title', null, null, null),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    HomePageTiles(
-                        homescreentilesicon[3], 'title', null, null, null),
                   ],
                 ),
               ),

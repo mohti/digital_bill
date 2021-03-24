@@ -51,9 +51,9 @@ class Tab extends StatelessWidget {
   }
 }
 
-class Settings extends StatelessWidget {
+class Settings1 extends StatelessWidget {
   final String uid;
-  Settings(this.uid);
+  Settings1(this.uid);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
