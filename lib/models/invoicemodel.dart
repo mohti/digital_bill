@@ -38,7 +38,7 @@ class InvoiceModel {
   String sname;
   String sphone;
   String sgstn;
-  String sdate;
+  DateTime sdate;
   String scity;
   String sstate;
   String scountry;
@@ -46,7 +46,7 @@ class InvoiceModel {
   String bname;
   String bphone;
   String bgstn;
-  String bdate;
+  DateTime bdate;
   String bcity;
   String bstate;
   String bcountry;

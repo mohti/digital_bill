@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:digitalbillbook/tables/purchasesummarytable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalbillbook/tables/table.dart';
+
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,14 +13,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 
-class ProductList extends StatefulWidget {
+class PurchaseSummary extends StatefulWidget {
   final String uid;
-  ProductList(this.uid);
+  PurchaseSummary(this.uid);
   @override
-  _ProductListState createState() => _ProductListState();
+  _PurchaseSummary createState() => _PurchaseSummary();
 }
 
-class _ProductListState extends State<ProductList> {
+class _PurchaseSummary extends State<PurchaseSummary> {
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
@@ -85,35 +86,46 @@ class _ProductListState extends State<ProductList> {
       FirebaseFirestore.instance
           .collection('userData')
           .doc(widget.uid)
-          .collection('Product')
+          .collection('PurchaseInvoice')
           .get()
           .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          final Timestamp timestamp = (doc['date']) as Timestamp;
+        querySnapshot.docs.forEach((product) {
+          final Timestamp timestamp = (product['sdate']) as Timestamp;
           final DateTime d = timestamp.toDate();
           if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
               d.day == initialdate.day ||
               d.day == finaldate.day)
             sheet.appendRow([
-              doc['productCode'],
-              doc['productName'],
-              doc['hsncode'],
-              doc['purchaserate'],
-              doc['sellingprice']
+              product['invoiceno'],
+              DateFormat('dd/MM/yyyy').format(d),
+              product['listOfProducts'][0]['productCode'],
+              product['sname'] == null ? '' : product['sgstn'],
+              product['listOfProducts'][0]['hsncode'],
+              product['sgstn'] == null ? '' : product['sgstn'],
+              product['listOfProducts'][0]['taxrate'],
+              product['listOfProducts'][0]['totalamount'],
+              product['listOfProducts'][0]['taxamount'],
             ]);
         });
       });
 
       sheet.appendRow([
-        'productCode',
-        'productName',
-        'hsncode',
-        'purchaserate',
-        'sellingprice'
+        'Receipt No.',
+        'Date',
+        'Pro Code',
+        'Pro Name',
+        'GSTN',
+        'Buyer Name',
+        'HSN',
+        'Quantity',
+        'TAX',
+        'Invoice Value',
+        'TAX Value'
       ]);
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
+      print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
       if (isPermissionStatusGranted) {
@@ -202,7 +214,7 @@ class _ProductListState extends State<ProductList> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Products List',
+          'Purchase Summary',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -220,7 +232,7 @@ class _ProductListState extends State<ProductList> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                'Product List',
+                'Purchase Summary',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
                   fontSize: 18,
@@ -299,7 +311,7 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
-            Table1(widget.uid, initialdate, finaldate)
+            PurchaseSummarytable(widget.uid, initialdate, finaldate)
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:digitalbillbook/tables/stocksummarytable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,14 +13,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 
-class ProductList extends StatefulWidget {
+class StockSummary extends StatefulWidget {
   final String uid;
-  ProductList(this.uid);
+  StockSummary(this.uid);
   @override
-  _ProductListState createState() => _ProductListState();
+  _StockSummaryState createState() => _StockSummaryState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _StockSummaryState extends State<StockSummary> {
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
@@ -97,9 +98,13 @@ class _ProductListState extends State<ProductList> {
             sheet.appendRow([
               doc['productCode'],
               doc['productName'],
+              DateFormat('dd/MM/yyyy').format(d),
+              doc['quantity'],
+              doc['cgst'],
               doc['hsncode'],
               doc['purchaserate'],
-              doc['sellingprice']
+              doc['sellingprice'],
+              doc['totalAmount']
             ]);
         });
       });
@@ -107,13 +112,18 @@ class _ProductListState extends State<ProductList> {
       sheet.appendRow([
         'productCode',
         'productName',
+        'date',
+        'quantity',
         'hsncode',
+        'Applied Tax',
         'purchaserate',
-        'sellingprice'
+        'sellingprice',
+        'Total Amount'
       ]);
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
+      print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
       if (isPermissionStatusGranted) {
@@ -202,7 +212,7 @@ class _ProductListState extends State<ProductList> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Products List',
+          'Stock Summary',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -220,7 +230,7 @@ class _ProductListState extends State<ProductList> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                'Product List',
+                'Stock Summary',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
                   fontSize: 18,
@@ -299,7 +309,7 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
-            Table1(widget.uid, initialdate, finaldate)
+            StockSummaryTable(widget.uid, initialdate, finaldate)
           ],
         ),
       ),

@@ -10,18 +10,18 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class PdfViewer extends StatefulWidget {
+class PurchasePdf extends StatefulWidget {
   final String uid;
   final bool generalreportornot;
   final invoiceid;
   final Uint8List sign, stamp, logo;
-  PdfViewer(this.uid, this.generalreportornot, this.invoiceid, this.sign,
+  PurchasePdf(this.uid, this.generalreportornot, this.invoiceid, this.sign,
       this.stamp, this.logo);
   @override
-  _PdfViewerState createState() => _PdfViewerState();
+  _PurchasePdfState createState() => _PurchasePdfState();
 }
 
-class _PdfViewerState extends State<PdfViewer> {
+class _PurchasePdfState extends State<PurchasePdf> {
   List<LayoutCallback> _tabGen;
   @override
   void initState() {
@@ -230,7 +230,7 @@ class _PdfViewerState extends State<PdfViewer> {
     await db
         .collection("userData")
         .doc(uid)
-        .collection("Invoice")
+        .collection("PurchaseInvoice")
         .doc(widget.invoiceid)
         .get()
         .then((valuee) {
@@ -247,14 +247,6 @@ class _PdfViewerState extends State<PdfViewer> {
             valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
         sname.text =
             valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
-        bcity.text =
-            valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
-        bstate.text =
-            valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
-        scity.text =
-            valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
-        sstate.text =
-            valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
         sphone.text =
             valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
         sgstn.text =
@@ -276,7 +268,7 @@ class _PdfViewerState extends State<PdfViewer> {
     yield* FirebaseFirestore.instance
         .collection("userData")
         .doc(widget.uid)
-        .collection("Invoice")
+        .collection("PurchaseInvoice")
         .snapshots();
   }
 
@@ -463,7 +455,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                       textAlign: pw.TextAlign.left,
                                     ),
                                     pw.Text(
-                                      'Place of Supply :    ' + sstate.text,
+                                      'Place of Supply :    ',
                                       style: pw.TextStyle(
                                         fontSize: 12,
                                         color: PdfColor.fromInt(0xff2f2e41),
@@ -515,7 +507,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                             pw.CrossAxisAlignment.start,
                                         children: [
                                           pw.Text(
-                                            'Name :       ' + bname.text,
+                                            'Name :       ' +
+                                                businessNameController.text,
                                             style: pw.TextStyle(
                                               fontSize: 13,
                                               color:
@@ -524,7 +517,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                             textAlign: pw.TextAlign.left,
                                           ),
                                           pw.Text(
-                                            'Address :    ' + bcity.text,
+                                            'Address :    ' +
+                                                businesAddressController.text,
                                             style: pw.TextStyle(
                                               fontSize: 13,
                                               color:
@@ -590,8 +584,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                           pw.Text(
                                             'Address :    ' +
                                                 scity.text +
-                                                ", " +
-                                                sstate.text,
+                                                ', ' +
+                                                sstate.text +
+                                                ', ' +
+                                                scountry.text,
                                             style: pw.TextStyle(
                                               fontSize: 13,
                                               color:

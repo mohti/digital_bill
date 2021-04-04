@@ -14,7 +14,7 @@ class AddNewParty {
         'partyName': partyName,
         'phone': phone,
         'gstn': gstn,
-        'address;': address,
+        'address': address,
         'country': country,
         'state': state,
         'city': city,

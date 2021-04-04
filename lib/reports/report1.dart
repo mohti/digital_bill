@@ -1,4 +1,9 @@
 import 'package:digitalbillbook/reports/lowstock.dart';
+import 'package:digitalbillbook/reports/partieslist.dart';
+import 'package:digitalbillbook/reports/productList.dart';
+import 'package:digitalbillbook/reports/purchsesummary.dart';
+import 'package:digitalbillbook/reports/salesummary.dart';
+import 'package:digitalbillbook/reports/stocksummary.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
@@ -87,17 +92,44 @@ class Report1 extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
             ),
-            Tab(null, ' Stocks Summary', null, w),
-            Tab(null, ' Product List (Rate List)', null, w),
-            Tab(null, ' Sales Summary', null, w),
+            Tab(
+                null,
+                ' Stocks Summary',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => StockSummary(uid))),
+                w),
+            Tab(
+                null,
+                ' Product List (Rate List)',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProductList(uid))),
+                w),
+            Tab(
+                null,
+                ' Sales Summary',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SalesSummary(uid))),
+                w),
             Tab(
                 null,
                 ' Low Stock',
                 () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LowStock(uid))),
                 w),
-            Tab(null, ' Party List', null, w),
-            Tab(null, ' Purchase Summary', null, w),
+            Tab(
+                null,
+                ' Party List',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PartiesList(uid))),
+                w),
+            Tab(
+                null,
+                ' Purchase Summary',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PurchaseSummary(uid))),
+                w),
           ],
         ),
       ),

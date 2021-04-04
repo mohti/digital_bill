@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:digitalbillbook/models/invoicemodel.dart';
-import 'package:digitalbillbook/pdf/pdfviewer.dart';
-import 'package:digitalbillbook/pdf/pdfviewer2.dart';
+import 'package:digitalbillbook/purchase/purchasepdf.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -71,13 +70,12 @@ class Eachrow extends StatelessWidget {
   }
 }
 
-class InvoiceMain extends StatefulWidget {
+class PurchaseInvoice extends StatefulWidget {
   final String uid;
-  final bool i;
-  InvoiceMain(this.uid, this.i);
+  PurchaseInvoice(this.uid);
 
   @override
-  _InvoiceMainState createState() => _InvoiceMainState();
+  _PurchaseInvoiceState createState() => _PurchaseInvoiceState();
 }
 
 /* 
@@ -116,7 +114,7 @@ class Customtexteditingcontroller {
   final totalamount = TextEditingController();
 }
 
-class _InvoiceMainState extends State<InvoiceMain> {
+class _PurchaseInvoiceState extends State<PurchaseInvoice> {
   final invoiceno = TextEditingController();
   final bname = TextEditingController();
   final bphone = TextEditingController();
@@ -193,7 +191,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
       null,
       null);
   final _keyForm = GlobalKey<FormState>();
-  bool generalInvoiceornot = true;
+  bool generalInvoiceornot = false;
 
   Uint8List logo, sign, stamp;
   Future<void> downloadURLExamplesign() async {
@@ -257,7 +255,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
         .collection("Product")
         .doc(t[index].productCode.text)
         .update({
-      'quantity': (v - int.parse(value)),
+      'quantity': (v + int.parse(value)),
     });
   }
 
@@ -315,7 +313,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
         listOfProducts.add(element);
         print(element.productCode);
       });*/
-
       addproducts(noofproducts);
       newInvoice.invoiceno = invoiceno.text;
       newInvoice.bname = bname.text;
@@ -347,7 +344,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
       return db
           .collection("userData")
           .doc(widget.uid)
-          .collection("Invoice")
+          .collection("PurchaseInvoice")
           .doc(invoiceno.text)
           .set(newInvoice.toJson());
     }
@@ -361,20 +358,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
           lastDate: DateTime(2101));
       if (picked != null)
         setState(() {
-          sdate = picked;
-        });
-    }
-
-    Future<Null> _selectDate1(BuildContext context) async {
-      final DateTime picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          initialDatePickerMode: DatePickerMode.day,
-          firstDate: DateTime(2015),
-          lastDate: DateTime(2101));
-      if (picked != null)
-        setState(() {
-          bdate = picked;
+          date = picked;
         });
     }
 
@@ -383,7 +367,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Generate Invoice',
+          'Purchase Receipt',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -402,99 +386,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
               SizedBox(
                 height: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Invoice Type",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: TextField(
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'General Invoice',
-                                  fillColor: Colors.white,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                ),
-                                // The validator receives the text that the user has entered.
-                              ),
-                            ),
-                            Checkbox(
-                              activeColor: Color(0xff05A20A),
-                              value: generalInvoiceornot,
-                              onChanged: (bool newvalue) {
-                                setState(() {
-                                  generalInvoiceornot = newvalue;
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Bill to Ship Invoice',
-                                  fillColor: Colors.white,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                ),
-                                // The validator receives the text that the user has entered.
-                              ),
-                            ),
-                            Checkbox(
-                              activeColor: Color(0xff05A20A),
-                              value: !generalInvoiceornot,
-                              onChanged: (bool newvalue) {
-                                setState(() {
-                                  generalInvoiceornot = !newvalue;
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -508,7 +399,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         child: TextFormField(
                           controller: invoiceno,
                           decoration: InputDecoration(
-                            labelText: "Invoice No",
+                            labelText: "Receipt No.",
                             fillColor: Colors.white,
                           ),
                           // The validator receives the text that the user has entered.
@@ -524,171 +415,73 @@ class _InvoiceMainState extends State<InvoiceMain> {
                   ),
                 ],
               ),
-              generalInvoiceornot == false
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Consignee Details(Ship To)",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Eachrow(
-                            sname, "Name/Company Name", sphone, 'Phone Number'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () => _selectDate(context),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  height: 50,
-                                  child: Text("Date " +
-                                      DateFormat().add_yMd().format(date)),
-                                ),
-                              ),
-                            ),
-                            Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
-                                child: TextFormField(
-                                  controller: sgstn,
-                                  decoration: InputDecoration(
-                                    labelText: "GSTN",
-                                  ),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {}
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scity, "City", sstate, 'State'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scountry, "Country", spin, 'Pin Code'),
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Consignor Details(Bill To)",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Eachrow(
-                            bname, "Name/Company Name", bphone, 'Phone Number'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () => _selectDate1(context),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  height: 50,
-                                  child: Text("Date " +
-                                      DateFormat().add_yMd().format(date)),
-                                ),
-                              ),
-                            ),
-                            Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
-                                child: TextFormField(
-                                  controller: bgstn,
-                                  decoration: InputDecoration(
-                                    labelText: "GSTN",
-                                  ),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {}
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(bcity, "City", bstate, 'State'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(bcountry, "Country", bpin, 'Pin Code'),
-                      ],
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Buyer's Details",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Eachrow(
-                            sname, "Name/Company Name", sphone, 'Phone Number'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scity, "City", sstate, 'State'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scountry, "Country", spin, 'Pin Code'),
-                      ],
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text(
+                      "Seller Detail",
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 14,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
+                  ),
+                  Eachrow(sname, "Name/Company Name", sphone, 'Phone Number'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Card(
+                        elevation: 4,
+                        child: InkWell(
+                          onTap: () => _selectDate(context),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            height: 50,
+                            child: Text(
+                                "Date " + DateFormat().add_yMd().format(date)),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.45,
+                          height: 50,
+                          child: TextFormField(
+                            controller: sgstn,
+                            decoration: InputDecoration(
+                              labelText: "GSTN",
+                            ),
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value.isEmpty) {}
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Eachrow(scity, "City", sstate, 'State'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Eachrow(scountry, "Country", spin, 'Pin Code'),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
@@ -1113,29 +906,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
                     if (_keyForm.currentState.validate()) {
                       // If the form is valid, display a Snackbar.
                       generateInvoice();
-
                       Future.delayed(new Duration(milliseconds: 100), () {
-                        widget.i
-                            ? Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PdfViewer2(
-                                        widget.uid,
-                                        generalInvoiceornot,
-                                        invoiceno.text,
-                                        sign,
-                                        stamp,
-                                        logo)))
-                            : Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PdfViewer(
-                                        widget.uid,
-                                        generalInvoiceornot,
-                                        invoiceno.text,
-                                        sign,
-                                        stamp,
-                                        logo)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PurchasePdf(widget.uid,
+                                    false, invoiceno.text, sign, stamp, logo)));
                       });
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(

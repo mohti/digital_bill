@@ -1,7 +1,6 @@
 import 'package:digitalbillbook/models/partydetails.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:country_state_city_picker/country_state_city_picker.dart';
 
 class Eachrow extends StatelessWidget {
   final TextEditingController controller1, controller2;
@@ -95,9 +94,9 @@ class _AddPartyState extends State<AddParty> {
   final phoneController = TextEditingController();
   final gstnController = TextEditingController();
   final addressController = TextEditingController();
-  var countryValue;
-  var stateValue;
-  var cityValue;
+  var countryValue = TextEditingController();
+  var stateValue = TextEditingController();
+  final cityValue = TextEditingController();
   var pincodeController = TextEditingController();
   final newParty =
       new AddNewParty(null, null, null, null, null, null, null, null);
@@ -110,9 +109,10 @@ class _AddPartyState extends State<AddParty> {
       newParty.phone = phoneController.text;
       newParty.gstn = gstnController.text;
       newParty.address = addressController.text;
-      newParty.country = countryValue;
-      newParty.state = stateValue;
-      newParty.city = cityValue;
+      newParty.country = countryValue.text;
+      newParty.state = stateValue.text;
+      newParty.city = cityValue.text;
+
       newParty.pincode = pincodeController.text;
 
       // Call the user's CollectionReference to add a new user
@@ -174,72 +174,11 @@ class _AddPartyState extends State<AddParty> {
               SizedBox(
                 height: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: 200,
-                        height: 180,
-                        child: SelectState(
-                          // style: TextStyle(color: Colors.red),
-                          onCountryChanged: (value) {
-                            setState(() {
-                              countryValue = value;
-                            });
-                          },
-                          onStateChanged: (value) {
-                            setState(() {
-                              stateValue = value;
-                            });
-                          },
-                          onCityChanged: (value) {
-                            setState(() {
-                              cityValue = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              Eachrow(cityValue, "city", stateValue, 'state'),
               SizedBox(
                 height: 30,
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Card(
-                    elevation: 4,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      height: 50,
-                      child: TextFormField(
-                        controller: pincodeController,
-                        decoration: InputDecoration(
-                          labelText: 'Pin Code',
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                        ),
-                        // The validator receives the text that the user has entered.
-                        validator: (value) {
-                          if (value.length != 6) {
-                            return 'Please Enter correct ' + 'Pin Code';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              Eachrow(countryValue, "country", pincodeController, 'Pincode'),
               SizedBox(
                 height: 30,
               ),

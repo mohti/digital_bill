@@ -1,20 +1,29 @@
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalbillbook/Invoicestyle.dart';
 import 'package:digitalbillbook/businessinfo.dart';
 import 'package:digitalbillbook/customwidgets/homepageicon.dart';
 import 'package:digitalbillbook/ewaybill/ewaybill1.dart';
 import 'package:digitalbillbook/invoices/invoicefirst.dart';
+import 'package:digitalbillbook/notification/notification.dart';
 import 'package:digitalbillbook/parties/parties1.dart';
 
 import 'package:digitalbillbook/product/product1.dart';
+import 'package:digitalbillbook/reports/lowstock.dart';
+import 'package:digitalbillbook/reports/purchsesummary.dart';
 import 'package:digitalbillbook/reports/report1.dart';
+import 'package:digitalbillbook/reports/salesummary.dart';
+import 'package:digitalbillbook/reports/stocksummary.dart';
 import 'package:digitalbillbook/settings/settings.dart';
+import 'package:digitalbillbook/signup_and_loginpages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'customwidgets/homepagetiles.dart';
+import 'models/businessprofile.dart';
+import 'models/invoicesettingsmodel.dart';
 
 class Home extends StatefulWidget {
   final String uid;
@@ -37,63 +46,6 @@ List<String> row2 = [
   'Business Profile'
 ];
 List<String> row3 = ['Notification', 'Setting', 'Support', 'Logout'];
-final List<Widget> homescreentilesicon = [
-  // Adobe XD layer: 'Icon feather-alert-…' (group)
-  Stack(
-    children: <Widget>[
-      Pinned.fromSize(
-        bounds: Rect.fromLTWH(0.0, 0.0, 25.0, 25.0),
-        size: Size(25.0, 25.0),
-        pinLeft: true,
-        pinRight: true,
-        pinTop: true,
-        pinBottom: true,
-        child: SvgPicture.string(
-          '<svg viewBox="3.0 3.0 25.0 25.0" ><path  d="M 10.32499980926514 3 L 20.67499923706055 3 L 28 10.32499980926514 L 28 20.67499923706055 L 20.67499923706055 28 L 10.32499980926514 28 L 3 20.67499923706055 L 3 10.32499980926514 L 10.32499980926514 3 Z" fill="none" stroke="#ff0e27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>',
-          allowDrawingOutsideViewBox: true,
-          fit: BoxFit.fill,
-        ),
-      ),
-      Pinned.fromSize(
-        bounds: Rect.fromLTWH(12.5, 7.1, 1.0, 6.0),
-        size: Size(25.0, 25.0),
-        fixedWidth: true,
-        fixedHeight: true,
-        child: SvgPicture.string(
-          '<svg viewBox="15.5 10.1 1.0 6.0" ><path transform="translate(-2.5, -1.87)" d="M 18 12 L 18 18" fill="none" stroke="#ff0e27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>',
-          allowDrawingOutsideViewBox: true,
-          fit: BoxFit.fill,
-        ),
-      ),
-      Pinned.fromSize(
-        bounds: Rect.fromLTWH(12.5, 17.5, 1.0, 1.0),
-        size: Size(25.0, 25.0),
-        fixedWidth: true,
-        fixedHeight: true,
-        child: SvgPicture.string(
-          '<svg viewBox="15.5 20.5 1.0 1.0" ><path transform="translate(-2.5, -3.5)" d="M 18 24 L 18 24" fill="none" stroke="#ff0e27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>',
-          allowDrawingOutsideViewBox: true,
-          fit: BoxFit.fill,
-        ),
-      ),
-    ],
-  ), // Adobe XD layer: 'Icon awesome-clipbo…' (shape)
-  SvgPicture.string(
-    '<svg viewBox="-1137.5 2888.5 27.0 36.0" ><path transform="translate(-1137.5, 2888.5)" d="M 23.625 4.5 L 18 4.5 C 18 2.017968654632568 15.98203086853027 0 13.5 0 C 11.01796913146973 0 9 2.017968654632568 9 4.5 L 3.375 4.5 C 1.51171875 4.5 0 6.01171875 0 7.875 L 0 32.625 C 0 34.48828125 1.51171875 36 3.375 36 L 23.625 36 C 25.48828125 36 27 34.48828125 27 32.625 L 27 7.875 C 27 6.01171875 25.48828125 4.5 23.625 4.5 Z M 6.75 29.8125 C 5.814843654632568 29.8125 5.0625 29.06015586853027 5.0625 28.125 C 5.0625 27.18984413146973 5.814843654632568 26.4375 6.75 26.4375 C 7.685156345367432 26.4375 8.4375 27.18984413146973 8.4375 28.125 C 8.4375 29.06015586853027 7.685156345367432 29.8125 6.75 29.8125 Z M 6.75 23.0625 C 5.814843654632568 23.0625 5.0625 22.31015586853027 5.0625 21.375 C 5.0625 20.43984413146973 5.814843654632568 19.6875 6.75 19.6875 C 7.685156345367432 19.6875 8.4375 20.43984413146973 8.4375 21.375 C 8.4375 22.31015586853027 7.685156345367432 23.0625 6.75 23.0625 Z M 6.75 16.3125 C 5.814843654632568 16.3125 5.0625 15.56015586853027 5.0625 14.625 C 5.0625 13.68984413146973 5.814843654632568 12.9375 6.75 12.9375 C 7.685156345367432 12.9375 8.4375 13.68984413146973 8.4375 14.625 C 8.4375 15.56015586853027 7.685156345367432 16.3125 6.75 16.3125 Z M 13.5 2.8125 C 14.43515586853027 2.8125 15.1875 3.564843654632568 15.1875 4.5 C 15.1875 5.435156345367432 14.43515586853027 6.1875 13.5 6.1875 C 12.56484413146973 6.1875 11.8125 5.435156345367432 11.8125 4.5 C 11.8125 3.564843654632568 12.56484413146973 2.8125 13.5 2.8125 Z M 22.5 28.6875 C 22.5 28.99687576293945 22.24687576293945 29.25 21.9375 29.25 L 11.8125 29.25 C 11.50312519073486 29.25 11.25 28.99687576293945 11.25 28.6875 L 11.25 27.5625 C 11.25 27.25312423706055 11.50312519073486 27 11.8125 27 L 21.9375 27 C 22.24687576293945 27 22.5 27.25312423706055 22.5 27.5625 L 22.5 28.6875 Z M 22.5 21.9375 C 22.5 22.24687576293945 22.24687576293945 22.5 21.9375 22.5 L 11.8125 22.5 C 11.50312519073486 22.5 11.25 22.24687576293945 11.25 21.9375 L 11.25 20.8125 C 11.25 20.50312423706055 11.50312519073486 20.25 11.8125 20.25 L 21.9375 20.25 C 22.24687576293945 20.25 22.5 20.50312423706055 22.5 20.8125 L 22.5 21.9375 Z M 22.5 15.1875 C 22.5 15.49687480926514 22.24687576293945 15.75 21.9375 15.75 L 11.8125 15.75 C 11.50312519073486 15.75 11.25 15.49687480926514 11.25 15.1875 L 11.25 14.0625 C 11.25 13.75312519073486 11.50312519073486 13.5 11.8125 13.5 L 21.9375 13.5 C 22.24687576293945 13.5 22.5 13.75312519073486 22.5 14.0625 L 22.5 15.1875 Z" fill="#2f2e41" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-    allowDrawingOutsideViewBox: true,
-    fit: BoxFit.fill,
-  ), // Adobe XD layer: 'Icon material-libra…' (shape)
-  SvgPicture.string(
-    '<svg viewBox="-907.0 2892.0 30.0 30.0" ><path transform="translate(-910.0, 2889.0)" d="M 6 9 L 3 9 L 3 30 C 3 31.64999961853027 4.349999904632568 33 6 33 L 27 33 L 27 30 L 6 30 L 6 9 Z M 30 3 L 12 3 C 10.35000038146973 3 9 4.349999904632568 9 6 L 9 24 C 9 25.64999961853027 10.35000038146973 27 12 27 L 30 27 C 31.64999961853027 27 33 25.64999961853027 33 24 L 33 6 C 33 4.349999904632568 31.64999961853027 3 30 3 Z M 28.5 16.5 L 13.5 16.5 L 13.5 13.5 L 28.5 13.5 L 28.5 16.5 Z M 22.5 22.5 L 13.5 22.5 L 13.5 19.5 L 22.5 19.5 L 22.5 22.5 Z M 28.5 10.5 L 13.5 10.5 L 13.5 7.5 L 28.5 7.5 L 28.5 10.5 Z" fill="#2f2e41" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-    allowDrawingOutsideViewBox: true,
-    fit: BoxFit.fill,
-  ), // Adobe XD layer: 'Icon metro-money' (shape)
-  SvgPicture.string(
-    '<svg viewBox="-665.7 2894.4 13.1 23.1" ><path transform="translate(-676.38, 2888.01)" d="M 17.73790740966797 16.58108711242676 C 14.82015991210938 15.82273769378662 13.88184070587158 15.04507732391357 13.88184070587158 13.82399940490723 C 13.88184070587158 12.42295169830322 15.17362308502197 11.43965435028076 17.3523006439209 11.43965435028076 C 19.64024353027344 11.43965435028076 20.48857879638672 12.53221702575684 20.56570053100586 14.13890075683594 L 23.40632629394531 14.13890075683594 C 23.32278823852539 11.92166233062744 21.96671867370605 9.903644561767578 19.28033447265625 9.241695404052734 L 19.28033447265625 6.426766395568848 L 15.42426776885986 6.426766395568848 L 15.42426776885986 9.203134536743164 C 12.93068790435791 9.749401092529297 10.92553329467773 11.35611534118652 10.92553329467773 13.8432788848877 C 10.92553329467773 16.81245040893555 13.38699913024902 18.29061889648438 16.96669387817383 19.15178680419922 C 20.18651008605957 19.92300033569336 20.82276153564453 21.04767608642578 20.82276153564453 22.25592041015625 C 20.82276153564453 23.13639831542969 20.19937324523926 24.55027961730957 17.3523006439209 24.55027961730957 C 14.70447826385498 24.55027961730957 13.65689277648926 23.36131477355957 13.52193069458008 21.85103225708008 L 10.68772125244141 21.85103225708008 C 10.84838104248047 24.66596031188965 12.94993686676025 26.24053192138672 15.42426681518555 26.77393341064453 L 15.42426681518555 29.56316566467285 L 19.28033447265625 29.56316566467285 L 19.28033447265625 26.7996654510498 C 21.78036117553711 26.31765747070312 23.7790699005127 24.87163162231445 23.7790699005127 22.23022651672363 C 23.7790699005127 18.59265899658203 20.65565490722656 17.34588623046875 17.73790740966797 16.58108901977539 Z" fill="#05a20a" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-    allowDrawingOutsideViewBox: true,
-    fit: BoxFit.fill,
-  )
-];
 
 class HomeIcons extends StatelessWidget {
   final List<Widgetfunction> l1, l2, l3;
@@ -171,7 +123,46 @@ class _HomeState extends State<Home> {
     // ignore: todo
     // TODO: implement initState
     _getBusinessDetails(widget.uid);
+    _getBusinessDetails2(widget.uid);
+    _getBusinessDetails3(widget.uid);
+    _getBusinessDetails4(widget.uid);
+    _getBusinessDetails5(widget.uid);
     super.initState();
+  }
+
+  final settings = new InvoiceSettingsmodel('', '');
+  Future<Null> setUpdatabase() async {
+    await db
+        .collection("userData")
+        .doc(widget.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+      } else {
+        final businessInfo = new BusinessProfile(
+            '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+        db
+            .collection("userData")
+            .doc(widget.uid)
+            .collection("invoiceSettings")
+            .doc('invoiceSettings')
+            .set(settings.toJson());
+        // Call the user's CollectionReference to add a new user
+        db
+            .collection("userData")
+            .doc(widget.uid)
+            .collection("BusinessInfo")
+            .doc('businessName')
+            .set(businessInfo.toJson());
+        db
+            .collection("userData")
+            .doc(widget.uid)
+            .collection("termsAndConditiononInvoice")
+            .doc('termsAndConditiononInvoice')
+            .set({'termsAndCondition': ''});
+      }
+    });
   }
 
   final db = FirebaseFirestore.instance;
@@ -189,8 +180,98 @@ class _HomeState extends State<Home> {
   final bankNameController = TextEditingController();
   final ifscCodeController = TextEditingController();
   final accountNumberController = TextEditingController();
+  String subtitle01 = '';
+  String subtitle02 = '';
+  String subtitle03 = '';
+  String subtitle11 = '';
+  String subtitle12 = '';
+  String subtitle13 = '';
+  String subtitle21 = '';
+  String subtitle22 = '';
+  String subtitle23 = '';
   Future<Null> _signOut() async {
     await FirebaseAuth.instance.signOut();
+
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ));
+  }
+
+  bool invoice0or1;
+  Future<Null> _getBusinessDetails2(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("PurchaseInvoice")
+        .orderBy('sdate', descending: true)
+        .get()
+        .then((valuee) {
+      setState(() {
+        subtitle21 = 'Invoice No. : ' + valuee.docs.first.data()['invoiceno'];
+        subtitle22 = 'Buyer Name : ' + valuee.docs.first.data()['sname'];
+        subtitle23 = 'Amount : ' +
+            valuee.docs.first.data()['listOfProducts'][0]['totalamount'];
+      });
+    });
+  }
+
+  Future<Null> _getBusinessDetails3(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("Invoice")
+        .orderBy('sdate', descending: true)
+        .get()
+        .then((valuee) {
+      setState(() {
+        subtitle11 = 'Invoice No. : ' + valuee.docs.first.data()['invoiceno'];
+        subtitle12 = 'Buyer Name : ' + valuee.docs.first.data()['sname'];
+        subtitle13 = 'Amount : ' +
+            valuee.docs.first.data()['listOfProducts'][0]['totalamount'];
+      });
+    });
+  }
+
+  Future<Null> _getBusinessDetails4(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("Product")
+        .where("quantity", isLessThanOrEqualTo: 100)
+        .get()
+        .then((valuee) {
+      setState(() {
+        subtitle01 =
+            'Product Name : ' + valuee.docs.first.data()['productName'];
+        subtitle02 =
+            'Product Code : ' + valuee.docs.first.data()['productCode'];
+        subtitle03 = 'Remaining Quantity : ' +
+            valuee.docs.first.data()['quantity'].toString();
+      });
+    });
+  }
+
+  int totalamount = 0;
+  int totalproducts = 0;
+  int totalquantity = 0;
+
+  Future<Null> _getBusinessDetails5(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("Product")
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          totalamount = totalamount + doc['totalAmount'];
+          totalproducts = totalproducts + 1;
+          totalquantity = totalquantity + doc['quantity'];
+        });
+      });
+    });
   }
 
   Future<Null> _getBusinessDetails(String uid) async {
@@ -229,6 +310,24 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    _getBusinessDetails(widget.uid);
+    _getBusinessDetails2(widget.uid);
+    _getBusinessDetails3(widget.uid);
+    _getBusinessDetails4(widget.uid);
+
+    _navigateAndDisplaySelection(BuildContext context) async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final result = await Navigator.push(
+        context,
+        // Create the SelectionScreen in the next step.
+        MaterialPageRoute(builder: (context) => InvoiceStyle()),
+      );
+      setState(() {
+        invoice0or1 = result;
+      });
+    }
+
     List<Widgetfunction> l = [
       Widgetfunction(
         SvgPicture.string(
@@ -245,7 +344,8 @@ class _HomeState extends State<Home> {
           () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Invoicefirst(widget.uid)),
+                    builder: (context) =>
+                        Invoicefirst(widget.uid, invoice0or1)),
               )),
       Widgetfunction(
         SizedBox(
@@ -311,7 +411,9 @@ class _HomeState extends State<Home> {
           '<svg viewBox="50.0 682.0 30.0 32.0" ><path transform="translate(50.0, 682.0)" d="M 30 3 L 30 21.00000190734863 C 30 22.65624809265137 28.74023628234863 24 27.18750190734863 24 L 24.375 24 L 24.375 11.00000095367432 C 24.375 8.243749618530273 22.271484375 6 19.6875 6 L 7.5 6 L 7.5 3 C 7.5 1.34375011920929 8.759765625 0 10.3125 0 L 27.18750190734863 0 C 28.74023628234863 0 30 1.34375011920929 30 3 Z M 22.5 11.00000095367432 L 22.5 29 C 22.5 30.65625 21.24023628234863 32 19.6875 32 L 2.8125 32 C 1.259765625 32 0 30.65625 0 29 L 0 11.00000095367432 C 0 9.343750953674316 1.259765625 8 2.8125 8 L 19.6875 8 C 21.24023628234863 8 22.5 9.343750953674316 22.5 11.00000095367432 Z M 18.515625 12.75 C 18.515625 12.33750057220459 18.19921875 12 17.8125 12 L 4.453125 12 C 4.06640625 12 3.75 12.33750057220459 3.75 12.75 L 3.75 16 L 18.515625 16 L 18.515625 12.75 Z" fill="none" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
           allowDrawingOutsideViewBox: true,
         ),
-        () => Navigator.pushNamed(context, './invoicestyle.dart'),
+        () {
+          _navigateAndDisplaySelection(context);
+        },
       ),
       Widgetfunction(
         SvgPicture.string(
@@ -358,11 +460,17 @@ class _HomeState extends State<Home> {
 
     List<Widgetfunction> l3 = [
       Widgetfunction(
-          SvgPicture.string(
-            '<svg viewBox="51.0 779.0 28.0 28.0" ><path transform="translate(47.96, 775.25)" d="M 10.83838081359863 6.018717765808105 L 8.830356597900391 3.965384721755981 C 5.460246562957764 6.593077659606934 3.241589784622192 10.64230728149414 3.045000076293945 15.23717880249023 L 5.8534255027771 15.23717880249023 C 6.06405782699585 11.43205070495605 7.973787784576416 8.10076904296875 10.83838081359863 6.018717765808105 Z M 28.2365779876709 15.23717880249023 L 31.04500007629395 15.23717880249023 C 30.83436965942383 10.64230728149414 28.61571502685547 6.59307861328125 25.25964546203613 3.96538519859314 L 23.26565933227539 6.018718719482422 C 26.10217094421387 8.10076904296875 28.02593994140625 11.43205070495605 28.236572265625 15.23717880249023 Z M 25.47027778625488 15.95512676239014 C 25.47027778625488 11.5469217300415 23.1673698425293 7.856667518615723 19.15132331848145 6.880256652832031 L 19.15132331848145 5.903846740722656 C 19.15132331848145 4.712052345275879 18.21050071716309 3.750000715255737 17.04500198364258 3.750000715255737 C 15.8795051574707 3.750000715255737 14.93868541717529 4.712052345275879 14.93868541717529 5.903846740722656 L 14.93868541717529 6.880256652832031 C 10.90859222412109 7.856667518615723 8.619724273681641 11.53256320953369 8.619724273681641 15.95512676239014 L 8.619724273681641 23.13461685180664 L 5.811299324035645 26.00641059875488 L 5.811299324035645 27.44231033325195 L 28.27870559692383 27.44231033325195 L 28.27870559692383 26.00641059875488 L 25.47027778625488 23.13461685180664 L 25.47027778625488 15.95512676239014 Z M 17.04500198364258 31.75 C 17.24159240722656 31.75 17.42414093017578 31.73564147949219 17.606689453125 31.69256210327148 C 18.51942825317383 31.49153709411621 19.2636604309082 30.85974502563477 19.62875556945801 29.99820327758789 C 19.7691764831543 29.65358734130859 19.83938789367676 29.28025436401367 19.83938789367676 28.87820243835449 L 14.22253513336182 28.87820243835449 C 14.23657894134521 30.45768928527832 15.48632717132568 31.75 17.04500198364258 31.75 Z" fill="none" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-            allowDrawingOutsideViewBox: true,
+        SvgPicture.string(
+          '<svg viewBox="51.0 779.0 28.0 28.0" ><path transform="translate(47.96, 775.25)" d="M 10.83838081359863 6.018717765808105 L 8.830356597900391 3.965384721755981 C 5.460246562957764 6.593077659606934 3.241589784622192 10.64230728149414 3.045000076293945 15.23717880249023 L 5.8534255027771 15.23717880249023 C 6.06405782699585 11.43205070495605 7.973787784576416 8.10076904296875 10.83838081359863 6.018717765808105 Z M 28.2365779876709 15.23717880249023 L 31.04500007629395 15.23717880249023 C 30.83436965942383 10.64230728149414 28.61571502685547 6.59307861328125 25.25964546203613 3.96538519859314 L 23.26565933227539 6.018718719482422 C 26.10217094421387 8.10076904296875 28.02593994140625 11.43205070495605 28.236572265625 15.23717880249023 Z M 25.47027778625488 15.95512676239014 C 25.47027778625488 11.5469217300415 23.1673698425293 7.856667518615723 19.15132331848145 6.880256652832031 L 19.15132331848145 5.903846740722656 C 19.15132331848145 4.712052345275879 18.21050071716309 3.750000715255737 17.04500198364258 3.750000715255737 C 15.8795051574707 3.750000715255737 14.93868541717529 4.712052345275879 14.93868541717529 5.903846740722656 L 14.93868541717529 6.880256652832031 C 10.90859222412109 7.856667518615723 8.619724273681641 11.53256320953369 8.619724273681641 15.95512676239014 L 8.619724273681641 23.13461685180664 L 5.811299324035645 26.00641059875488 L 5.811299324035645 27.44231033325195 L 28.27870559692383 27.44231033325195 L 28.27870559692383 26.00641059875488 L 25.47027778625488 23.13461685180664 L 25.47027778625488 15.95512676239014 Z M 17.04500198364258 31.75 C 17.24159240722656 31.75 17.42414093017578 31.73564147949219 17.606689453125 31.69256210327148 C 18.51942825317383 31.49153709411621 19.2636604309082 30.85974502563477 19.62875556945801 29.99820327758789 C 19.7691764831543 29.65358734130859 19.83938789367676 29.28025436401367 19.83938789367676 28.87820243835449 L 14.22253513336182 28.87820243835449 C 14.23657894134521 30.45768928527832 15.48632717132568 31.75 17.04500198364258 31.75 Z" fill="none" stroke="#f1f3f6" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+          allowDrawingOutsideViewBox: true,
+        ),
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NotificationPage(widget.uid),
           ),
-          null),
+        ),
+      ),
       Widgetfunction(
         // Adobe XD layer: 'Icon feather-settin…' (group)
         SizedBox(
@@ -575,17 +683,50 @@ class _HomeState extends State<Home> {
                 child: Row(
                   children: [
                     HomePageTiles(
-                        homescreentilesicon[1], 'title', null, null, null),
-                    SizedBox(
-                      width: 10,
+                      homescreentilesicon[0],
+                      'Low Stock',
+                      subtitle01,
+                      subtitle02,
+                      subtitle03,
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LowStock(widget.uid))),
                     ),
                     HomePageTiles(
-                        homescreentilesicon[2], 'title', null, null, null),
-                    SizedBox(
-                      width: 10,
+                      homescreentilesicon[1],
+                      'Last Sale Details',
+                      subtitle11,
+                      subtitle12,
+                      subtitle13,
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SalesSummary(widget.uid))),
                     ),
                     HomePageTiles(
-                        homescreentilesicon[3], 'title', null, null, null),
+                      homescreentilesicon[2],
+                      'Last Purchase Details',
+                      subtitle21,
+                      subtitle22,
+                      subtitle23,
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PurchaseSummary(widget.uid))),
+                    ),
+                    HomePageTiles(
+                      homescreentilesicon[3],
+                      'Stock Value',
+                      'Total Product :' + totalproducts.toString(),
+                      'Quantity : ' + totalquantity.toString(),
+                      'Amount : ' + totalamount.toString(),
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StockSummary(widget.uid))),
+                    ),
                   ],
                 ),
               ),
@@ -697,23 +838,16 @@ class _HomeState extends State<Home> {
                                         onTap: () => Navigator.pushNamed(
                                             context, './plan.dart'),
                                         child: Container(
-                                          child: Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                12.0, 6.0, 49.0, 10.0),
-                                            size: Size(71.0, 21.0),
-                                            pinRight: true,
-                                            fixedWidth: true,
-                                            fixedHeight: true,
-                                            child: Text(
-                                              'View More',
-                                              style: TextStyle(
-                                                fontFamily: 'Bell MT',
-                                                fontSize: 10,
-                                                color: const Color(0xe52f2e41),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              textAlign: TextAlign.left,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'View More',
+                                            style: TextStyle(
+                                              fontFamily: 'Bell MT',
+                                              fontSize: 10,
+                                              color: const Color(0xe52f2e41),
+                                              fontWeight: FontWeight.w700,
                                             ),
+                                            textAlign: TextAlign.left,
                                           ),
                                         ),
                                       ),

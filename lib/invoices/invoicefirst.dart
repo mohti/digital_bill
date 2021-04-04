@@ -1,4 +1,5 @@
 import 'package:digitalbillbook/invoices/invoicemain.dart';
+import 'package:digitalbillbook/purchase/purchaseinvoice.dart';
 import 'package:flutter/material.dart';
 
 class Tab extends StatelessWidget {
@@ -48,7 +49,8 @@ class Tab extends StatelessWidget {
 
 class Invoicefirst extends StatelessWidget {
   final uid;
-  Invoicefirst(this.uid);
+  final bool i;
+  Invoicefirst(this.uid, this.i);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
@@ -81,7 +83,7 @@ class Invoicefirst extends StatelessWidget {
                 () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => InvoiceMain(uid),
+                        builder: (context) => InvoiceMain(uid, i),
                       ),
                     ),
                 w),
@@ -90,7 +92,12 @@ class Invoicefirst extends StatelessWidget {
                   width: 10,
                 ),
                 'Add New Purchase Receipt',
-                null,
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PurchaseInvoice(uid),
+                      ),
+                    ),
                 w),
             Tab(
                 SizedBox(

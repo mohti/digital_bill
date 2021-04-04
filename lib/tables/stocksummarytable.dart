@@ -23,7 +23,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                   children: [
                     Container(
                       alignment: Alignment.center,
-                      width: w * 0.2,
+                      width: w * 0.1,
                       child: Text(
                         product['productCode'],
                         style: TextStyle(
@@ -36,7 +36,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                     ),
                     Container(
                       alignment: Alignment.center,
-                      width: w * 0.2,
+                      width: w * 0.1,
                       child: Text(
                         product['productName'],
                         style: TextStyle(
@@ -49,7 +49,20 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                     ),
                     Container(
                       alignment: Alignment.center,
-                      width: w * 0.2,
+                      width: w * 0.1,
+                      child: Text(
+                        DateFormat('dd/MM/yyyy').format(d),
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
                       child: Text(
                         product['hsncode'],
                         style: TextStyle(
@@ -62,7 +75,33 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                     ),
                     Container(
                       alignment: Alignment.center,
-                      width: w * 0.2,
+                      width: w * 0.1,
+                      child: Text(
+                        product['quantity'].toString(),
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['cgst'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
                       child: Text(
                         product['purchaserate'] == null
                             ? ''
@@ -90,6 +129,19 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                         textAlign: TextAlign.left,
                       ),
                     ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['totalAmount'].toString(),
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -99,10 +151,10 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
       : null;
 }
 
-class Table1 extends StatelessWidget {
+class StockSummaryTable extends StatelessWidget {
   final String uid;
   final DateTime id, fd;
-  Table1(this.uid, this.id, this.fd);
+  StockSummaryTable(this.uid, this.id, this.fd);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +191,7 @@ class Table1 extends StatelessWidget {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  width: w * 0.2,
+                  width: w * 0.1,
                   child: Text(
                     'Product Code ',
                     style: TextStyle(
@@ -167,7 +219,21 @@ class Table1 extends StatelessWidget {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  width: w * 0.2,
+                  width: w * 0.1,
+                  child: Text(
+                    'Date',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 10,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: w * 0.1,
                   child: Text(
                     'HSN Code ',
                     style: TextStyle(
@@ -181,7 +247,35 @@ class Table1 extends StatelessWidget {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  width: w * 0.2,
+                  width: w * 0.1,
+                  child: Text(
+                    'Quantity',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 10,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: w * 0.1,
+                  child: Text(
+                    'Applied Tax',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 10,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: w * 0.1,
                   child: Text(
                     'Purchase Rate ',
                     style: TextStyle(
@@ -198,6 +292,20 @@ class Table1 extends StatelessWidget {
                   width: w * 0.1,
                   child: Text(
                     'Selling Rate ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 10,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: w * 0.1,
+                  child: Text(
+                    'Total Amount',
                     style: TextStyle(
                       fontFamily: 'Arial',
                       fontSize: 10,

@@ -1,3 +1,4 @@
+import 'package:digitalbillbook/reports/partieslist.dart';
 import 'package:flutter/material.dart';
 
 import 'addparty.dart';
@@ -84,7 +85,11 @@ class Parties1 extends StatelessWidget {
             Tab(
                 null,
                 ' Parties List',
-                null, //    () => Navigator.pushNamed(context, './invoicesettings'),
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PartiesList(
+                            uid))), //    () => Navigator.pushNamed(context, './invoicesettings'),
                 w),
           ],
         ),

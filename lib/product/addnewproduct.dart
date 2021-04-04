@@ -299,18 +299,13 @@ class _AddproductState extends State<Addproduct> {
                 children: <Widget>[
                   Card(
                     elevation: 4,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      height: 50,
-                      child: TextField(
-                        onTap: () => _selectDate(context),
-                        readOnly: true,
-                        decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                            labelText:
-                                "Date " + DateFormat().add_yMd().format(date)),
+                    child: InkWell(
+                      onTap: () => _selectDate(context),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child:
+                            Text("Date " + DateFormat().add_yMd().format(date)),
                       ),
                     ),
                   ),

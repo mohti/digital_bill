@@ -8,7 +8,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
   return ((d.isBefore(fd) && d.isAfter(id)) ||
               d.day == id.day ||
               d.day == fd.day) &&
-          (product['quantity'] <= 10)
+          (product['quantity'] <= product['lowstockreminderat'])
       ? Container(
           child: Column(
             children: [
@@ -62,7 +62,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                       alignment: Alignment.center,
                       width: w * 0.2,
                       child: Text(
-                        product['quantity'] == null ? '' : product['quantity'],
+                        product['quantity'].toString(),
                         style: TextStyle(
                           fontFamily: 'Arial',
                           fontSize: 10,

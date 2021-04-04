@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:digitalbillbook/tables/partiestable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,19 +8,19 @@ import 'package:digitalbillbook/tables/table.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 
-class ProductList extends StatefulWidget {
+class PartiesList extends StatefulWidget {
   final String uid;
-  ProductList(this.uid);
+  PartiesList(this.uid);
   @override
-  _ProductListState createState() => _ProductListState();
+  _PartiesListState createState() => _PartiesListState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _PartiesListState extends State<PartiesList> {
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
@@ -44,76 +45,43 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    Future<Null> selectDate1(BuildContext context) async {
-      final DateTime picked1 = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          initialDatePickerMode: DatePickerMode.day,
-          firstDate: DateTime(2015),
-          lastDate: finaldate);
-      if (picked1 != null)
-        setState(() {
-          initialdate = picked1;
-        });
-    }
-
-    Future<Null> selectDate2(BuildContext context) async {
-      final DateTime picked2 = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          initialDatePickerMode: DatePickerMode.day,
-          firstDate: DateTime(2015),
-          lastDate: DateTime(2101));
-      if (picked2 != null)
-        setState(() {
-          finaldate = picked2;
-        });
-    }
-
     Future<void> fc() async {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
       var sheet = excel['mySheet'];
-      sheet.appendRow([
-        'From ' +
-            DateFormat('dd/MM/yyyy').format(initialdate).toString() +
-            ' to ' +
-            DateFormat('dd/MM/yyyy').format(finaldate).toString(),
-      ]);
 
+      sheet.appendRow([
+        'Name/Company Name',
+        'GST Number',
+        'Address',
+        'city',
+        'state',
+        'country',
+        'pincode'
+      ]);
       FirebaseFirestore.instance
           .collection('userData')
           .doc(widget.uid)
-          .collection('Product')
+          .collection('Party')
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
-          final Timestamp timestamp = (doc['date']) as Timestamp;
-          final DateTime d = timestamp.toDate();
-          if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-              d.day == initialdate.day ||
-              d.day == finaldate.day)
-            sheet.appendRow([
-              doc['productCode'],
-              doc['productName'],
-              doc['hsncode'],
-              doc['purchaserate'],
-              doc['sellingprice']
-            ]);
+          sheet.appendRow([
+            doc['partyName'],
+            doc['gstn'],
+            doc['address'],
+            doc['city'],
+            doc['state'],
+            doc['country'],
+            doc['pincode']
+          ]);
         });
       });
 
-      sheet.appendRow([
-        'productCode',
-        'productName',
-        'hsncode',
-        'purchaserate',
-        'sellingprice'
-      ]);
-
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
+      print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
       if (isPermissionStatusGranted) {
@@ -202,7 +170,7 @@ class _ProductListState extends State<ProductList> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Products List',
+          'Parties List',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -220,7 +188,7 @@ class _ProductListState extends State<ProductList> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                'Product List',
+                'Parties List',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
                   fontSize: 18,
@@ -229,50 +197,6 @@ class _ProductListState extends State<ProductList> {
                 ),
                 textAlign: TextAlign.left,
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Date',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 12,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-                Card(
-                  elevation: 4,
-                  child: InkWell(
-                    onTap: () => selectDate1(context),
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 50,
-                      child: Text("From " +
-                          DateFormat('dd-MM-yyyy').format(initialdate)),
-                    ),
-                  ),
-                ),
-                Card(
-                  elevation: 4,
-                  child: InkWell(
-                    onTap: () => selectDate2(context),
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 50,
-                      child: Text(
-                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
             ),
             SizedBox(
               height: 20,
@@ -285,7 +209,7 @@ class _ProductListState extends State<ProductList> {
                 padding: const EdgeInsets.only(
                     left: 60.0, right: 60, top: 10, bottom: 10),
                 child: Text(
-                  'Product List',
+                  'Parties List',
                   style: TextStyle(
                     fontFamily: 'Arial',
                     fontSize: 16,
@@ -299,7 +223,7 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
-            Table1(widget.uid, initialdate, finaldate)
+            PartiesTable(widget.uid, initialdate, finaldate)
           ],
         ),
       ),

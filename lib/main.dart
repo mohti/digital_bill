@@ -9,7 +9,6 @@ import 'package:digitalbillbook/settings/privacypolicy.dart';
 import 'package:digitalbillbook/settings/termsofservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'Invoicestyle.dart';
 import 'Support.dart';
 import 'signup_and_loginpages/signup.dart';
 
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
 
         './plan.dart': (BuildContext context) => CurrentPlan(),
         './checkout': (BuildContext context) => Checkout(),
-        './invoicestyle.dart': (BuildContext context) => InvoiceStyle(),
+
         './support': (BuildContext context) => Support(),
       },
     );

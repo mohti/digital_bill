@@ -54,7 +54,7 @@ class ReminderSetting extends StatefulWidget {
 
 class _ReminderSettingState extends State<ReminderSetting> {
   bool lowStockAlert = false, gstr1 = false, gstr3b = false;
-  var reminderSettings = new ReminderSettings(null, null, null);
+  var reminderSettings = new ReminderSettings(false, false, false);
   @override
   void initState() {
     // ignore: todo
@@ -62,68 +62,45 @@ class _ReminderSettingState extends State<ReminderSetting> {
     super.initState();
 
     Future<void> setf() async {
-      bool f = await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("userData")
           .doc(widget.uid)
           .collection("ReminderSettings")
-          .snapshots()
-          .isEmpty;
-      setState(() {
-        // ignore: unnecessary_statements
-        f == true
-            // ignore: unnecessary_statements
-            ? {
-                print('true'),
-                reminderSettings.lowStockALert = lowStockAlert,
-                reminderSettings.gstr1 = gstr1,
+          .doc('reminderSettings')
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          FirebaseFirestore.instance
+              .collection("userData")
+              .doc(widget.uid)
+              .collection("ReminderSettings")
+              .doc('reminderSettings')
+              .get()
+              .then((value) {
+            setState(() {
+              lowStockAlert = value.data()['lowStockALert'];
+              gstr1 = value.data()['gstr1'];
+              gstr3b = value.data()['gstr3b'];
+            });
+          });
+        } else {
+          reminderSettings.lowStockALert = lowStockAlert;
+          reminderSettings.gstr1 = gstr1;
 
-                reminderSettings.gstr3b = gstr3b,
-                // Call the user's CollectionReference to add a new user
+          reminderSettings.gstr3b = gstr3b;
+          // Call the user's CollectionReference to add a new user
 
-                FirebaseFirestore.instance
-                    .collection("userData")
-                    .doc(widget.uid)
-                    .collection("ReminderSettings")
-                    .doc('reminderSettings')
-                    .set(reminderSettings.toJson())
-                // ignore: unnecessary_statements
-              }
-            // ignore: unnecessary_statements
-            : {
-                print('false'),
-                FirebaseFirestore.instance
-                    .collection("userData")
-                    .doc(widget.uid)
-                    .collection("ReminderSettings")
-                    .doc('reminderSettings')
-                    .get()
-                    .then((value) {
-                  setState(() {
-                    lowStockAlert = value.data()['lowStockALert'];
-                    gstr1 = value.data()['gstr1'];
-                    gstr3b = value.data()['gstr3b'];
-                  });
-                })
-              };
+          FirebaseFirestore.instance
+              .collection("userData")
+              .doc(widget.uid)
+              .collection("ReminderSettings")
+              .doc('reminderSettings')
+              .set(reminderSettings.toJson());
+        }
       });
     }
 
     setf();
-    /*    .catchError((e) => {
-                reminderSettings.lowStockALert = lowStockAlert,
-                reminderSettings.gstr1 = gstr1,
-
-                reminderSettings.gstr3b = gstr3b,
-                // Call the user's CollectionReference to add a new user
-
-                FirebaseFirestore.instance
-                    .collection("userData")
-                    .doc(widget.uid)
-                    .collection("ReminderSettings")
-                    .doc('reminderSettings')
-                    .set(reminderSettings.toJson())
-              });*/
-    // Call the user's CollectionReference to add a new user
   }
 
   @override
