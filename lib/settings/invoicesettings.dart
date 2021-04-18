@@ -87,7 +87,7 @@ class InvoiceSettings extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
             ),
-            Tab(null, 'Change Invoice Style', null, w),
+            //Tab(null, 'Change Invoice Style', , w),
             Tab(
                 null,
                 'Invoice Prefix & Sequence No.',

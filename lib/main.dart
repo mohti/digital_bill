@@ -1,6 +1,4 @@
 import 'package:digitalbillbook/home.dart';
-import 'package:digitalbillbook/plan/checkout.dart';
-import 'package:digitalbillbook/plan/plandetails.dart';
 
 import 'package:digitalbillbook/settings/aboutus.dart';
 import 'package:digitalbillbook/settings/acceptableusepolicy.dart';
@@ -40,9 +38,6 @@ class MyApp extends StatelessWidget {
         './privacypolicy': (BuildContext context) => PrivacyPolicy(),
         './acceptableusepolicy.dart': (BuildContext context) =>
             AcceptableUsePolicy(),
-
-        './plan.dart': (BuildContext context) => CurrentPlan(),
-        './checkout': (BuildContext context) => Checkout(),
 
         './support': (BuildContext context) => Support(),
       },

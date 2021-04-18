@@ -163,8 +163,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     '',
     '',
     '',
+    '',
   );
   final newInvoice = new InvoiceModel(
+      null,
+      null,
+      null,
+      null,
+      null,
       null,
       null,
       null,

@@ -1,10 +1,13 @@
 // ignore: unused_import
 import 'package:adobe_xd/pinned.dart';
+import 'package:digitalbillbook/plan/razorpayhandler.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/svg.dart';
 
 class Checkout extends StatelessWidget {
+  final String uid;
+  Checkout(this.uid);
   @override
   Widget build(BuildContext context) {
     //  final double w = MediaQuery.of(context).size.width;
@@ -136,141 +139,57 @@ class Checkout extends StatelessWidget {
                     SizedBox(
                       height: 50,
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Stack(children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: SvgPicture.string(
-                            '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                            allowDrawingOutsideViewBox: true,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazorPayHandler(34900,
+                                  Duration(days: 31), "Basic Plan", uid, 10)),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: SvgPicture.string(
+                              '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
+                              allowDrawingOutsideViewBox: true,
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Basic Plan',
-                                style: TextStyle(
-                                  fontFamily: 'SF Pro Display',
-                                  fontSize: 16,
-                                  color: const Color(0xffffffff),
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.625,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 20,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 77.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'You Saving',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                                Text(
+                                  'Basic Plan',
+                                  style: TextStyle(
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 16,
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.625,
                                   ),
-                                  Text(
-                                    '30 %',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 35.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Price',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '500',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffff0e27),
-                                      decoration: TextDecoration.lineThrough,
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  SizedBox(
-                                    width: 85.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'for you only',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '349',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  textAlign: TextAlign.left,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 137.0,
+                                      width: 77.0,
                                       height: 19.0,
                                       child: Text(
-                                        ' 1 Month Subscription     ',
+                                        'You Saving',
                                         style: TextStyle(
                                           fontFamily: 'SF Pro Display',
                                           fontSize: 14,
@@ -280,236 +199,255 @@ class Checkout extends StatelessWidget {
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
-
-                                    // Adobe XD layer: 'Radio Button' (group)
-                                    SizedBox(
-                                      width: 24.0,
-                                      height: 24.0,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                0.0, 0.0, 24.0, 24.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0x0fFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                5.0, 5.0, 14.0, 14.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0xffFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 137.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Monthly Charges',
+                                    Text(
+                                      '30 %',
                                       style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  Text(
-                                    'RS 349',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 35.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Price',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.left,
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                                    Text(
+                                      '500',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffff0e27),
+                                        decoration: TextDecoration.lineThrough,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      width: 85.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'for you only',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      '349',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 137.0,
+                                        height: 19.0,
+                                        child: Text(
+                                          ' 1 Month Subscription     ',
+                                          style: TextStyle(
+                                            fontFamily: 'SF Pro Display',
+                                            fontSize: 14,
+                                            color: const Color(0xa8ffffff),
+                                            height: 1.6428571428571428,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+
+                                      // Adobe XD layer: 'Radio Button' (group)
+                                      SizedBox(
+                                        width: 24.0,
+                                        height: 24.0,
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  0.0, 0.0, 24.0, 24.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0x0fFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  5.0, 5.0, 14.0, 14.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0xffFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 137.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Monthly Charges',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      'RS 349',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                     // Adobe XD layer: 'Primary Button - Sm…' (group)
                     SizedBox(
                       height: 50,
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Stack(children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: SvgPicture.string(
-                            '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                            allowDrawingOutsideViewBox: true,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazorPayHandler(
+                                  89900,
+                                  Duration(days: 92),
+                                  "Standard Plan",
+                                  uid,
+                                  10)),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: SvgPicture.string(
+                              '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
+                              allowDrawingOutsideViewBox: true,
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Standard Plan',
-                                style: TextStyle(
-                                  fontFamily: 'SF Pro Display',
-                                  fontSize: 16,
-                                  color: const Color(0xffffffff),
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.625,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 20,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 77.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'You Saving',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                                Text(
+                                  'Standard Plan',
+                                  style: TextStyle(
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 16,
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.625,
                                   ),
-                                  Text(
-                                    '40 %',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 35.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Price',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '1500',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffff0e27),
-                                      decoration: TextDecoration.lineThrough,
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  SizedBox(
-                                    width: 85.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'for you only',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '899',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  textAlign: TextAlign.left,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 137.0,
+                                      width: 77.0,
                                       height: 19.0,
                                       child: Text(
-                                        ' 3 Month Subscription     ',
+                                        'You Saving',
                                         style: TextStyle(
                                           fontFamily: 'SF Pro Display',
                                           fontSize: 14,
@@ -519,235 +457,254 @@ class Checkout extends StatelessWidget {
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
-
-                                    // Adobe XD layer: 'Radio Button' (group)
-                                    SizedBox(
-                                      width: 24.0,
-                                      height: 24.0,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                0.0, 0.0, 24.0, 24.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0x0fFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                5.0, 5.0, 14.0, 14.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0xffFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 137.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Monthly Charges',
+                                    Text(
+                                      '40 %',
                                       style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  Text(
-                                    'RS 300',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 35.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Price',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.left,
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                                    Text(
+                                      '1500',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffff0e27),
+                                        decoration: TextDecoration.lineThrough,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      width: 85.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'for you only',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      '899',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 137.0,
+                                        height: 19.0,
+                                        child: Text(
+                                          ' 3 Month Subscription     ',
+                                          style: TextStyle(
+                                            fontFamily: 'SF Pro Display',
+                                            fontSize: 14,
+                                            color: const Color(0xa8ffffff),
+                                            height: 1.6428571428571428,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+
+                                      // Adobe XD layer: 'Radio Button' (group)
+                                      SizedBox(
+                                        width: 24.0,
+                                        height: 24.0,
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  0.0, 0.0, 24.0, 24.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0x0fFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  5.0, 5.0, 14.0, 14.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0xffFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 137.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Monthly Charges',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      'RS 300',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                     SizedBox(
                       height: 50,
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Stack(children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: SvgPicture.string(
-                            '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                            allowDrawingOutsideViewBox: true,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazorPayHandler(
+                                  149900,
+                                  Duration(days: 184),
+                                  "Premium Plan",
+                                  uid,
+                                  10)),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: SvgPicture.string(
+                              '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
+                              allowDrawingOutsideViewBox: true,
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Premium Plan',
-                                style: TextStyle(
-                                  fontFamily: 'SF Pro Display',
-                                  fontSize: 16,
-                                  color: const Color(0xffffffff),
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.625,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 20,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 77.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'You Saving',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                                Text(
+                                  'Premium Plan',
+                                  style: TextStyle(
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 16,
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.625,
                                   ),
-                                  Text(
-                                    '50 %',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 35.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Price',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '3000',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffff0e27),
-                                      decoration: TextDecoration.lineThrough,
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  SizedBox(
-                                    width: 85.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'for you only',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '1499',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  textAlign: TextAlign.left,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 137.0,
+                                      width: 77.0,
                                       height: 19.0,
                                       child: Text(
-                                        ' 12 Month Subscription    ',
+                                        'You Saving',
                                         style: TextStyle(
                                           fontFamily: 'SF Pro Display',
                                           fontSize: 14,
@@ -757,235 +714,254 @@ class Checkout extends StatelessWidget {
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
-
-                                    // Adobe XD layer: 'Radio Button' (group)
-                                    SizedBox(
-                                      width: 24.0,
-                                      height: 24.0,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                0.0, 0.0, 24.0, 24.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0x0fFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                5.0, 5.0, 14.0, 14.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0xffFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 137.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Monthly Charges',
+                                    Text(
+                                      '50 %',
                                       style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  Text(
-                                    'RS 250',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 35.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Price',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.left,
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                                    Text(
+                                      '3000',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffff0e27),
+                                        decoration: TextDecoration.lineThrough,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      width: 85.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'for you only',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      '1499',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 137.0,
+                                        height: 19.0,
+                                        child: Text(
+                                          ' 12 Month Subscription    ',
+                                          style: TextStyle(
+                                            fontFamily: 'SF Pro Display',
+                                            fontSize: 14,
+                                            color: const Color(0xa8ffffff),
+                                            height: 1.6428571428571428,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+
+                                      // Adobe XD layer: 'Radio Button' (group)
+                                      SizedBox(
+                                        width: 24.0,
+                                        height: 24.0,
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  0.0, 0.0, 24.0, 24.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0x0fFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  5.0, 5.0, 14.0, 14.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0xffFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 137.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Monthly Charges',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      'RS 250',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                     SizedBox(
                       height: 50,
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Stack(children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: SvgPicture.string(
-                            '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                            allowDrawingOutsideViewBox: true,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazorPayHandler(
+                                  179900,
+                                  Duration(days: 365),
+                                  "Premium Plus Plan",
+                                  uid,
+                                  10)),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: SvgPicture.string(
+                              '<svg viewBox="32.0 262.8 353.0 215.7" ><defs><filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="10"/></filter><linearGradient id="gradient" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff683e77"  /><stop offset="1.0" stop-color="#ff1b1b2a"  /></linearGradient></defs><path transform="translate(32.0, 262.75)" d="M 28.81632614135742 0 L 324.1836853027344 0 C 340.0985107421875 0 353 11.21790504455566 353 25.0558967590332 L 353 190.603759765625 C 353 204.4417724609375 340.0985107421875 215.6596527099609 324.1836853027344 215.6596527099609 L 28.81632614135742 215.6596527099609 C 12.90150833129883 215.6596527099609 0 204.4417724609375 0 190.603759765625 L 0 25.0558967590332 C 0 11.21790504455566 12.90150833129883 0 28.81632614135742 0 Z" fill="url(#gradient)" stroke="none" stroke-width="0.6000000238418579" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
+                              allowDrawingOutsideViewBox: true,
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Premium Plus Plan',
-                                style: TextStyle(
-                                  fontFamily: 'SF Pro Display',
-                                  fontSize: 16,
-                                  color: const Color(0xffffffff),
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.625,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 20,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 77.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'You Saving',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                                Text(
+                                  'Premium Plus Plan',
+                                  style: TextStyle(
+                                    fontFamily: 'SF Pro Display',
+                                    fontSize: 16,
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.625,
                                   ),
-                                  Text(
-                                    '70 %',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 35.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Price',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '6000',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffff0e27),
-                                      decoration: TextDecoration.lineThrough,
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  SizedBox(
-                                    width: 85.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'for you only',
-                                      style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
-                                        height: 1.6428571428571428,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Text(
-                                    '1799',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      height: 1.3,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  textAlign: TextAlign.left,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 137.0,
+                                      width: 77.0,
                                       height: 19.0,
                                       child: Text(
-                                        ' 12 Month Subscription    ',
+                                        'You Saving',
                                         style: TextStyle(
                                           fontFamily: 'SF Pro Display',
                                           fontSize: 14,
@@ -995,96 +971,195 @@ class Checkout extends StatelessWidget {
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
-
-                                    // Adobe XD layer: 'Radio Button' (group)
-                                    SizedBox(
-                                      width: 24.0,
-                                      height: 24.0,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                0.0, 0.0, 24.0, 24.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0x0fFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                          Pinned.fromSize(
-                                            bounds: Rect.fromLTWH(
-                                                5.0, 5.0, 14.0, 14.0),
-                                            size: Size(24.0, 24.0),
-                                            pinLeft: true,
-                                            pinRight: true,
-                                            pinTop: true,
-                                            pinBottom: true,
-                                            child:
-                                                // Adobe XD layer: 'Dot 2' (shape)
-                                                Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.elliptical(
-                                                        9999.0, 9999.0)),
-                                                color: const Color(0xffFF0E27),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 137.0,
-                                    height: 19.0,
-                                    child: Text(
-                                      'Monthly Charges',
+                                    Text(
+                                      '70 %',
                                       style: TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontSize: 14,
-                                        color: const Color(0xa8ffffff),
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  Text(
-                                    'RS 150',
-                                    style: TextStyle(
-                                      fontFamily: 'Acumin Pro',
-                                      fontSize: 20,
-                                      color: const Color(0xffffffff),
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 35.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Price',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.left,
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                                    Text(
+                                      '6000',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffff0e27),
+                                        decoration: TextDecoration.lineThrough,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      width: 85.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'for you only',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                          height: 1.6428571428571428,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      '1799',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 137.0,
+                                        height: 19.0,
+                                        child: Text(
+                                          ' 12 Month Subscription    ',
+                                          style: TextStyle(
+                                            fontFamily: 'SF Pro Display',
+                                            fontSize: 14,
+                                            color: const Color(0xa8ffffff),
+                                            height: 1.6428571428571428,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+
+                                      // Adobe XD layer: 'Radio Button' (group)
+                                      SizedBox(
+                                        width: 24.0,
+                                        height: 24.0,
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  0.0, 0.0, 24.0, 24.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0x0fFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                            Pinned.fromSize(
+                                              bounds: Rect.fromLTWH(
+                                                  5.0, 5.0, 14.0, 14.0),
+                                              size: Size(24.0, 24.0),
+                                              pinLeft: true,
+                                              pinRight: true,
+                                              pinTop: true,
+                                              pinBottom: true,
+                                              child:
+                                                  // Adobe XD layer: 'Dot 2' (shape)
+                                                  Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.elliptical(
+                                                              9999.0, 9999.0)),
+                                                  color:
+                                                      const Color(0xffFF0E27),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 137.0,
+                                      height: 19.0,
+                                      child: Text(
+                                        'Monthly Charges',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontSize: 14,
+                                          color: const Color(0xa8ffffff),
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      'RS 150',
+                                      style: TextStyle(
+                                        fontFamily: 'Acumin Pro',
+                                        fontSize: 20,
+                                        color: const Color(0xffffffff),
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.3,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                   ],
                 ),
@@ -1093,26 +1168,27 @@ class Checkout extends StatelessWidget {
                 height: 10,
               ),
               // Adobe XD layer: 'BG' (shape)
-              Stack(alignment: Alignment.centerRight, children: [
+              /*         Stack(alignment: Alignment.centerRight, children: [
                 Stack(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerRight,
                   children: <Widget>[
                     // Adobe XD layer: 'Button' (shape)
                     Container(
                       width: MediaQuery.of(context).size.width,
                       height: 100,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25.0),
                         color: const Color(0xff2f2e41),
                       ),
                     ),
 
-                    Container(
+                    /*        Container(
+                      //      padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(30)),
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.only(
+                            bottom: 9.0, top: 9.0, left: 30, right: 30),
                         child: Text(
                           'NEXT',
                           style: TextStyle(
@@ -1125,9 +1201,11 @@ class Checkout extends StatelessWidget {
                         ),
                       ),
                     ),
+              */
                   ],
                 ),
               ])
+       */
             ],
           ),
         ),

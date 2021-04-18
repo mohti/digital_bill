@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import 'dart:typed_data';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/businessprofile.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -102,14 +106,16 @@ class _PdfViewerState extends State<PdfViewer> {
   final totalamount = TextEditingController();
   final transporterid = TextEditingController();
   final transportername = TextEditingController();
-  final tracnsportdocno = TextEditingController();
+  final transportdocno = TextEditingController();
   final tdate = TextEditingController();
   final vehiclemode = TextEditingController();
   final vehicleno = TextEditingController();
   final from = TextEditingController();
+  final taxtype = TextEditingController();
   final businessInfo = new BusinessProfile(
       '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
   final invoicedetails = new InvoiceModel(
+      '',
       '',
       ' ',
       ' ',
@@ -126,15 +132,19 @@ class _PdfViewerState extends State<PdfViewer> {
       ' ',
       ' ',
       ' ',
-      ' ',
+      '',
       null,
       ' ',
       ' ',
       ' ',
+      null,
+      null,
       ' ',
       ' ',
-      ' ',
-      '');
+      null,
+      null,
+      null,
+      null);
   Future<Null> _getBusinessDetails(String uid) async {
     await db
         .collection("userData")
@@ -225,7 +235,7 @@ class _PdfViewerState extends State<PdfViewer> {
         'totalamount': totalamount,*/
   Map<String, dynamic> m;
   List<Map<String, dynamic>> l = [];
-
+  var taxes = new Map();
   Future<Null> _invoicedetails(String uid) async {
     await db
         .collection("userData")
@@ -242,13 +252,12 @@ class _PdfViewerState extends State<PdfViewer> {
             valuee.data()['bname'] == null ? '' : valuee.data()['bname'];
         bphone.text =
             valuee.data()['bphone'] == null ? '' : valuee.data()['bphone'];
-
+        bcity.text =
+            valuee.data()['bcity;'] == null ? '' : valuee.data()['bcity;'];
         bgstn.text =
             valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
         sname.text =
             valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
-        bcity.text =
-            valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
         bstate.text =
             valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
         scity.text =
@@ -265,6 +274,11 @@ class _PdfViewerState extends State<PdfViewer> {
         vehicleno.text = valuee.data()['vehicleno'] == null
             ? ''
             : valuee.data()['vehicleno'];
+        transportdocno.text = valuee.data()['tracnsportdocno'] == null
+            ? ''
+            : valuee.data()['tracnsportdocno'];
+        taxtype.text =
+            valuee.data()['taxtype'] == null ? '' : valuee.data()['taxtype'];
         l = List.castFrom(valuee.data()['listOfProducts']);
         print(l);
       });
@@ -287,13 +301,32 @@ class _PdfViewerState extends State<PdfViewer> {
     double totalquantity = 0, totalamount = 0;
     l.forEach((element) {
       setState(() {
+        taxes[element['taxrate']] = 0.00;
         totalquantity =
             totalquantity + double.parse(element['quantity'].toString());
         totalamount =
             totalamount + double.parse(element['totalamount'].toString());
       });
     });
+    l.forEach((element) {
+      setState(() {
+        taxes[element['taxrate']] =
+            taxes[element['taxrate']] + double.parse(element['totalamount']);
+        print(taxes[element['taxrate']]);
+      });
+    });
     final pdf = pw.Document();
+    Future<void> uploadtostorage() async {
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/" + widget.invoiceid + "example.pdf");
+      file.writeAsBytes(await pdf.save());
+      await firebase_storage.FirebaseStorage.instance
+          .ref(widget.uid + '/Invoice/' + widget.invoiceid + '.pdf')
+          .putFile(file)
+          .catchError((onerror) {
+        print(onerror);
+      });
+    }
 
     pdf.addPage(
       pw.MultiPage(
@@ -424,7 +457,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                         textAlign: pw.TextAlign.left,
                                       ),
                                       pw.Text(
-                                        'State  :' + bstate.text,
+                                        'State  :' + gstNumberController.text,
                                         style: pw.TextStyle(
                                           fontSize: 12,
                                           color: PdfColor.fromInt(0xff2f2e41),
@@ -470,16 +503,17 @@ class _PdfViewerState extends State<PdfViewer> {
                                       ),
                                       textAlign: pw.TextAlign.left,
                                     ),
-                                    pw.Text(
+                                    /*                      pw.Text(
                                       'eWaybill No :        ',
                                       style: pw.TextStyle(
                                         fontSize: 12,
                                         color: PdfColor.fromInt(0xff2f2e41),
                                       ),
                                       textAlign: pw.TextAlign.left,
-                                    ),
+                                    ),*/
                                     pw.Text(
-                                      'GR No :              ',
+                                      'GR No :              ' +
+                                          transportdocno.text,
                                       style: pw.TextStyle(
                                         fontSize: 12,
                                         color: PdfColor.fromInt(0xff2f2e41),
@@ -739,23 +773,23 @@ class _PdfViewerState extends State<PdfViewer> {
                                   textAlign: pw.TextAlign.left,
                                 ),
                                 pw.Text(
-                                  'Place of Supply :    ',
+                                  'Place of Supply :    ' + scity.text,
                                   style: pw.TextStyle(
                                     fontSize: 12,
                                     color: PdfColor.fromInt(0xff2f2e41),
                                   ),
                                   textAlign: pw.TextAlign.left,
                                 ),
-                                pw.Text(
+                                /*            pw.Text(
                                   'eWaybill No :        ',
                                   style: pw.TextStyle(
                                     fontSize: 12,
                                     color: PdfColor.fromInt(0xff2f2e41),
                                   ),
                                   textAlign: pw.TextAlign.left,
-                                ),
+                                ),*/
                                 pw.Text(
-                                  'GR No :              ',
+                                  'GR No :              ' + transportdocno.text,
                                   style: pw.TextStyle(
                                     fontSize: 12,
                                     color: PdfColor.fromInt(0xff2f2e41),
@@ -801,7 +835,10 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                               pw.SizedBox(height: 10),
                               pw.Text(
-                                'Mobile No :        ' + sphone.text,
+                                'Address :    ' +
+                                    scity.text +
+                                    ", " +
+                                    sstate.text,
                                 style: pw.TextStyle(
                                   fontSize: 13,
                                   color: PdfColor.fromInt(0xff2f2e41),
@@ -810,9 +847,20 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ],
                           ),
-                          pw.SizedBox(width: 140),
+                          pw.SizedBox(width: 120),
                           pw.Column(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
+                              pw.SizedBox(height: 10),
+                              pw.Text(
+                                'Mobile No :        ' + sphone.text,
+                                style: pw.TextStyle(
+                                  fontSize: 13,
+                                  color: PdfColor.fromInt(0xff2f2e41),
+                                ),
+                                textAlign: pw.TextAlign.left,
+                              ),
                               pw.SizedBox(height: 10),
                               pw.Text(
                                 'GST :        ' + sgstn.text,
@@ -1226,7 +1274,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 alignment: pw.Alignment.center,
                                 width: 70,
                                 child: pw.Text(
-                                  l[index]['taxamount'],
+                                  l[index]['taxrate'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1375,8 +1423,10 @@ class _PdfViewerState extends State<PdfViewer> {
                     ),
                   ),
                 ]),
-                pw.Wrap(children: [
-                  pw.Container(
+                pw.Wrap(
+                    children: List<pw.Widget>.generate(
+                  taxes.length,
+                  (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
                       children: [
@@ -1418,32 +1468,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                 child: pw.Text(
                                   'Tax Amount',
                                   style: pw.TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                  textAlign: pw.TextAlign.left,
-                                ),
-                              ),
-                              pw.Container(
-                                alignment: pw.Alignment.center,
-                                width: 50,
-                                child: pw.Text(
-                                  '',
-                                  style: pw.TextStyle(
-                                    fontSize: 13,
-                                  ),
-                                  textAlign: pw.TextAlign.left,
-                                ),
-                              ),
-                              pw.Container(
-                                alignment: pw.Alignment.center,
-                                width: 70,
-                                child: pw.Text(
-                                  '18% IGST',
-                                  style: pw.TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.left,
                                 ),
                               ),
@@ -1460,6 +1486,33 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                               pw.Container(
                                 alignment: pw.Alignment.center,
+                                width: 20,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 80,
+                                child: pw.Text(
+                                  taxes.entries
+                                          .elementAt(index)
+                                          .key
+                                          .toString() +
+                                      '% ' +
+                                      taxtype.text,
+                                  style: pw.TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1471,7 +1524,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                               pw.Container(
                                 alignment: pw.Alignment.center,
-                                width: 70,
+                                width: 90,
                                 child: pw.Text(
                                   '',
                                   style: pw.TextStyle(
@@ -1484,11 +1537,19 @@ class _PdfViewerState extends State<PdfViewer> {
                                 alignment: pw.Alignment.center,
                                 width: 50,
                                 child: pw.Text(
-                                  (totalamount * 18 / 100).toString(),
+                                  (double.parse(taxes.entries
+                                              .elementAt(index)
+                                              .key
+                                              .toString()) *
+                                          double.parse((taxes.entries
+                                                  .elementAt(index)
+                                                  .value)
+                                              .toString()) /
+                                          100.toInt())
+                                      .toString(),
                                   style: pw.TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.right,
                                 ),
                               ),
@@ -1498,7 +1559,8 @@ class _PdfViewerState extends State<PdfViewer> {
                       ],
                     ),
                   ),
-                ]),
+                )),
+
                 pw.Wrap(children: [
                   pw.Container(
                     alignment: pw.Alignment.centerLeft,
@@ -1623,6 +1685,7 @@ class _PdfViewerState extends State<PdfViewer> {
                     ),
                   ),
                 ]),
+
                 pw.Wrap(children: [
                   pw.Container(
                     alignment: pw.Alignment.centerLeft,
@@ -1768,7 +1831,7 @@ class _PdfViewerState extends State<PdfViewer> {
                 ])
               ]),
     );
-
+    uploadtostorage();
     return await pdf.save();
   }
 }

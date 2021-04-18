@@ -1,3 +1,5 @@
+import 'package:digitalbillbook/downloadpdfs/idownloadPurchaseinvoice.dart';
+import 'package:digitalbillbook/downloadpdfs/idownloadinvoicepdf.dart';
 import 'package:digitalbillbook/invoices/invoicemain.dart';
 import 'package:digitalbillbook/purchase/purchaseinvoice.dart';
 import 'package:flutter/material.dart';
@@ -104,14 +106,24 @@ class Invoicefirst extends StatelessWidget {
                   width: 10,
                 ),
                 'All Sales Invoice',
-                null,
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DownloadInvoice(uid),
+                      ),
+                    ),
                 w),
             Tab(
                 SizedBox(
                   width: 10,
                 ),
                 'All Purchase Receipt',
-                null,
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DownloadPurchaseInvoice(uid),
+                      ),
+                    ),
                 w),
           ],
         ),

@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'dart:typed_data';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/businessprofile.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -113,6 +116,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
       '',
       ' ',
       ' ',
+      '',
       ' ',
       DateTime.now(),
       ' ',
@@ -134,7 +138,11 @@ class _PurchasePdfState extends State<PurchasePdf> {
       ' ',
       ' ',
       ' ',
-      '');
+      null,
+      null,
+      null,
+      null,
+      null);
   Future<Null> _getBusinessDetails(String uid) async {
     await db
         .collection("userData")
@@ -247,6 +255,13 @@ class _PurchasePdfState extends State<PurchasePdf> {
             valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
         sname.text =
             valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
+
+        scountry.text =
+            valuee.data()['scountry'] == null ? '' : valuee.data()['scountry'];
+        sstate.text =
+            valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
+        scity.text =
+            valuee.data()['scity'] == null ? '' : valuee.data()['scity'];
         sphone.text =
             valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
         sgstn.text =
@@ -286,6 +301,17 @@ class _PurchasePdfState extends State<PurchasePdf> {
       });
     });
     final pdf = pw.Document();
+    Future<void> uploadtostorage() async {
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/" + widget.invoiceid + "example.pdf");
+      file.writeAsBytes(await pdf.save());
+      await firebase_storage.FirebaseStorage.instance
+          .ref(widget.uid + '/PurchaseInvoice/' + widget.invoiceid + '.pdf')
+          .putFile(file)
+          .catchError((onerror) {
+        print(onerror);
+      });
+    }
 
     pdf.addPage(
       pw.MultiPage(
@@ -527,7 +553,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                             textAlign: pw.TextAlign.left,
                                           ),
                                           pw.Text(
-                                            'Mobile No. :  ' + bphone.text,
+                                            'Mobile No. :  ' +
+                                                phoneController.text,
                                             style: pw.TextStyle(
                                               fontSize: 13,
                                               color:
@@ -536,7 +563,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                             textAlign: pw.TextAlign.left,
                                           ),
                                           pw.Text(
-                                            'GSTN :        ' + bgstn.text,
+                                            'GSTN :        ' +
+                                                gstNumberController.text,
                                             style: pw.TextStyle(
                                               fontSize: 13,
                                               color:
@@ -1764,6 +1792,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                 ])
               ]),
     );
+    uploadtostorage();
 
     return await pdf.save();
   }

@@ -16,7 +16,6 @@ class _SignupotpState extends State<Signupotp>
   AnimationController _controller;
   // ignore: unused_field
   Animation _animation;
-
   FocusNode _focusNode = FocusNode();
 
   @override
@@ -72,215 +71,146 @@ class _SignupotpState extends State<Signupotp>
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.height;
     final double w = MediaQuery.of(context).size.width;
+    final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       key: _scaffoldkey,
       body: Center(
         child: SingleChildScrollView(
+            reverse: true,
             child: Column(children: <Widget>[
-          Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Container(
-              width: w * 1,
-              height: h * 1,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage('assets/images/bg1.jpg'),
-                  fit: BoxFit.fitHeight,
+              Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+                Container(
+                  width: w * 1,
+                  height: h * 1,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: const AssetImage('assets/images/bg1.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                    //   border: Border.all(width: 1.0, color: const Color(0xff707070)),
+                  ),
                 ),
-                //   border: Border.all(width: 1.0, color: const Color(0xff707070)),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          height: h * 0.025,
-                        ),
-                        Text(
-                          'Welcome To! Digital Bill Book',
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 24,
-                            color: const Color(0xff2f2e41),
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                        SizedBox(
-                          height: h * 0.01,
-                        ),
-                        Text(
-                          'Enter 6 Digit OTP',
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 16,
-                            color: const Color(0x992f2e41),
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                        SizedBox(
-                          height: h * 0.02,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            print('hi');
-                            FocusScope.of(context).requestFocus(FocusNode());
-                          },
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: PinPut(
-                                onTap: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                },
-                                fieldsCount: 6,
-                                keyboardType: TextInputType.text,
-                                textStyle: const TextStyle(
-                                    fontSize: 25.0, color: Colors.black),
-                                eachFieldWidth: 40.0,
-                                eachFieldHeight: 55.0,
-                                focusNode: _focusNode,
-                                controller: _pinPutController,
-                                submittedFieldDecoration: pinPutDecoration,
-                                selectedFieldDecoration: pinPutDecoration,
-                                followingFieldDecoration: pinPutDecoration,
-                                //    eachFieldPadding: EdgeInsets.all(10),
-                                //   eachFieldMargin: EdgeInsets.all(0),
-                                pinAnimationType: PinAnimationType.fade,
-                                onSubmit: (pin) async {
-                                  try {
-                                    await FirebaseAuth.instance
-                                        .signInWithCredential(
-                                            PhoneAuthProvider.credential(
-                                                verificationId:
-                                                    _verificationCode,
-                                                smsCode: pin))
-                                        .then((value) async {
-                                      if (value.user != null) {
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Home(value.user.uid)),
-                                            (route) => false);
-                                      }
-                                    });
-                                  } catch (e) {
-                                    FocusScope.of(context).unfocus();
-                                    _scaffoldkey.currentState.showSnackBar(
-                                        SnackBar(content: Text('invalid OTP')));
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: h * 0.04,
-                        ),
-                        Row(
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: SingleChildScrollView(
+                        reverse: true,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text.rich(
-                              TextSpan(
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 12,
-                                  color: const Color(0xff8a9ead),
-                                  letterSpacing: 0.30000000000000004,
-                                  height: 1.5,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Already have an account? \n',
-                                  ),
-                                  TextSpan(
-                                    text: 'SIGN IN',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: const Color(0xff1d1a2f),
-                                      letterSpacing: 0.4,
-                                    ),
-                                  ),
-                                ],
+                            SizedBox(
+                              height: h * 0.025,
+                            ),
+                            Text(
+                              'Welcome To! Digital Bill Book',
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 24,
+                                color: const Color(0xff2f2e41),
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.left,
                             ),
-                            /*      SizedBox(
-                              width: 120.0,
-                              height: 50.0,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                      color: const Color(0xd902020a),
-                                      border: Border.all(
-                                          width: 1.0,
-                                          color: const Color(0xd93f3d56)),
-                                    ),
-                                  ),
-                                  /*       InkWell(
-                                    onTap: () {},
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          'SignUp',
-                                          style: TextStyle(
-                                            fontFamily: 'Bell MT',
-                                            fontSize: 15,
-                                            color: const Color(0xe5dde8f8),
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          color: Colors.white,
-                                        )
-                                      ],
-                                    ),
-                                  ),*/
-                                ],
+                            SizedBox(
+                              height: h * 0.01,
+                            ),
+                            Text(
+                              'Enter 6 Digit OTP',
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 16,
+                                color: const Color(0x992f2e41),
+                                fontWeight: FontWeight.w700,
                               ),
-                            ),*/
+                              textAlign: TextAlign.left,
+                            ),
+                            SizedBox(
+                              height: h * 0.02,
+                            ),
+                            Container(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 2.0,
+                                    left: 2,
+                                    right: 2,
+                                    bottom: bottom),
+                                child: PinPut(
+                                  onTap: () {},
+
+                                  fieldsCount: 6,
+                                  keyboardType: TextInputType.number,
+                                  textStyle: const TextStyle(
+                                      fontSize: 25.0, color: Colors.black),
+                                  eachFieldWidth: 40.0,
+                                  eachFieldHeight: 55.0,
+
+                                  controller: _pinPutController,
+                                  submittedFieldDecoration: pinPutDecoration,
+                                  selectedFieldDecoration: pinPutDecoration,
+                                  followingFieldDecoration: pinPutDecoration,
+                                  //    eachFieldPadding: EdgeInsets.all(10),
+                                  //   eachFieldMargin: EdgeInsets.all(0),
+                                  pinAnimationType: PinAnimationType.fade,
+                                  onSubmit: (pin) async {
+                                    try {
+                                      await FirebaseAuth.instance
+                                          .signInWithCredential(
+                                              PhoneAuthProvider.credential(
+                                                  verificationId:
+                                                      _verificationCode,
+                                                  smsCode: pin))
+                                          .then((value) async {
+                                        if (value.user != null) {
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Home(value.user.uid)),
+                                              (route) => false);
+                                        }
+                                      });
+                                    } catch (e) {
+                                      FocusScope.of(context).unfocus();
+                                      _scaffoldkey.currentState.showSnackBar(
+                                          SnackBar(
+                                              content: Text('invalid OTP')));
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: h * 0.04,
+                            ),
                           ],
-                        )
+                        ),
+                      ),
+                    ),
+                    width: w * 1,
+                    height: h * 375 / 870 + bottom,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(45.0),
+                        topRight: Radius.circular(45.0),
+                      ),
+                      color: const Color(0xfff1f3f6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0x66000000),
+                          offset: Offset(3, 3),
+                          blurRadius: 6,
+                        ),
                       ],
                     ),
                   ),
-                ),
-                width: w * 1,
-                height: h * 375 / 870,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(45.0),
-                    topRight: Radius.circular(45.0),
-                  ),
-                  color: const Color(0xfff1f3f6),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0x66000000),
-                      offset: Offset(3, 3),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ])
-        ])),
+                )
+              ])
+            ])),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:digitalbillbook/ewaybill/ewaybill1.dart';
 import 'package:digitalbillbook/invoices/invoicefirst.dart';
 import 'package:digitalbillbook/notification/notification.dart';
 import 'package:digitalbillbook/parties/parties1.dart';
+import 'package:digitalbillbook/plan/plandetails.dart';
 
 import 'package:digitalbillbook/product/product1.dart';
 import 'package:digitalbillbook/reports/lowstock.dart';
@@ -20,10 +21,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:intl/intl.dart';
 import 'customwidgets/homepagetiles.dart';
 import 'models/businessprofile.dart';
 import 'models/invoicesettingsmodel.dart';
+import 'models/plandetails.dart';
 
 class Home extends StatefulWidget {
   final String uid;
@@ -122,15 +124,20 @@ class _HomeState extends State<Home> {
   void initState() {
     // ignore: todo
     // TODO: implement initState
+
     _getBusinessDetails(widget.uid);
     _getBusinessDetails2(widget.uid);
     _getBusinessDetails3(widget.uid);
     _getBusinessDetails4(widget.uid);
     _getBusinessDetails5(widget.uid);
+    _getBusinessDetails6(widget.uid);
+
     super.initState();
   }
 
   final settings = new InvoiceSettingsmodel('', '');
+
+  bool isnewuser = false;
   Future<Null> setUpdatabase() async {
     await db
         .collection("userData")
@@ -138,9 +145,28 @@ class _HomeState extends State<Home> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-      } else {
+        setState(() {
+          isnewuser = false;
+        });
+      } else if (documentSnapshot.exists == null) {
+        setState(() {
+          isnewuser = true;
+        });
+
+        print(documentSnapshot.id);
+        print(documentSnapshot.exists);
         final businessInfo = new BusinessProfile(
             '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+        final plandetails = new PlanDetails('Free Trial',
+            DateTime.now().add(Duration(days: 31)), DateTime.now(), 100, 100);
+
+        db
+            .collection("userData")
+            .doc(widget.uid)
+            .collection("planDetails")
+            .doc('plan')
+            .set(plandetails.toJson());
 
         db
             .collection("userData")
@@ -180,6 +206,11 @@ class _HomeState extends State<Home> {
   final bankNameController = TextEditingController();
   final ifscCodeController = TextEditingController();
   final accountNumberController = TextEditingController();
+
+  int invoice;
+  DateTime duration;
+  final planName = TextEditingController();
+  int ewaybillno;
   String subtitle01 = '';
   String subtitle02 = '';
   String subtitle03 = '';
@@ -199,7 +230,7 @@ class _HomeState extends State<Home> {
         ));
   }
 
-  bool invoice0or1;
+  bool invoice0or1 = false;
   Future<Null> _getBusinessDetails2(String uid) async {
     await db
         .collection("userData")
@@ -308,13 +339,29 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<Null> _getBusinessDetails6(String uid) async {
+    await db
+        .collection("userData")
+        .doc(widget.uid)
+        .collection("planDetails")
+        .doc('plan')
+        .get()
+        .then((valuee) {
+      setState(() {
+        final Timestamp timestamp = (valuee.data()['duration']) as Timestamp;
+        duration = timestamp.toDate();
+        planName.text = valuee.data()['planName'];
+        ewaybillno = valuee.data()['remainingewaybill'];
+        invoice = valuee.data()['remaininginvoices'];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _getBusinessDetails(widget.uid);
-    _getBusinessDetails2(widget.uid);
-    _getBusinessDetails3(widget.uid);
-    _getBusinessDetails4(widget.uid);
-
+    setUpdatabase();
+    _getBusinessDetails6(widget.uid);
     _navigateAndDisplaySelection(BuildContext context) async {
       // Navigator.push returns a Future that completes after calling
       // Navigator.pop on the Selection Screen.
@@ -423,7 +470,9 @@ class _HomeState extends State<Home> {
         () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Product1(widget.uid)),
-        ),
+        ).then((value) {
+          setState(() {});
+        }),
       ),
       Widgetfunction(
         SvgPicture.string(
@@ -433,7 +482,9 @@ class _HomeState extends State<Home> {
         () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Ewaybill1(widget.uid)),
-        ),
+        ).then((value) {
+          setState(() {});
+        }),
       ),
       Widgetfunction(
         // Adobe XD layer: 'Icon ionic-ios-pers…' (group)
@@ -454,7 +505,9 @@ class _HomeState extends State<Home> {
           MaterialPageRoute(
             builder: (context) => BusinessInfo(widget.uid),
           ),
-        ),
+        ).then((value) {
+          setState(() {});
+        }),
       )
     ];
 
@@ -469,7 +522,9 @@ class _HomeState extends State<Home> {
           MaterialPageRoute(
             builder: (context) => NotificationPage(widget.uid),
           ),
-        ),
+        ).then((value) {
+          setState(() {});
+        }),
       ),
       Widgetfunction(
         // Adobe XD layer: 'Icon feather-settin…' (group)
@@ -510,7 +565,9 @@ class _HomeState extends State<Home> {
           MaterialPageRoute(
             builder: (context) => Settings1(widget.uid),
           ),
-        ),
+        ).then((value) {
+          setState(() {});
+        }),
       ),
       Widgetfunction(
           // Adobe XD layer: 'Icon ionic-ios-chat…' (group)
@@ -644,8 +701,13 @@ class _HomeState extends State<Home> {
                             alignment: Alignment.centerRight,
                             padding: EdgeInsets.all(10),
                             child: InkWell(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, './plan.dart'),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BusinessInfo(widget.uid),
+                                ),
+                              ),
                               child: Container(
                                 alignment: Alignment.center,
                                 width: 60,
@@ -678,58 +740,74 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: 20,
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    HomePageTiles(
-                      homescreentilesicon[0],
-                      'Low Stock',
-                      subtitle01,
-                      subtitle02,
-                      subtitle03,
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LowStock(widget.uid))),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[1],
-                      'Last Sale Details',
-                      subtitle11,
-                      subtitle12,
-                      subtitle13,
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SalesSummary(widget.uid))),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[2],
-                      'Last Purchase Details',
-                      subtitle21,
-                      subtitle22,
-                      subtitle23,
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PurchaseSummary(widget.uid))),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[3],
-                      'Stock Value',
-                      'Total Product :' + totalproducts.toString(),
-                      'Quantity : ' + totalquantity.toString(),
-                      'Amount : ' + totalamount.toString(),
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => StockSummary(widget.uid))),
-                    ),
-                  ],
-                ),
-              ),
+              isnewuser == false
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          HomePageTiles(
+                            homescreentilesicon[0],
+                            'Low Stock',
+                            subtitle01,
+                            subtitle02,
+                            subtitle03,
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LowStock(widget.uid))).then((value) {
+                              setState(() {});
+                            }),
+                          ),
+                          HomePageTiles(
+                            homescreentilesicon[1],
+                            'Last Sale Details',
+                            subtitle11,
+                            subtitle12,
+                            subtitle13,
+                            () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SalesSummary(widget.uid)))
+                                .then((value) {
+                              setState(() {});
+                            }),
+                          ),
+                          HomePageTiles(
+                            homescreentilesicon[2],
+                            'Last Purchase Details',
+                            subtitle21,
+                            subtitle22,
+                            subtitle23,
+                            () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PurchaseSummary(widget.uid)))
+                                .then((value) {
+                              setState(() {});
+                            }),
+                          ),
+                          HomePageTiles(
+                            homescreentilesicon[3],
+                            'Stock Value',
+                            'Total Product :' + totalproducts.toString(),
+                            'Quantity : ' + totalquantity.toString(),
+                            'Amount : ' + totalamount.toString(),
+                            () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StockSummary(widget.uid)))
+                                .then((value) {
+                              setState(() {});
+                            }),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
               SizedBox(
                 height: 20,
               ),
@@ -763,100 +841,117 @@ class _HomeState extends State<Home> {
                       width: w * 0.7,
                       height: 160,
                       child: Stack(children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Your Plan - Premium',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 20,
-                                color: const Color(0xfff2f2f2),
-                                fontWeight: FontWeight.w700,
+                        SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20,
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              '     Exp. Date:               21st January 2021',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5ffffff),
-                                fontWeight: FontWeight.w700,
+                              Text(
+                                'Your Plan - ' + planName.text,
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 20,
+                                  color: const Color(0xfff2f2f2),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              '     Remaining Plan :    150 Invoice, 50 e-Way Bill',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5ffffff),
-                                fontWeight: FontWeight.w700,
+                              SizedBox(
+                                height: 20,
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: SizedBox(
-                                  width: 71.0,
-                                  height: 21.0,
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Pinned.fromSize(
-                                        bounds:
-                                            Rect.fromLTWH(0.0, 0.0, 71.0, 21.0),
-                                        size: Size(71.0, 21.0),
-                                        pinLeft: true,
-                                        pinRight: true,
-                                        pinTop: true,
-                                        pinBottom: true,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(11.0),
-                                            color: const Color(0xfff1f3f6),
-                                            border: Border.all(
-                                                width: 1.0,
-                                                color: const Color(0xff3f3d56)),
-                                          ),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () => Navigator.pushNamed(
-                                            context, './plan.dart'),
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'View More',
-                                            style: TextStyle(
-                                              fontFamily: 'Bell MT',
-                                              fontSize: 10,
-                                              color: const Color(0xe52f2e41),
-                                              fontWeight: FontWeight.w700,
+                              Text(
+                                '     Exp. Date:               ' +
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(duration)
+                                        .toString(),
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 10,
+                                  color: const Color(0xe5ffffff),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                '     Remaining Plan :    ' +
+                                    invoice.toString() +
+                                    ' Invoice, ' +
+                                    ewaybillno.toString() +
+                                    'e-Way Bill',
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 10,
+                                  color: const Color(0xe5ffffff),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: SizedBox(
+                                    width: 71.0,
+                                    height: 21.0,
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Pinned.fromSize(
+                                          bounds: Rect.fromLTWH(
+                                              0.0, 0.0, 71.0, 21.0),
+                                          size: Size(71.0, 21.0),
+                                          pinLeft: true,
+                                          pinRight: true,
+                                          pinTop: true,
+                                          pinBottom: true,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(11.0),
+                                              color: const Color(0xfff1f3f6),
+                                              border: Border.all(
+                                                  width: 1.0,
+                                                  color:
+                                                      const Color(0xff3f3d56)),
                                             ),
-                                            textAlign: TextAlign.left,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        InkWell(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CurrentPlan(widget.uid),
+                                            ),
+                                          ).then((value) {
+                                            setState(() {});
+                                          }),
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'View More',
+                                              style: TextStyle(
+                                                fontFamily: 'Bell MT',
+                                                fontSize: 10,
+                                                color: const Color(0xe52f2e41),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ]),
                     ),

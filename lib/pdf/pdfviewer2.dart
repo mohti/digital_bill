@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'dart:typed_data';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/businessprofile.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -113,6 +116,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
       '',
       ' ',
       ' ',
+      '',
       ' ',
       DateTime.now(),
       ' ',
@@ -134,7 +138,11 @@ class _PdfViewer2State extends State<PdfViewer2> {
       ' ',
       ' ',
       ' ',
-      '');
+      '',
+      null,
+      null,
+      null,
+      null);
   Future<Null> _getBusinessDetails(String uid) async {
     await db
         .collection("userData")
@@ -295,6 +303,17 @@ class _PdfViewer2State extends State<PdfViewer2> {
       });
     });
     final pdf = pw.Document();
+    Future<void> uploadtostorage() async {
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/" + widget.invoiceid + "example.pdf");
+      file.writeAsBytes(await pdf.save());
+      await firebase_storage.FirebaseStorage.instance
+          .ref(widget.uid + '/Invoice/' + widget.invoiceid + '.pdf')
+          .putFile(file)
+          .catchError((onerror) {
+        print(onerror);
+      });
+    }
 
     pdf.addPage(
       pw.MultiPage(
@@ -874,7 +893,9 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                       .start,
                                                               children: [
                                                                 pw.Text(
-                                                                  'State & State Code :',
+                                                                  'State & State Code :' +
+                                                                      sstate
+                                                                          .text,
                                                                   style: pw
                                                                       .TextStyle(
                                                                     fontSize:
@@ -1194,7 +1215,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                 .CrossAxisAlignment
                                                                 .start,
                                                             children: [
-                                                              pw.Text(
+                                                              /*              pw.Text(
                                                                 'eWaybill No :',
                                                                 style: pw
                                                                     .TextStyle(
@@ -1223,6 +1244,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                     .TextAlign
                                                                     .left,
                                                               ),
+                                                  */
                                                             ],
                                                           ),
                                                           width: 137.5,
@@ -1247,7 +1269,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                             .CrossAxisAlignment
                                                             .start,
                                                         children: [
-                                                          pw.Text(
+                                                          /*               pw.Text(
                                                             'GR No:',
                                                             style: pw.TextStyle(
                                                               fontSize: 13,
@@ -1272,6 +1294,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                             textAlign: pw
                                                                 .TextAlign.left,
                                                           ),
+                                              */
                                                         ],
                                                       ),
                                                       decoration:
@@ -2994,6 +3017,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
               ]),
     );
 
+    uploadtostorage();
     return await pdf.save();
   }
 }

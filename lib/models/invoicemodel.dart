@@ -8,7 +8,7 @@ class InvoiceProduct {
   String sellingrate;
   String taxamount;
   String totalamount;
-
+  String focornot;
   InvoiceProduct(
     this.productCode,
     this.productName,
@@ -19,6 +19,7 @@ class InvoiceProduct {
     this.sellingrate,
     this.taxamount,
     this.totalamount,
+    this.focornot,
   );
   Map<String, dynamic> toJson() => {
         'productCode': productCode,
@@ -30,11 +31,20 @@ class InvoiceProduct {
         'sellingrate': sellingrate,
         'taxamount': taxamount,
         'totalamount': totalamount,
+        'focornot': focornot
       };
+}
+
+class OtherCharges {
+  String otherchargename;
+  double otherchargevalue;
+  OtherCharges(this.otherchargename, this.otherchargevalue);
+  Map<String, dynamic> toJson() => {otherchargename: otherchargevalue};
 }
 
 class InvoiceModel {
   String invoiceno;
+  String taxtype;
   String sname;
   String sphone;
   String sgstn;
@@ -57,11 +67,15 @@ class InvoiceModel {
   String tracnsportdocno;
   String tdate;
   String vehiclemode;
+  double discount;
+  double tcs;
+  double roundoff;
   String vehicleno;
   String from;
-
+  List<OtherCharges> othercharges = [];
   InvoiceModel(
       this.invoiceno,
+      this.taxtype,
       this.sname,
       this.sphone,
       this.sgstn,
@@ -85,9 +99,14 @@ class InvoiceModel {
       this.tdate,
       this.vehiclemode,
       this.vehicleno,
-      this.from);
+      this.from,
+      this.othercharges,
+      this.discount,
+      this.tcs,
+      this.roundoff);
   Map<String, dynamic> toJson() => {
         'invoiceno': invoiceno,
+        'taxtype': taxtype,
         'sname': sname,
         'sphone': sphone,
         'sgstn': sgstn,
@@ -113,6 +132,11 @@ class InvoiceModel {
         'tdate': tdate,
         'vehiclemode': vehiclemode,
         'vehicleno': vehicleno,
-        'from': from
+        'from': from,
+        'othercharges':
+            othercharges.map((othercharge) => othercharge.toJson()).toList(),
+        'discount': discount,
+        'tcs': tcs,
+        'roundoff': roundoff
       };
 }

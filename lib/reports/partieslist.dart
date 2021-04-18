@@ -4,7 +4,7 @@ import 'package:digitalbillbook/tables/partiestable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalbillbook/tables/table.dart';
+
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

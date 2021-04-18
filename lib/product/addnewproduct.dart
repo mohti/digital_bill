@@ -302,6 +302,7 @@ class _AddproductState extends State<Addproduct> {
                     child: InkWell(
                       onTap: () => _selectDate(context),
                       child: Container(
+                        alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 0.45,
                         height: 50,
                         child:
