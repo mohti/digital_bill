@@ -199,10 +199,10 @@ class MyHomePage extends StatelessWidget {
                                   ),
                                   children: [
                                     TextSpan(
-                                      text: 'Already have an account? \n',
+                                      text: '                      \n',
                                     ),
                                     TextSpan(
-                                      text: 'SIGN IN',
+                                      text: '        ',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: const Color(0xff1d1a2f),

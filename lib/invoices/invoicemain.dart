@@ -34,7 +34,7 @@ class Eachrow extends StatelessWidget {
                 // The validator receives the text that the user has entered.
                 validator: (value) {
                   if (value.isEmpty) {
-                    return null;
+                    return 'Please Enter ' + s1;
                   }
                   return null;
                 },
@@ -57,8 +57,10 @@ class Eachrow extends StatelessWidget {
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
-                  if (value.isEmpty) {
-                    return null;
+                  if (value.isEmpty &&
+                      value.length != 15 &&
+                     ) {
+                    return 'Please Enter correct ' + s2;
                   }
                   return null;
                 },
@@ -750,7 +752,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 height: 60,
                                 child: TextFormField(
-                                  controller: bgstn,
+                                  controller: sgstn,
                                   decoration: InputDecoration(
                                     labelText: "GSTN",
                                   ),
@@ -1875,7 +1877,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           _scaffoldkey.currentState.showSnackBar(SnackBar(
                               content: Text('Please upload sign/stamp/logo')));
                         }
-                        widget.i == true
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PdfViewer2(
+                                    widget.uid,
+                                    generalInvoiceornot,
+                                    invoiceno.text,
+                                    sign,
+                                    stamp,
+                                    logo)));
+                        /*         widget.i == true
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -1895,7 +1907,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         invoiceno.text,
                                         sign,
                                         stamp,
-                                        logo)));
+                                        logo)));*/
                       });
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(

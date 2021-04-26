@@ -14,7 +14,6 @@ class DownloadPurchaseInvoice extends StatelessWidget {
   DownloadPurchaseInvoice(this.uid);
   @override
   Widget build(BuildContext context) {
-    final double w = MediaQuery.of(context).size.width;
     Stream<QuerySnapshot> getUsersTripsStreamSnapshots(
         BuildContext context) async* {
       yield* FirebaseFirestore.instance

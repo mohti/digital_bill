@@ -102,7 +102,7 @@ class InvoiceSettings extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => TermsAndCondition(uid))),
                 w),
-            Tab(null, 'Free Quantity', null, w),
+            //     Tab(null, 'Free Quantity', null, w),
           ],
         ),
       ),

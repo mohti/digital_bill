@@ -39,7 +39,10 @@ class OtherCharges {
   String otherchargename;
   double otherchargevalue;
   OtherCharges(this.otherchargename, this.otherchargevalue);
-  Map<String, dynamic> toJson() => {otherchargename: otherchargevalue};
+  Map<String, dynamic> toJson() => {
+        'otherchargename': otherchargename,
+        'otherchargevalue': otherchargevalue
+      };
 }
 
 class InvoiceModel {

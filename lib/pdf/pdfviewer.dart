@@ -102,7 +102,7 @@ class _PdfViewerState extends State<PdfViewer> {
   final quantity = TextEditingController();
   final unit = TextEditingController();
   final sellingrate = TextEditingController();
-  final taxamount = TextEditingController();
+  var taxamount = TextEditingController();
   final totalamount = TextEditingController();
   final transporterid = TextEditingController();
   final transportername = TextEditingController();
@@ -112,6 +112,10 @@ class _PdfViewerState extends State<PdfViewer> {
   final vehicleno = TextEditingController();
   final from = TextEditingController();
   final taxtype = TextEditingController();
+  double discount;
+  double roundoff;
+  double tcs;
+  double totaltax = 0;
   final businessInfo = new BusinessProfile(
       '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
   final invoicedetails = new InvoiceModel(
@@ -235,6 +239,7 @@ class _PdfViewerState extends State<PdfViewer> {
         'totalamount': totalamount,*/
   Map<String, dynamic> m;
   List<Map<String, dynamic>> l = [];
+  List<Map<String, dynamic>> l2 = [];
   var taxes = new Map();
   Future<Null> _invoicedetails(String uid) async {
     await db
@@ -279,7 +284,13 @@ class _PdfViewerState extends State<PdfViewer> {
             : valuee.data()['tracnsportdocno'];
         taxtype.text =
             valuee.data()['taxtype'] == null ? '' : valuee.data()['taxtype'];
+        discount =
+            valuee.data()['discount'] == null ? '' : valuee.data()['discount'];
+        tcs = valuee.data()['tcs'] == null ? '' : valuee.data()['tcs'];
+        roundoff =
+            valuee.data()['roundoff'] == null ? '' : valuee.data()['roundoff'];
         l = List.castFrom(valuee.data()['listOfProducts']);
+        l2 = List.castFrom(valuee.data()['othercharges']);
         print(l);
       });
     });
@@ -298,7 +309,7 @@ class _PdfViewerState extends State<PdfViewer> {
     _getBusinessDetails(widget.uid);
     _invoicedetails(widget.uid);
 
-    double totalquantity = 0, totalamount = 0;
+    double totalquantity = 0, totalamount = 0, finalamount = 0;
     l.forEach((element) {
       setState(() {
         taxes[element['taxrate']] = 0.00;
@@ -308,12 +319,32 @@ class _PdfViewerState extends State<PdfViewer> {
             totalamount + double.parse(element['totalamount'].toString());
       });
     });
+    setState(() {
+      finalamount = totalamount;
+    });
     l.forEach((element) {
       setState(() {
         taxes[element['taxrate']] =
             taxes[element['taxrate']] + double.parse(element['totalamount']);
         print(taxes[element['taxrate']]);
       });
+    });
+    taxes.forEach((key, value) {
+      setState(() {
+        finalamount = finalamount +
+            (double.parse(key.toString()) *
+                    double.parse(value.toString()) /
+                    100.0)
+                .toDouble();
+      });
+    });
+    l2.forEach((element) {
+      setState(() {
+        finalamount = finalamount + (element['otherchargevalue']);
+      });
+    });
+    setState(() {
+      finalamount = finalamount - (discount * totalamount / 100) + roundoff;
     });
     final pdf = pw.Document();
     Future<void> uploadtostorage() async {
@@ -1560,7 +1591,499 @@ class _PdfViewerState extends State<PdfViewer> {
                     ),
                   ),
                 )),
+                pw.Wrap(
+                    children: List<pw.Widget>.generate(
+                  l2.length,
+                  (index) => pw.Container(
+                    alignment: pw.Alignment.centerLeft,
+                    child: pw.Wrap(
+                      children: [
+                        pw.Container(
+                          width: 600,
+                          height: 30,
+                          decoration: pw.BoxDecoration(
+                              color: PdfColors.white,
+                              border: pw.Border.all(
+                                  width: 0.000000001,
+                                  color: PdfColor.fromInt(0xff707070))),
+                          child: pw.Row(
+                            children: [
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 30,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 100,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 100,
+                                child: pw.Text(
+                                  'Other Charges',
+                                  style: pw.TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 30,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 20,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 80,
+                                child: pw.Text(
+                                  l2[index]['otherchargename'],
+                                  style: pw.TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 30,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 90,
+                                child: pw.Text(
+                                  '',
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 50,
+                                child: pw.Text(
+                                  l2[index]['otherchargevalue'].toString(),
+                                  style: pw.TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
+                                  textAlign: pw.TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
 
+                if (discount != 0.0)
+                  pw.Wrap(children: [
+                    pw.Container(
+                      alignment: pw.Alignment.centerLeft,
+                      child: pw.Wrap(
+                        children: [
+                          pw.Container(
+                            width: 600,
+                            height: 30,
+                            decoration: pw.BoxDecoration(
+                                color: PdfColors.white,
+                                border: pw.Border.all(
+                                    width: 0.000000001,
+                                    color: PdfColor.fromInt(0xff707070))),
+                            child: pw.Row(
+                              children: [
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    'Discount',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 20,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 80,
+                                  child: pw.Text(
+                                    discount.toString() + '%',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 90,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 50,
+                                  child: pw.Text(
+                                    '-' +
+                                        (discount * totalamount / 100)
+                                            .toString(),
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.right,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                if (tcs != 0.0)
+                  pw.Wrap(children: [
+                    pw.Container(
+                      alignment: pw.Alignment.centerLeft,
+                      child: pw.Wrap(
+                        children: [
+                          pw.Container(
+                            width: 600,
+                            height: 30,
+                            decoration: pw.BoxDecoration(
+                                color: PdfColors.white,
+                                border: pw.Border.all(
+                                    width: 0.000000001,
+                                    color: PdfColor.fromInt(0xff707070))),
+                            child: pw.Row(
+                              children: [
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    'TCS',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 20,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 80,
+                                  child: pw.Text(
+                                    tcs.toString() + '%',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 90,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 50,
+                                  child: pw.Text(
+                                    (tcs * totalamount / 100).toString(),
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.right,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+
+                if (roundoff != 0.0)
+                  pw.Wrap(children: [
+                    pw.Container(
+                      alignment: pw.Alignment.centerLeft,
+                      child: pw.Wrap(
+                        children: [
+                          pw.Container(
+                            width: 600,
+                            height: 30,
+                            decoration: pw.BoxDecoration(
+                                color: PdfColors.white,
+                                border: pw.Border.all(
+                                    width: 0.000000001,
+                                    color: PdfColor.fromInt(0xff707070))),
+                            child: pw.Row(
+                              children: [
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 100,
+                                  child: pw.Text(
+                                    'Round Off',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 20,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 80,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 30,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 90,
+                                  child: pw.Text(
+                                    '',
+                                    style: pw.TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: pw.TextAlign.left,
+                                  ),
+                                ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 50,
+                                  child: pw.Text(
+                                    roundoff.toString(),
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.right,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
                 pw.Wrap(children: [
                   pw.Container(
                     alignment: pw.Alignment.centerLeft,
@@ -1670,7 +2193,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 alignment: pw.Alignment.center,
                                 width: 50,
                                 child: pw.Text(
-                                  (totalamount * 118 / 100).toString(),
+                                  (finalamount).toStringAsFixed(2).toString(),
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                     fontWeight: pw.FontWeight.bold,
@@ -1720,8 +2243,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                       ),
                                       pw.Text(
                                         'INR ' +
-                                            NumberToWord().convert('en-in',
-                                                totalamount * 118 ~/ 100) +
+                                            NumberToWord().convert(
+                                                'en-in', finalamount.toInt()) +
                                             'Only',
                                         style: pw.TextStyle(
                                           fontSize: 13,

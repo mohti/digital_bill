@@ -47,7 +47,7 @@ class HomePageTiles extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Container(
             width: 200,
-            height: 100,
+            height: 120,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               color: const Color(0xffffffff),
@@ -62,22 +62,22 @@ class HomePageTiles extends StatelessWidget {
             child: SingleChildScrollView(
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                   Container(
                     padding: const EdgeInsets.all(5.0),
                     child: w,
                   ),
                   Container(
-                    height: 100,
+                    height: 120,
                     width: 150,
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Column(
                             children: [
                               SizedBox(
-                                height: 2,
+                                height: 3,
                               ),
                               Text(
                                 title,

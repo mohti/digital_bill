@@ -1,3 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalbillbook/models/businessprofile.dart';
+import 'package:digitalbillbook/models/invoicesettingsmodel.dart';
+import 'package:digitalbillbook/models/plandetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -67,6 +71,9 @@ class _SignupotpState extends State<Signupotp>
           ),
         )
       ]);
+
+  String uid;
+
   @override
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.height;
@@ -157,6 +164,7 @@ class _SignupotpState extends State<Signupotp>
                                   //   eachFieldMargin: EdgeInsets.all(0),
                                   pinAnimationType: PinAnimationType.fade,
                                   onSubmit: (pin) async {
+                                    print('TRIED');
                                     try {
                                       await FirebaseAuth.instance
                                           .signInWithCredential(
@@ -165,7 +173,24 @@ class _SignupotpState extends State<Signupotp>
                                                       _verificationCode,
                                                   smsCode: pin))
                                           .then((value) async {
-                                        if (value.user != null) {
+                                        print(
+                                            value.additionalUserInfo.isNewUser);
+                                        if (value
+                                                .additionalUserInfo.isNewUser ==
+                                            true) {
+                                          setState(() {
+                                            uid = value.user.uid;
+                                          });
+                                          print('newuser');
+                                          setUpdatabase();
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Home(value.user.uid)),
+                                              (route) => false);
+                                        } else if (value.user != null) {
+                                          print('value.user');
                                           Navigator.pushAndRemoveUntil(
                                               context,
                                               MaterialPageRoute(
@@ -215,6 +240,47 @@ class _SignupotpState extends State<Signupotp>
     );
   }
 
+  final settings = new InvoiceSettingsmodel('', '');
+
+  Future<Null> setUpdatabase() async {
+    final db = FirebaseFirestore.instance;
+    print('setupdatabase');
+
+    print('document does esixts');
+    final businessInfo = new BusinessProfile(
+        '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+    final plandetails = new PlanDetails('Free Trial',
+        DateTime.now().add(Duration(days: 31)), DateTime.now(), 100, 100);
+
+    db
+        .collection("userData")
+        .doc(uid)
+        .collection("planDetails")
+        .doc('plan')
+        .set(plandetails.toJson());
+
+    db
+        .collection("userData")
+        .doc(uid)
+        .collection("invoiceSettings")
+        .doc('invoiceSettings')
+        .set(settings.toJson());
+    // Call the user's CollectionReference to add a new user
+    db
+        .collection("userData")
+        .doc(uid)
+        .collection("BusinessInfo")
+        .doc('businessName')
+        .set(businessInfo.toJson());
+    db
+        .collection("userData")
+        .doc(uid)
+        .collection("termsAndConditiononInvoice")
+        .doc('termsAndConditiononInvoice')
+        .set({'termsAndCondition': ''});
+  }
+
   _verifyPhone() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+91${widget.phone}',
@@ -222,7 +288,20 @@ class _SignupotpState extends State<Signupotp>
           await FirebaseAuth.instance
               .signInWithCredential(credential)
               .then((value) async {
-            if (value.user != null) {
+            print(value.additionalUserInfo.isNewUser);
+
+            if (value.additionalUserInfo.isNewUser == true) {
+              setState(() {
+                uid = value.user.uid;
+              });
+              print('newuser');
+              setUpdatabase();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home(value.user.uid)),
+                  (route) => false);
+            } else if (value.user != null) {
+              print('value.user');
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => Home(value.user.uid)),

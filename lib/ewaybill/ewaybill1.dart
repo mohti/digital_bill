@@ -45,6 +45,18 @@ class GetUrl {
   }
 }
 
+class GetEwayBIllno {
+// ignore: non_constant_identifier_names
+  final int ewaybillno;
+
+  // ignore: non_constant_identifier_names
+  GetEwayBIllno({this.ewaybillno});
+
+  factory GetEwayBIllno.fromJson(Map<String, dynamic> json) {
+    return GetEwayBIllno(ewaybillno: json['results']['message']["ewayBillNo"]);
+  }
+}
+
 class Ewaybill1 extends StatefulWidget {
   final String uid;
   Ewaybill1(this.uid);
@@ -297,6 +309,418 @@ class _Ewaybill1State extends State<Ewaybill1> {
 
     double totalquantity = 0, totalamount = 0;
     List<Items> items1 = [];
+    int ewaybillno;
+    Future<Null> _tocanceWaylBill() async {
+      await db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("Invoice")
+          .doc(ewaybillController.text.toString())
+          .get()
+          .then((valuee) {
+        setState(() {
+          invoiceno1.text = valuee.data()['invoiceno'] == null
+              ? ''
+              : valuee.data()['invoiceno'];
+
+          bname.text =
+              valuee.data()['bname'] == null ? '' : valuee.data()['bname'];
+          bphone.text =
+              valuee.data()['bphone'] == null ? '' : valuee.data()['bphone'];
+          bcity.text =
+              valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
+          bstate.text =
+              valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
+          scity.text =
+              valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
+          sstate.text =
+              valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
+          bpin.text =
+              valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
+          bgstn.text =
+              valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
+          sname.text =
+              valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
+          sphone.text =
+              valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
+          transportername.text = valuee.data()['transportername'] == null
+              ? ''
+              : valuee.data()['transportername'];
+          spin.text =
+              valuee.data()['spin'] == null ? '' : valuee.data()['spin'];
+          transporterid.text = valuee.data()['transporterid'] == null
+              ? ''
+              : valuee.data()['transporterid'];
+          tracnsportdocno.text = valuee.data()['transporterdocno'] == null
+              ? ''
+              : valuee.data()['transporterdocno'];
+          tdate.text = valuee.data()['tdate'];
+          sgstn.text =
+              valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
+          timestamp = (valuee.data()['sdate']) as Timestamp;
+          sdate = timestamp.toDate();
+
+          vehiclemode.text = valuee.data()['vehiclemode'] == null
+              ? ''
+              : valuee.data()['vehiclemode'];
+          vehicleno.text = valuee.data()['vehicleno'] == null
+              ? ''
+              : valuee.data()['vehicleno'];
+          l = List.castFrom(valuee.data()['listOfProducts']);
+        });
+      });
+
+      l.forEach((element) {
+        setState(() {
+          totalquantity =
+              totalquantity + double.parse(element['quantity'].toString());
+          totalamount =
+              totalamount + double.parse(element['totalamount'].toString());
+        });
+      });
+      db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("BusinessInfo")
+          .doc('businessName')
+          .get()
+          .then((valuee) {
+        setState(() {
+          bankNameController.text = valuee.data()['bankName'] == null
+              ? ''
+              : valuee.data()['bankName'];
+          accountNumberController.text = valuee.data()['accountNumber'] == null
+              ? ''
+              : valuee.data()['accountNumber'];
+          ifscCodeController.text = valuee.data()['ifscCode'] == null
+              ? ''
+              : valuee.data()['ifscCode'];
+
+          branchNameController.text = valuee.data()['branchName'] == null
+              ? ''
+              : valuee.data()['branchName'];
+          _businessNameController = valuee.data()['businessName'] == null
+              ? ''
+              : valuee.data()['businessName'];
+          businesAddressController.text =
+              valuee.data()['businessAddress'] == null
+                  ? ''
+                  : valuee.data()['businessAddress'];
+          gstNumberController.text = valuee.data()['gstNumber'] == null
+              ? ''
+              : valuee.data()['gstNumber'];
+          emailController.text =
+              valuee.data()['email'] == null ? '' : valuee.data()['email'];
+          phoneController.text =
+              valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+        });
+      });
+
+      List items = [];
+
+      l.forEach((element) {
+        setState(() {
+          items.add({
+            "product_name": element['productName'],
+            "product_description": element['productCode'],
+            "hsn_code": '1001', // element['hsncode'],
+            "unit_of_product": 'BOX', //element['unit'],
+            "cgst_rate": 9,
+            "sgst_rate": 9,
+            "igst_rate": 0,
+            "cess_rate": 0,
+            "quantity": 9, //int.tryParse(element['quantity']),
+            "cessNonAdvol": 0,
+            "taxable_amount": 9, // int.tryParse(element['totalamount'])*/
+          });
+        });
+      });
+      try {
+        (int.parse(spin.text));
+      } on FormatException {
+        Fluttertoast.showToast(msg: 'Invalid Pincode', timeInSecForIosWeb: 4);
+      }
+      try {
+        final response = await http.post(
+          Uri.parse('https://clientbasic.mastersindia.co/ewayBillsGenerate'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<dynamic, dynamic>{
+            "access_token": responsedecode.access_token,
+            "userGstin": gstNumberController.text,
+            "supply_type": "outward",
+            "sub_supply_type": "Others",
+            "sub_supply_description": "sales from other country",
+            "document_type": "tax invoice",
+            "document_number": invoiceno1.text,
+            "document_date": DateFormat('dd/MM/yyyy').format(sdate).toString(),
+            "gstin_of_consignor": "05AAABB0639G1Z8 ", //sgstn.text,
+            "legal_name_of_consignor": bname.text.toString() == ''
+                ? _businessNameController.toString()
+                : bname.text.toString(),
+            "address1_of_consignor": bcity.text.toString() == ''
+                ? businesAddressController.text.toString()
+                : bcity.text.toString(),
+            "address2_of_consignor": '',
+            "place_of_consignor": bcity.text.toString() == ''
+                ? businesAddressController.text.toString()
+                : bcity.text.toString(),
+            "pincode_of_consignor": bpin.text == ''
+                ? int.parse(spin.text)
+                : int.tryParse(bpin.text),
+            "state_of_consignor": bstate.text == '' ? sstate.text : sstate.text,
+            "actual_from_state_name":
+                bstate.text == '' ? sstate.text : sstate.text,
+            "gstin_of_consignee":
+                "05AAABC0181E1ZE ", //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
+            "legal_name_of_consignee": sname.text.toString(),
+            "address1_of_consignee": scity.text.toString(),
+            "address2_of_consignee": scity.text.toString(),
+            "place_of_consignee": scity.text.toString(),
+            "pincode_of_consignee": int.parse(spin.text),
+            "state_of_supply": sstate.text,
+            "actual_to_state_name": sstate.text,
+            "transaction_type": 1,
+            "other_value": 0.00,
+            "total_invoice_value": (totalamount * 118 / 100),
+            "taxable_amount": totalamount.toInt(),
+            "cgst_amount": 0.00,
+            "sgst_amount": 0.00,
+            "igst_amount": 0,
+            "cess_amount": 0,
+            "cess_nonadvol_value": 0,
+            "transporter_id": transporterid.text,
+            "transporter_name": transportername.text,
+            "transporter_document_number": tracnsportdocno.text,
+            "transporter_document_date": tdate.text,
+            "transportation_mode": 'road',
+            "transportation_distance": '0',
+
+            "vehicle_number": vehicleno.text,
+            "vehicle_type": "Regular",
+            "generate_status": 1,
+            "data_source": "erp",
+            "user_ref": "1232435466sdsf234",
+            "location_code": "XYZ",
+            "eway_bill_status": "ABC",
+            "auto_print": "Y",
+            "email": emailController.text,
+            "itemList": items
+          }),
+        );
+        print(response.statusCode);
+
+        print(bname.text.toString());
+        if (response.statusCode == 201 || response.statusCode == 200) {
+          // If the server did return a 201 CREATED response,
+          // then parse the JSON.
+          print(response.body);
+          Fluttertoast.showToast(
+              msg: response.statusCode.toString() + " - " + response.body,
+              timeInSecForIosWeb: 4);
+          print(response.statusCode);
+          GetEwayBIllno g;
+          g = GetEwayBIllno.fromJson(jsonDecode(response.body));
+          print(g.ewaybillno);
+
+          if (g.ewaybillno != null) {
+            setState(() {
+              ewaybillno = g.ewaybillno;
+            });
+
+            //   downloadFile(g.url, 'ewaybill' + invoiceno1.text, null);
+            // createFile(g.url, 'ewaybill' + invoiceno1.text);
+
+            /*      Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TestViewEwayBill(g.url)));
+      */
+          }
+          //print(jsonDecode(response.body).cast<Map<String, dynamic>>().map<Photo>((json) => Photo.fromJson(json)));
+        } else {
+          // If the server did not return a 201 CREATED response,
+          // then throw an exception.
+          throw Exception('Failed to load album');
+        }
+      } catch (e) {
+        print(e);
+        print('error');
+      }
+    }
+
+    Future<Null> _cancelEwayBill() async {
+      await db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("Invoice")
+          .doc(ewaybillController.text.toString())
+          .get()
+          .then((valuee) {
+        setState(() {
+          invoiceno1.text = valuee.data()['invoiceno'] == null
+              ? ''
+              : valuee.data()['invoiceno'];
+
+          bname.text =
+              valuee.data()['bname'] == null ? '' : valuee.data()['bname'];
+          bphone.text =
+              valuee.data()['bphone'] == null ? '' : valuee.data()['bphone'];
+          bcity.text =
+              valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
+          bstate.text =
+              valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
+          scity.text =
+              valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
+          sstate.text =
+              valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
+          bpin.text =
+              valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
+          bgstn.text =
+              valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
+          sname.text =
+              valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
+          sphone.text =
+              valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
+          transportername.text = valuee.data()['transportername'] == null
+              ? ''
+              : valuee.data()['transportername'];
+          spin.text =
+              valuee.data()['spin'] == null ? '' : valuee.data()['spin'];
+          transporterid.text = valuee.data()['transporterid'] == null
+              ? ''
+              : valuee.data()['transporterid'];
+          tracnsportdocno.text = valuee.data()['transporterdocno'] == null
+              ? ''
+              : valuee.data()['transporterdocno'];
+          tdate.text = valuee.data()['tdate'];
+          sgstn.text =
+              valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
+          timestamp = (valuee.data()['sdate']) as Timestamp;
+          sdate = timestamp.toDate();
+
+          vehiclemode.text = valuee.data()['vehiclemode'] == null
+              ? ''
+              : valuee.data()['vehiclemode'];
+          vehicleno.text = valuee.data()['vehicleno'] == null
+              ? ''
+              : valuee.data()['vehicleno'];
+          l = List.castFrom(valuee.data()['listOfProducts']);
+        });
+      });
+
+      l.forEach((element) {
+        setState(() {
+          totalquantity =
+              totalquantity + double.parse(element['quantity'].toString());
+          totalamount =
+              totalamount + double.parse(element['totalamount'].toString());
+        });
+      });
+      db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("BusinessInfo")
+          .doc('businessName')
+          .get()
+          .then((valuee) {
+        setState(() {
+          bankNameController.text = valuee.data()['bankName'] == null
+              ? ''
+              : valuee.data()['bankName'];
+          accountNumberController.text = valuee.data()['accountNumber'] == null
+              ? ''
+              : valuee.data()['accountNumber'];
+          ifscCodeController.text = valuee.data()['ifscCode'] == null
+              ? ''
+              : valuee.data()['ifscCode'];
+
+          branchNameController.text = valuee.data()['branchName'] == null
+              ? ''
+              : valuee.data()['branchName'];
+          _businessNameController = valuee.data()['businessName'] == null
+              ? ''
+              : valuee.data()['businessName'];
+          businesAddressController.text =
+              valuee.data()['businessAddress'] == null
+                  ? ''
+                  : valuee.data()['businessAddress'];
+          gstNumberController.text = valuee.data()['gstNumber'] == null
+              ? ''
+              : valuee.data()['gstNumber'];
+          emailController.text =
+              valuee.data()['email'] == null ? '' : valuee.data()['email'];
+          phoneController.text =
+              valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+        });
+      });
+
+      List items = [];
+
+      l.forEach((element) {
+        setState(() {
+          items.add({
+            "product_name": element['productName'],
+            "product_description": element['productCode'],
+            "hsn_code": '1001', // element['hsncode'],
+            "unit_of_product": 'BOX', //element['unit'],
+            "cgst_rate": 9,
+            "sgst_rate": 9,
+            "igst_rate": 0,
+            "cess_rate": 0,
+            "quantity": 9, //int.tryParse(element['quantity']),
+            "cessNonAdvol": 0,
+            "taxable_amount": 9, // int.tryParse(element['totalamount'])*/
+          });
+        });
+      });
+      try {
+        (int.parse(spin.text));
+      } on FormatException {
+        Fluttertoast.showToast(msg: 'Invalid Pincode', timeInSecForIosWeb: 4);
+      }
+      try {
+        final response = await http.post(
+          Uri.parse('https://clientbasic.mastersindia.co/ewayBillCancel'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<dynamic, dynamic>{
+            "access_token": responsedecode.access_token,
+            "userGstin": gstNumberController.text,
+            "eway_bill_number": ewaybillno,
+            "reason_of_cancel": "Others",
+            "cancel_remark": "Cancelled the order",
+            "data_source": "erp"
+          }),
+        );
+        print(response.statusCode);
+
+        print(bname.text.toString());
+        if (response.statusCode == 201 || response.statusCode == 200) {
+          // If the server did return a 201 CREATED response,
+          // then parse the JSON.
+          print(response.body);
+          Fluttertoast.showToast(
+              msg: response.statusCode.toString() + " - " + response.body,
+              timeInSecForIosWeb: 4);
+          Fluttertoast.showToast(
+              msg: "Eway Bill Cancel Generate again within 48 hrs",
+              timeInSecForIosWeb: 4);
+
+          //print(jsonDecode(response.body).cast<Map<String, dynamic>>().map<Photo>((json) => Photo.fromJson(json)));
+        } else {
+          // If the server did not return a 201 CREATED response,
+          // then throw an exception.
+          throw Exception('Failed to load album');
+        }
+      } catch (e) {
+        print(e);
+        print('error');
+      }
+    }
+
     Future<Null> _invoicedetails() async {
       await db
           .collection("userData")
@@ -681,36 +1105,51 @@ class _Ewaybill1State extends State<Ewaybill1> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Align(
-                alignment: Alignment.center,
-                child: InkWell(
-                  onTap: () => {
-                    _getBusinessDetails(widget.uid),
-                    print(responsedecode.access_token),
-                    _invoicedetails(),
-
-                    //     generateewaybill()
-                  },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: () => {_tocanceWaylBill(), _cancelEwayBill()},
                   child: Container(
-                    color: const Color(0xfff3F3D56),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Generate e-Way Bill',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 16,
-                          color: const Color(0xffffffff),
-                          fontWeight: FontWeight.w700,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Icon(
+                        Icons.edit,
+                        color: const Color(0xfff3F3D56),
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: InkWell(
+                      onTap: () => {
+                        _getBusinessDetails(widget.uid),
+                        print(responsedecode.access_token),
+                        _invoicedetails(),
+
+                        //     generateewaybill()
+                      },
+                      child: Container(
+                        color: const Color(0xfff3F3D56),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Generate e-Way Bill',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 16,
+                              color: const Color(0xffffffff),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
-                        textAlign: TextAlign.left,
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
