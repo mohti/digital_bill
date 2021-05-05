@@ -390,7 +390,54 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     }
 
     final foc = ['None', "Gift", "Free of Cost", 'Free Sample'];
+    final taxtypes = ['IGST', "CGST+SGST"];
+    final units = [
+      'BAG-BAGS',
+      'BAL-BALE',
+      'BDL-BUNDLES',
+      'BKL-BUCKLES',
+      'BOU-BILLIONS OF UNITS',
+      'BOX-BOX',
+      'BTL-BOTTLES',
+      'BUN-BUNCHES',
+      'CAN-CANS',
+      'CBM-CUBIC METER',
+      'CCM-CUBIC CENTIMETER',
+      'CMS-CENTIMETER',
+      'CTN-CARTONS',
+      'DOZ-DOZEN',
+      'DRM-DRUM',
+      'GGR-GREAT GROSS',
+      'GMS-GRAMS',
+      'GRS-GROSS',
+      'GYD-GROSS YARDS',
+      'KGS-KILOGRAMS',
+      'KLR-KILOLITER',
+      'KME-KILOMETRE',
+      'MLT-MILLILITRE',
+      'MTR-METERS',
+      'NOS-NUMBERS',
+      'PAC-PACKS',
+      'PCS-PIECES',
+      'PRS-PAIRS',
+      'QTL-QUINTAL',
+      'ROL-ROLLS',
+      'SET-SETS',
+      'SQF-SQUARE FEET',
+      'SQM-SQUARE METERS',
+      'SQY-SQUARE YARDS',
+      'TBS-TABLETS',
+      'TGM-TEN GROSS',
+      'THD-THOUSANDS',
+      'TON-TONNES',
+      'TUB-TUBES',
+      'UGS-US GALLONS',
+      'UNT-UNITS',
+      'YDS-YARDS',
+      'OTH-OTHERS'
+    ];
 
+    final vehiclemodes = ['Road', 'Train', 'Ship', 'Air'];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -422,16 +469,26 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
                         height: 60,
-                        child: TextFormField(
-                          controller: taxtype,
+                        child: DropdownButtonFormField<String>(
+                          value: 'IGST',
+                          icon: Icon(Icons.arrow_downward),
                           decoration: InputDecoration(
                             labelText: "Tax Type",
-                            fillColor: Colors.white,
                           ),
-                          // The validator receives the text that the user has entered.
+                          items: taxtypes.map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              taxtype.text = newValue;
+                            });
+                          },
                           validator: (value) {
                             if (value.isEmpty) {
-                              return null;
+                              return 'Pease select taxtype';
                             }
                             return null;
                           },
@@ -731,22 +788,38 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
-                                child: TextFormField(
-                                  controller: t[index].unit,
-
+                                height: 60,
+                                child: DropdownButtonFormField<String>(
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontFamily: 'Arial',
+                                    fontSize: 13,
+                                  ),
+                                  value: 'OTH-OTHERS',
+                                  icon: Icon(Icons.arrow_downward),
                                   decoration: InputDecoration(
                                     labelText: "Unit",
-                                    fillColor: Colors.white,
                                   ),
-                                  // The validator receives the text that the user has entered.
+                                  items: units.map((String value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value,
+                                      child: new Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String newValue) {
+                                    setState(() {
+                                      t[index].unit.text =
+                                          newValue.substring(0, 3);
+                                    });
+                                  },
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Pease select unit';
                                     }
                                     return null;
                                   },
                                 ),
+
                                 /*DropdownButtonFormField(
                           value: unit.text,
                           icon: Icon(Icons.arrow_downward),
@@ -1585,7 +1658,74 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              Eachrow(vehiclemode, "Mode", vehicleno, 'Vehicle no'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 60,
+                        child: DropdownButtonFormField<String>(
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontFamily: 'Arial',
+                            fontSize: 13,
+                          ),
+                          value: 'Road',
+                          icon: Icon(Icons.arrow_downward),
+                          decoration: InputDecoration(
+                            labelText: "Mode",
+                          ),
+                          items: vehiclemodes.map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              vehiclemode.text = newValue;
+                            });
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Pease select unit';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 60,
+                        child: TextFormField(
+                          controller: vehicleno,
+                          decoration: InputDecoration(
+                            labelText: 'Vehicle no',
+                            fillColor: Colors.white,
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty && value.length != 15) {
+                              return 'Please Enter correct ' + 'Vehicle no';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 10,
               ),

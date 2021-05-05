@@ -79,7 +79,7 @@ class _SupportState extends State<Support> {
                 'FAQ',
                 style: TextStyle(
                   fontFamily: 'Arial',
-                  fontSize: 14,
+                  fontSize: 10,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
@@ -97,77 +97,48 @@ class _SupportState extends State<Support> {
               child: SizedBox(
                 width: 391.0,
                 height: 16.0,
-                child: Stack(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Pinned.fromSize(
-                      bounds: Rect.fromLTWH(356.0, 0.0, 35.0, 16.0),
-                      size: Size(391.0, 16.0),
-                      pinRight: true,
-                      pinTop: true,
-                      pinBottom: true,
-                      fixedWidth: true,
-                      child: Text(
-                        'Party',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 14,
-                          color: const Color(0xcc2f2e41),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
+                    Text(
+                      'Common Query',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 10,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
                       ),
+                      textAlign: TextAlign.left,
                     ),
-                    Pinned.fromSize(
-                      bounds: Rect.fromLTWH(253.0, 0.0, 53.0, 16.0),
-                      size: Size(391.0, 16.0),
-                      pinTop: true,
-                      pinBottom: true,
-                      fixedWidth: true,
-                      child: Text(
-                        'Product',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 14,
-                          color: const Color(0xcc2f2e41),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
+                    Text(
+                      'Party',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 10,
+                        color: const Color(0xcc2f2e41),
+                        fontWeight: FontWeight.w700,
                       ),
+                      textAlign: TextAlign.left,
                     ),
-                    Pinned.fromSize(
-                      bounds: Rect.fromLTWH(155.0, 0.0, 48.0, 16.0),
-                      size: Size(391.0, 16.0),
-                      pinTop: true,
-                      pinBottom: true,
-                      fixedWidth: true,
-                      child: Text(
-                        'Invoice',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 14,
-                          color: const Color(0xcc2f2e41),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
+                    Text(
+                      'Product',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 10,
+                        color: const Color(0xcc2f2e41),
+                        fontWeight: FontWeight.w700,
                       ),
+                      textAlign: TextAlign.left,
                     ),
-                    Pinned.fromSize(
-                      bounds: Rect.fromLTWH(0.0, 0.0, 105.0, 16.0),
-                      size: Size(391.0, 16.0),
-                      pinLeft: true,
-                      pinTop: true,
-                      pinBottom: true,
-                      fixedWidth: true,
-                      child: Text(
-                        'Common Query',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 14,
-                          color: const Color(0xff2f2e41),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
+                    Text(
+                      'Invoice',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 10,
+                        color: const Color(0xcc2f2e41),
+                        fontWeight: FontWeight.w700,
                       ),
+                      textAlign: TextAlign.left,
                     ),
                   ],
                 ),

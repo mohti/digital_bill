@@ -444,7 +444,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               pw.SizedBox(
                                 width: 96.0,
                                 child: pw.Text(
-                                  'Phone No. : ' + phoneController.text,
+                                  'Phone No.: ' + phoneController.text,
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                     color: PdfColor.fromInt(0xff2f2e41),
@@ -488,7 +488,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                         textAlign: pw.TextAlign.left,
                                       ),
                                       pw.Text(
-                                        'State  :' + gstNumberController.text,
+                                        'State  :' + sstate.text,
                                         style: pw.TextStyle(
                                           fontSize: 12,
                                           color: PdfColor.fromInt(0xff2f2e41),
@@ -737,6 +737,43 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                         ]),
                     pw.SizedBox(height: 10),
+                    pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        children: [
+                          pw.SizedBox(
+                            width: 96.0,
+                            child: pw.Text(
+                              'GSTN : ' + gstNumberController.text,
+                              style: pw.TextStyle(
+                                fontSize: 13,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                          ),
+                          pw.SizedBox(
+                            width: 96.0,
+                            child: pw.Text(
+                              'Email : ' + emailController.text,
+                              style: pw.TextStyle(
+                                fontSize: 13,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                          ),
+                          pw.SizedBox(
+                            width: 96.0,
+                            child: pw.Text(
+                              'Phone No.: ' + phoneController.text,
+                              style: pw.TextStyle(
+                                fontSize: 13,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                          ),
+                        ]),
                     pw.Container(
                         padding: pw.EdgeInsets.all(10),
                         decoration: pw.BoxDecoration(border: pw.Border.all()),
@@ -767,7 +804,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                     textAlign: pw.TextAlign.left,
                                   ),
                                   pw.Text(
-                                    'State  :' + bstate.text,
+                                    'State  :' + sstate.text,
                                     style: pw.TextStyle(
                                       fontSize: 12,
                                       color: PdfColor.fromInt(0xff2f2e41),

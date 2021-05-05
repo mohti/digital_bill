@@ -2,25 +2,56 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 
-class TermsAndCondition extends StatelessWidget {
+class TermsAndCondition extends StatefulWidget {
+  final String uid;
+  TermsAndCondition(this.uid);
+
+  @override
+  _TermsAndConditionState createState() => _TermsAndConditionState();
+}
+
+class _TermsAndConditionState extends State<TermsAndCondition> {
   final termsAndConditionController = TextEditingController();
 
   final _keyForm = GlobalKey<FormState>();
-  final String uid;
-  TermsAndCondition(this.uid);
+
+  @override
+  void initState() {
+    _gettermsandcondition(widget.uid);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  final db = FirebaseFirestore.instance;
+  Future<Null> _gettermsandcondition(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("termsAndConditiononInvoice")
+        .doc('termsAndConditiononInvoice')
+        .get()
+        .then((valuee) {
+      setState(() {
+        termsAndConditionController.text =
+            valuee.data()['termsAndCondition'] == null
+                ? ''
+                : valuee.data()['termsAndCondition'];
+      });
+    });
+  }
+
+  Future<void> invoicebutton() {
+    // Call the user's CollectionReference to add a new user
+    return db
+        .collection("userData")
+        .doc(widget.uid)
+        .collection("termsAndConditiononInvoice")
+        .doc('termsAndConditiononInvoice')
+        .set({'termsAndCondition': termsAndConditionController.text});
+  }
+
   @override
   Widget build(BuildContext context) {
-    final db = FirebaseFirestore.instance;
-    Future<void> invoicebutton() {
-      // Call the user's CollectionReference to add a new user
-      return db
-          .collection("userData")
-          .doc(uid)
-          .collection("termsAndConditiononInvoice")
-          .doc('termsAndConditiononInvoice')
-          .set({'termsAndCondition': termsAndConditionController.text});
-    }
-
     return Scaffold(
       body: SafeArea(
           child: Form(

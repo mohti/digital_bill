@@ -19,6 +19,7 @@ class Eachrow extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.45,
               height: 50,
               child: TextFormField(
+                maxLines: 1,
                 controller: controller1,
                 decoration: InputDecoration(
                   labelText: s1,
@@ -46,6 +47,7 @@ class Eachrow extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.45,
               height: 50,
               child: TextFormField(
+                maxLines: 1,
                 controller: controller2,
                 decoration: InputDecoration(
                   labelText: s2,
@@ -125,6 +127,7 @@ class _AddPartyState extends State<AddParty> {
     }
 
     return Scaffold(
+      key: _keyForm,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
@@ -165,20 +168,265 @@ class _AddPartyState extends State<AddParty> {
               SizedBox(
                 height: 20,
               ),
-              Eachrow(partyNameController, "Name/Company Name", phoneController,
-                  'phone Number'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: partyNameController,
+                          decoration: InputDecoration(
+                            labelText: "Name/Company Name",
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + "Name/Company Name";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          controller: phoneController,
+                          decoration: InputDecoration(
+                            labelText: 'phone Number',
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty || value.length != 10) {
+                              return 'Please Enter correct ' + 'phone Number';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),
-              Eachrow(gstnController, "GSTN", addressController, 'Address'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: gstnController,
+
+                          decoration: InputDecoration(
+                            labelText: "GSTN",
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                value.characters.last != 'Z' ||
+                                value.length != 15) {
+                              return 'Please Enter Correct ' + "GSTN";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: addressController,
+                          decoration: InputDecoration(
+                            labelText: 'Address',
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + 'Address';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),
-              Eachrow(cityValue, "city", stateValue, 'state'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          expands: false,
+                          controller: cityValue,
+                          decoration: InputDecoration(
+                            labelText: "city",
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + "city";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: stateValue,
+                          decoration: InputDecoration(
+                            labelText: 'state',
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + 'state';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),
-              Eachrow(countryValue, "country", pincodeController, 'Pincode'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          controller: countryValue,
+                          decoration: InputDecoration(
+                            labelText: "country",
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + "country";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 50,
+                        child: TextFormField(
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          controller: pincodeController,
+                          decoration: InputDecoration(
+                            labelText: 'Pincode',
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty || value.length != 6) {
+                              return 'Please Enter ' + 'Pincode';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),

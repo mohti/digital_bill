@@ -23,9 +23,6 @@ class Eachrow extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: s1,
                   fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
@@ -50,9 +47,6 @@ class Eachrow extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: s2,
                   fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
@@ -115,7 +109,51 @@ class _AddproductState extends State<Addproduct> {
       '1.5+1.5%'
     ];
     final listofIGST = ["28 %", "18%", '12%', '9%', '5%', '3%'];
-
+    final units = [
+      'BAG-BAGS',
+      'BAL-BALE',
+      'BDL-BUNDLES',
+      'BKL-BUCKLES',
+      'BOU-BILLIONS OF UNITS',
+      'BOX-BOX',
+      'BTL-BOTTLES',
+      'BUN-BUNCHES',
+      'CAN-CANS',
+      'CBM-CUBIC METER',
+      'CCM-CUBIC CENTIMETER',
+      'CMS-CENTIMETER',
+      'CTN-CARTONS',
+      'DOZ-DOZEN',
+      'DRM-DRUM',
+      'GGR-GREAT GROSS',
+      'GMS-GRAMS',
+      'GRS-GROSS',
+      'GYD-GROSS YARDS',
+      'KGS-KILOGRAMS',
+      'KLR-KILOLITER',
+      'KME-KILOMETRE',
+      'MLT-MILLILITRE',
+      'MTR-METERS',
+      'NOS-NUMBERS',
+      'PAC-PACKS',
+      'PCS-PIECES',
+      'PRS-PAIRS',
+      'QTL-QUINTAL',
+      'ROL-ROLLS',
+      'SET-SETS',
+      'SQF-SQUARE FEET',
+      'SQM-SQUARE METERS',
+      'SQY-SQUARE YARDS',
+      'TBS-TABLETS',
+      'TGM-TEN GROSS',
+      'THD-THOUSANDS',
+      'TON-TONNES',
+      'TUB-TUBES',
+      'UGS-US GALLONS',
+      'UNT-UNITS',
+      'YDS-YARDS',
+      'OTH-OTHERS'
+    ];
     String cgst = listOfCgst[0];
     String igst = "28 %";
     final db = FirebaseFirestore.instance;
@@ -219,9 +257,6 @@ class _AddproductState extends State<Addproduct> {
                         icon: Icon(Icons.arrow_downward),
                         decoration: InputDecoration(
                           labelText: "CGST + SGST",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         items: [
                           "14+14%",
@@ -260,9 +295,6 @@ class _AddproductState extends State<Addproduct> {
                         icon: Icon(Icons.arrow_downward),
                         decoration: InputDecoration(
                           labelText: "IGST",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         items: listofIGST.map((String value) {
                           return new DropdownMenuItem<String>(
@@ -319,9 +351,6 @@ class _AddproductState extends State<Addproduct> {
                         controller: totalAmount,
                         decoration: InputDecoration(
                           labelText: "Total Amount",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -338,8 +367,75 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 30,
               ),
-              Eachrow(unitController, "unit", lowstockreminderat,
-                  'Remind Low Stock at'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 60,
+                        child: DropdownButtonFormField<String>(
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontFamily: 'Arial',
+                            fontSize: 13,
+                          ),
+                          value: 'OTH-OTHERS',
+                          icon: Icon(Icons.arrow_downward),
+                          decoration: InputDecoration(
+                            labelText: "Unit",
+                          ),
+                          items: units.map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              unitController.text = newValue.substring(0, 3);
+                              print(unitController.text);
+                            });
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Pease select unit';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: 60,
+                        child: TextFormField(
+                          controller: lowstockreminderat,
+                          decoration: InputDecoration(
+                            labelText: 'Remind Low Stock at',
+                            fillColor: Colors.white,
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Enter ' + 'Remind Low Stock at';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),

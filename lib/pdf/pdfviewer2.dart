@@ -1825,7 +1825,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                       .CrossAxisAlignment.start,
                                                   children: [
                                                     pw.Text(
-                                                      'State & State Code :',
+                                                      'State :',
                                                       style: pw.TextStyle(
                                                         fontSize: 13,
                                                         color: PdfColor.fromInt(
@@ -1911,7 +1911,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                           pw.TextAlign.left,
                                                     ),
                                                     pw.Text(
-                                                      bstate.text,
+                                                      sstate.text,
                                                       style: pw.TextStyle(
                                                         fontSize: 13,
                                                         color: PdfColor.fromInt(
@@ -2050,30 +2050,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                     pw.MainAxisAlignment.start,
                                                 crossAxisAlignment:
                                                     pw.CrossAxisAlignment.start,
-                                                children: [
-                                                  pw.Text(
-                                                    'eWaybill No :',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 13,
-                                                      color: PdfColor.fromInt(
-                                                          0xff2f2e41),
-                                                      fontWeight:
-                                                          pw.FontWeight.bold,
-                                                    ),
-                                                    textAlign:
-                                                        pw.TextAlign.left,
-                                                  ),
-                                                  pw.Text(
-                                                    vehicleno.text,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 13,
-                                                      color: PdfColor.fromInt(
-                                                          0xff2f2e41),
-                                                    ),
-                                                    textAlign:
-                                                        pw.TextAlign.left,
-                                                  ),
-                                                ],
+                                                children: [],
                                               ),
                                               width: 137.5,
                                               decoration: pw.BoxDecoration(
@@ -2103,7 +2080,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                 textAlign: pw.TextAlign.left,
                                               ),
                                               pw.Text(
-                                                vehicleno.text,
+                                                tracnsportdocno.text,
                                                 style: pw.TextStyle(
                                                   fontSize: 13,
                                                   color: PdfColor.fromInt(

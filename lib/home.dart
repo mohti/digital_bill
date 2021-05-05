@@ -645,15 +645,18 @@ class _HomeState extends State<Home> {
                               textAlign: TextAlign.left,
                             ),
                           ),
-                          Text(
-                            emailController.text,
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xe5707070),
-                              fontWeight: FontWeight.w700,
+                          Container(
+                            width: 200,
+                            child: Text(
+                              emailController.text,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 10,
+                                color: const Color(0xe5707070),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
                           ),
                           Container(
                             alignment: Alignment.centerRight,

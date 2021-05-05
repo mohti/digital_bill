@@ -50,9 +50,6 @@ class EditRow extends StatelessWidget {
                     controller: c1,
                     decoration: InputDecoration(
                       labelText: s1,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(2.0),
-                      ),
                     ),
                     // The validator receives the text that the user has entered.
                   )
@@ -89,6 +86,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
   @override
   void initState() {
     super.initState();
+    _getBusinessDetails(widget.uid);
     downloadURLExample();
   }
 
@@ -249,9 +247,56 @@ class _BusinessInfoState extends State<BusinessInfo> {
         .set(businessInfo.toJson());
   }
 
-  final _keyForm = GlobalKey<FormState>();
+  Future<Null> _getBusinessDetails(String uid) async {
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("BusinessInfo")
+        .doc('businessName')
+        .get()
+        .then((valuee) {
+      setState(() {
+        authorisedSignatureController.text =
+            valuee.data()['authorisedSignature'] == null
+                ? ''
+                : valuee.data()['authorisedSignature'];
+        industryTypeController.text = valuee.data()['industryType'] == null
+            ? ''
+            : valuee.data()['industryType'];
+        businessTypeController.text = valuee.data()['businessType'] == null
+            ? ''
+            : valuee.data()['businessType'];
+        bankNameController.text =
+            valuee.data()['bankName'] == null ? '' : valuee.data()['bankName'];
+        accountNumberController.text = valuee.data()['accountNumber'] == null
+            ? ''
+            : valuee.data()['accountNumber'];
+        ifscCodeController.text =
+            valuee.data()['ifscCode'] == null ? '' : valuee.data()['ifscCode'];
+        branchNameController.text = valuee.data()['branchName'] == null
+            ? ''
+            : valuee.data()['branchName'];
+        businessNameController.text = valuee.data()['businessName'] == null
+            ? ''
+            : valuee.data()['businessName'];
+        businesAddressController.text = valuee.data()['businessAddress'] == null
+            ? ''
+            : valuee.data()['businessAddress'];
+        gstNumberController.text = valuee.data()['gstNumber'] == null
+            ? ''
+            : valuee.data()['gstNumber'];
+        emailController.text =
+            valuee.data()['email'] == null ? '' : valuee.data()['email'];
+        phoneController.text =
+            valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+      });
+    });
+  }
+
+  final _keyForm1 = GlobalKey<FormState>();
 
   bool _edit = true;
+
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> getUsersTripsStreamSnapshots(
@@ -311,7 +356,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
     }
 
     return Scaffold(
-        //   key: _scaffoldKey,
+        key: _keyForm1,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color.fromRGBO(47, 46, 65, 1),
@@ -329,7 +374,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
         body: Container(
           child: _edit
               ? Form(
-                  key: _keyForm,
+                  key: _keyForm1,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -357,10 +402,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                       controller: businessNameController,
                                       decoration: InputDecoration(
                                         labelText: '',
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(2.0),
-                                        ),
                                       ),
                                       // The validator receives the text that the user has entered.
                                     )
@@ -616,7 +657,72 @@ class _BusinessInfoState extends State<BusinessInfo> {
                         ),
                         EditRow('Authorised Signatory', '',
                             authorisedSignatureController, _edit),
-                        EditRow('Phone Number', '', phoneController, _edit),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 0.1)),
+                          width: w,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: w * 0.01,
+                              ),
+                              Container(
+                                width: w * 0.4,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 14.0, bottom: 14),
+                                  child: Text(
+                                    'Phone Number',
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 12,
+                                      color: const Color(0xcc2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: w * 0.05,
+                              ),
+                              Container(
+                                width: w * 0.5,
+                                child: _edit
+                                    ? TextFormField(
+                                        validator: (value) {
+                                          if (value.isEmpty ||
+                                              value.length != 10) {
+                                            return 'Please Enter Correct ' +
+                                                "Phone Number";
+                                          }
+                                          return null;
+                                        },
+                                        maxLength: 10,
+
+                                        obscureText: false,
+                                        controller: phoneController,
+                                        decoration: InputDecoration(
+                                          labelText: 'Phone Number',
+                                          counterText: '',
+                                        ),
+                                        // The validator receives the text that the user has entered.
+                                      )
+                                    : Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 12,
+                                          color: const Color(0xff2f2e41),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
                         EditRow('Email', '', emailController, _edit),
                         Padding(
                             padding: const EdgeInsets.all(20.0),
@@ -630,7 +736,72 @@ class _BusinessInfoState extends State<BusinessInfo> {
                               ),
                               textAlign: TextAlign.left,
                             )),
-                        EditRow('GST Number', '', gstNumberController, _edit),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 0.1)),
+                          width: w,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: w * 0.01,
+                              ),
+                              Container(
+                                width: w * 0.4,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 14.0, bottom: 14),
+                                  child: Text(
+                                    'GST Number',
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 12,
+                                      color: const Color(0xcc2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: w * 0.05,
+                              ),
+                              Container(
+                                width: w * 0.5,
+                                child: _edit
+                                    ? TextFormField(
+                                        maxLength: 15,
+
+                                        validator: (value) {
+                                          if (value.isEmpty ||
+                                              value.characters.last != 'Z' ||
+                                              value.length != 15) {
+                                            return 'Please Enter Correct ' +
+                                                "GSTN";
+                                          }
+                                          return null;
+                                        },
+                                        controller: gstNumberController,
+                                        decoration: InputDecoration(
+                                          labelText: 'GST Number',
+                                          counterText: '',
+                                        ),
+                                        // The validator receives the text that the user has entered.
+                                      )
+                                    : Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 12,
+                                          color: const Color(0xff2f2e41),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
                         EditRow('Business Address', '',
                             businesAddressController, _edit),
                         EditRow(
@@ -660,7 +831,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                         InkWell(
                           onTap: () => _edit
                               ? {
-                                  if (_keyForm.currentState.validate())
+                                  if (_keyForm1.currentState.validate())
                                     {
                                       /*          saveImages([
                                                 File(_result.files.first.path)
@@ -714,7 +885,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                     return new ListView.builder(
                         itemCount: snapshot.data.docs.length,
                         itemBuilder: (BuildContext context, int index) => Form(
-                              key: _keyForm,
+                              key: _keyForm1,
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1073,16 +1244,81 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                           ),
                                           textAlign: TextAlign.left,
                                         )),
-                                    EditRow(
-                                        'GST Number',
-                                        snapshot.data.docs[index]
-                                                    ['gstNumber'] ==
-                                                null
-                                            ? ' '
-                                            : snapshot.data.docs[index]
-                                                ['gstNumber'],
-                                        gstNumberController,
-                                        _edit),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(width: 0.1)),
+                                      width: w,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: w * 0.01,
+                                          ),
+                                          Container(
+                                            width: w * 0.4,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 14.0, bottom: 14),
+                                              child: Text(
+                                                'GST Number',
+                                                style: TextStyle(
+                                                  fontFamily: 'Arial',
+                                                  fontSize: 12,
+                                                  color:
+                                                      const Color(0xcc2f2e41),
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: w * 0.05,
+                                          ),
+                                          Container(
+                                            width: w * 0.5,
+                                            child: _edit
+                                                ? TextFormField(
+                                                    validator: (value) {
+                                                      if (value.isEmpty ||
+                                                          value.characters
+                                                                  .last !=
+                                                              'Z' ||
+                                                          value.length != 15) {
+                                                        return 'Please Enter Correct ' +
+                                                            "GSTN";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    controller:
+                                                        gstNumberController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'GST Number',
+                                                    ),
+                                                    // The validator receives the text that the user has entered.
+                                                  )
+                                                : Text(
+                                                    snapshot.data.docs[index]
+                                                                ['gstNumber'] ==
+                                                            null
+                                                        ? ' '
+                                                        : snapshot.data
+                                                                .docs[index]
+                                                            ['gstNumber'],
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 12,
+                                                      color: const Color(
+                                                          0xff2f2e41),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                     EditRow(
                                         'Business Address',
                                         snapshot.data.docs[index]
@@ -1169,7 +1405,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                     InkWell(
                                       onTap: () => _edit
                                           ? {
-                                              if (_keyForm.currentState
+                                              if (_keyForm1.currentState
                                                   .validate())
                                                 {
                                                   /*          saveImages([
