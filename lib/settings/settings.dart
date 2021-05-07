@@ -1,4 +1,7 @@
 import 'package:adobe_xd/pinned.dart';
+import 'package:digitalbillbook/settings/invoicesettings.dart';
+
+import 'package:digitalbillbook/settings/remindersettings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -48,7 +51,9 @@ class Tab extends StatelessWidget {
   }
 }
 
-class Settings extends StatelessWidget {
+class Settings1 extends StatelessWidget {
+  final String uid;
+  Settings1(this.uid);
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
@@ -92,7 +97,11 @@ class Settings extends StatelessWidget {
                   allowDrawingOutsideViewBox: true,
                 ),
                 ' Invoice Settings',
-                () => Navigator.pushNamed(context, './invoicesettings'),
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InvoiceSettings(uid)),
+                    ),
                 w),
             Tab(
                 SvgPicture.string(
@@ -100,7 +109,12 @@ class Settings extends StatelessWidget {
                   allowDrawingOutsideViewBox: true,
                 ),
                 'Reminder Settings',
-                null,
+                () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReminderSetting(uid),
+                      ),
+                    ),
                 w),
             Tab(
                 SvgPicture.string(

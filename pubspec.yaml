@@ -21,8 +21,32 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  pin_code_fields: ^6.1.0
+
+  firebase_storage: ^7.0.0
+  http: ^0.12.2
+  razorpay_flutter: ^1.1.0
+  share: ^0.6.5
+  advance_pdf_viewer: any
+  intl: ^0.16.1
+  file_picker: ^2.1.6
+  fluttertoast: ^7.1.6
+  url_launcher: ^5.7.8
+  dio: ^3.0.9
+  excel: ^1.1.5
+  open_file: any
+  number_to_words: ^0.0.1
+  country_state_city_picker: ^1.2.7
+  permission_handler: ^4.4.0+hotfix.2
+  downloads_path_provider_28: ^0.1.0
+
+  path_provider: any
   adobe_xd: ^1.1.0+1
+  printing: ^4.1.0
+  firebase_core: ^0.7.0
+  pdf: ^2.1.0
+  cloud_firestore: "^0.16.0+1"
+  firebase_auth: ^0.20.1
+  pinput: ^1.0.0
   flutter_svg: ^0.18.0
   change_app_package_name: ^0.1.2
   flutter:
@@ -51,6 +75,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - assets/bg1.jpg
+     - assets/Component7.jpg
+     - assets/Component12.jpg
+     - assets/downloadinvoicebg.jpg
+     - assets/Component_8.jpg
+     - assets/Component_9.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

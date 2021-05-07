@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "800016050000",
+    "firebase_url": "https://digitalbillbook-3710e-default-rtdb.firebaseio.com",
+    "project_id": "digitalbillbook-3710e",
+    "storage_bucket": "digitalbillbook-3710e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800016050000:android:2018cb5c9b181b06b0ae55",
+        "android_client_info": {
+          "package_name": "com.bradvice.digitalbillbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800016050000-h80e738ap31u8j9sbqie5d0f0a9a957s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bradvice.digitalbillbook",
+            "certificate_hash": "26b55f0ab7ba6b2c9f7aa1d9a955e0ba243b11f4"
+          }
+        },
+        {
+          "client_id": "800016050000-c8mo6ir1u11l38teajkbgmb1nmpn167j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo_zRW1lXeNJNjKQhEDYgia23Dilt-4vE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800016050000-c8mo6ir1u11l38teajkbgmb1nmpn167j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
