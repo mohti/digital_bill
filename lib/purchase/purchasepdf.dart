@@ -111,9 +111,13 @@ class _PurchasePdfState extends State<PurchasePdf> {
   final vehicleno = TextEditingController();
   final from = TextEditingController();
   final taxtype = TextEditingController();
-  double discount;
-  double roundoff;
-  double tcs;
+  String discountStr;
+  String roundoffStr;
+  String tcsStr;
+  String totaltaxStr;
+  double discount = 0;
+  double roundoff = 0.0;
+  double tcs = 0;
   double totaltax = 0;
   final businessInfo = new BusinessProfile(
       '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
@@ -140,7 +144,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
       ' ',
       ' ',
       ' ',
-      ' ',
+      DateTime.now(),
       ' ',
       ' ',
       null,
@@ -200,42 +204,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
     });
   }
 
-  /*     'invoiceno': invoiceno,
-        'sname': sname,
-        'sphone': sphone,
-        'sgstn': sgstn,
-        'sdate': sdate,
-        'scity;': scity,
-        'sstate': sstate,
-        'scountry': scountry,
-        'spin': spin,
-        'bname': bname,
-        'bphone': bphone,
-        'bgstn': bgstn,
-        'bdate': bdate,
-        'bcity;': bcity,
-        'bstate': bstate,
-        'bcountry': bcountry,
-        'bpin': bpin,
-        'listOfProducts': listOfProducts
-            .map((listOfProduct) => listOfProduct.toJson())
-            .toList(),
-        'transporterid': transporterid,
-        'transportername': transportername,
-        'tracnsportdocno': tracnsportdocno,
-        'tdate': tdate,
-        'vehiclemode': vehiclemode,
-        'vehicleno': vehicleno,
-        'from': from
-   'productCode': productCode,
-        'productName': productName,
-        'hsncode': hsncode,
-        'taxrate': taxrate,
-        'quantity': quantity,
-        'unit': unit,
-        'sellingrate': sellingrate,
-        'taxamount': taxamount,
-        'totalamount': totalamount,*/
+ 
   Map<String, dynamic> m;
   List<Map<String, dynamic>> l = [];
   List<Map<String, dynamic>> l2 = [];
@@ -283,11 +252,22 @@ class _PurchasePdfState extends State<PurchasePdf> {
             : valuee.data()['tracnsportdocno'];
         taxtype.text =
             valuee.data()['taxtype'] == null ? '' : valuee.data()['taxtype'];
-        discount =
+        discountStr =
             valuee.data()['discount'] == null ? '' : valuee.data()['discount'];
-        tcs = valuee.data()['tcs'] == null ? '' : valuee.data()['tcs'];
-        roundoff =
+        tcsStr = valuee.data()['tcs'] == null ? '' : valuee.data()['tcs'];
+        if (tcsStr.isNotEmpty) {
+          tcs = double.tryParse(tcsStr);
+        }
+        roundoffStr =
             valuee.data()['roundoff'] == null ? '' : valuee.data()['roundoff'];
+        if (roundoffStr.isNotEmpty) {
+          roundoff = double.tryParse(roundoffStr);
+        }
+
+        if (discountStr.isNotEmpty) {
+          discount = double.tryParse(discountStr);
+        }
+
         l = List.castFrom(valuee.data()['listOfProducts']);
         l2 = List.castFrom(valuee.data()['othercharges']);
         print(l);
@@ -304,7 +284,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
         .snapshots();
   }
 
-  Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
+   Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
     _getBusinessDetails(widget.uid);
     _invoicedetails(widget.uid);
 
@@ -313,9 +293,9 @@ class _PurchasePdfState extends State<PurchasePdf> {
       setState(() {
         taxes[element['taxrate']] = 0.00;
         totalquantity =
-            totalquantity + double.parse(element['quantity'].toString());
+            totalquantity + double.tryParse(element['quantity'].toString());
         totalamount =
-            totalamount + double.parse(element['totalamount'].toString());
+            totalamount + double.tryParse(element['totalamount'].toString());
       });
     });
     setState(() {
@@ -324,15 +304,15 @@ class _PurchasePdfState extends State<PurchasePdf> {
     l.forEach((element) {
       setState(() {
         taxes[element['taxrate']] =
-            taxes[element['taxrate']] + double.parse(element['totalamount']);
+            taxes[element['taxrate']] + double.tryParse(element['totalamount']);
         print(taxes[element['taxrate']]);
       });
     });
     taxes.forEach((key, value) {
       setState(() {
         finalamount = finalamount +
-            (double.parse(key.toString()) *
-                    double.parse(value.toString()) /
+            (double.tryParse(key.toString()) *
+                    double.tryParse(value.toString()) /
                     100.0)
                 .toDouble();
       });
@@ -345,6 +325,9 @@ class _PurchasePdfState extends State<PurchasePdf> {
     setState(() {
       finalamount = finalamount - (discount * totalamount / 100) + roundoff;
     });
+
+
+
     final pdf = pw.Document();
     Future<void> uploadtostorage() async {
       final output = await getTemporaryDirectory();
@@ -364,9 +347,11 @@ class _PurchasePdfState extends State<PurchasePdf> {
           margin: pw.EdgeInsets.only(top: 10, right: 30, left: 30, bottom: 10),
           header: (pw.Context context) {
             return widget.generalreportornot == false
-                ? pw.Column(
+                ? 
+                pw.Column(
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
+                      
                         pw.Align(
                           alignment: pw.Alignment.topRight,
                           child: pw.SizedBox(
@@ -381,15 +366,24 @@ class _PurchasePdfState extends State<PurchasePdf> {
                             ),
                           ),
                         ),
+                        
+                       
                         pw.Row(
+
                             mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                             children: [
-                              pw.SizedBox(
-                                  width: 50.0,
-                                  height: 50.0,
-                                  child: pw.Image(pw.MemoryImage(widget.logo))
-                                  //  child: null,
-                                  ),
+                              //mohit here  in this  row problems
+                            
+                              // pw.SizedBox(
+                              //     width: 50.0,
+                              //     height: 50.0,
+                              //     child: pw.Image(pw.MemoryImage(widget.logo))
+                              //     //  child: null,
+                              //     ),
+                            
+                            
+                            //above here 
+                             
                               pw.Column(children: [
                                 pw.Text(
                                   businessNameController.text,
@@ -411,10 +405,14 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                   ),
                                 )
                               ]),
+                         
                               pw.SizedBox(width: 50.0, height: 50.0, child: null
                                   //  child: null,
                                   ),
                             ]),
+                        
+                        
+                     
                         pw.Row(
                             mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                             children: [
@@ -454,6 +452,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                             ]),
                         pw.SizedBox(height: 10),
                         pw.Container(height: 2, color: PdfColors.black),
+                    
                         pw.SizedBox(height: 10),
                         pw.Container(
                             padding: pw.EdgeInsets.all(10),
@@ -683,8 +682,13 @@ class _PurchasePdfState extends State<PurchasePdf> {
                               ])
                         ]),
                         pw.SizedBox(height: 20),
-                      ])
-                : pw.Column(children: [
+                      
+                      
+                       ])
+                
+                :
+                
+                 pw.Column(children: [
                     pw.Align(
                       alignment: pw.Alignment.topRight,
                       child: pw.SizedBox(
@@ -898,7 +902,13 @@ class _PurchasePdfState extends State<PurchasePdf> {
                         ])),
                     pw.SizedBox(height: 20)
                   ]);
-          },
+          
+          
+           },
+       
+       
+       
+       
           footer: (pw.Context context) {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -918,6 +928,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
                               mainAxisAlignment: pw.MainAxisAlignment.start,
                               children: [
                                 pw.Text(
+       
+       
                                   'Company Bank A/C Details',
                                   style: pw.TextStyle(
                                     fontSize: 14,
@@ -996,53 +1008,55 @@ class _PurchasePdfState extends State<PurchasePdf> {
                   ],
                 ),
                 pw.SizedBox(height: 20),
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Column(
-                      mainAxisAlignment: pw.MainAxisAlignment.end,
-                      children: [
-                        pw.SizedBox(
-                          child: pw.SizedBox(
-                              width: 50.0,
-                              height: 50.0,
-                              child: widget.stamp == null
-                                  ? null
-                                  : pw.Image(pw.MemoryImage(widget.stamp))
-                              //  child: null,
-                              ),
-                        ),
-                        pw.Text(
-                          'For ' + businessNameController.text,
-                          style: pw.TextStyle(
-                            fontSize: 10,
-                            color: PdfColor.fromInt(0xff2f2e41),
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                          textAlign: pw.TextAlign.left,
-                        ),
-                        pw.SizedBox(
-                          child: pw.SizedBox(
-                              width: 50.0,
-                              height: 50.0,
-                              child:
-                                  pw.Image(pw.MemoryImage(widget.sign)) == null
-                                      ? null
-                                      : pw.Image(pw.MemoryImage(widget.sign))
-                              //  child: null,
-                              ),
-                        ),
-                        pw.Text(
-                          'Authorised Signatory',
-                          style: pw.TextStyle(
-                            fontSize: 10,
-                            color: PdfColor.fromInt(0xff2f2e41),
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                          textAlign: pw.TextAlign.left,
-                        ),
-                      ]),
-                ),
-                pw.SizedBox(height: 50),
+                //mohit here the problems
+                
+                 // pw.Align(
+                //   alignment: pw.Alignment.centerRight,
+                //   child: pw.Column(
+                //       mainAxisAlignment: pw.MainAxisAlignment.end,
+                //       children: [
+                //         pw.SizedBox(
+                //           child: pw.SizedBox(
+                //               width: 50.0,
+                //               height: 50.0,
+                //               child: widget.stamp == null
+                //                   ? null
+                //                   : pw.Image(pw.MemoryImage(widget.stamp))
+                //               //  child: null,
+                //               ),
+                //         ),
+                //         pw.Text(
+                //           'For ' + businessNameController.text,
+                //           style: pw.TextStyle(
+                //             fontSize: 10,
+                //             color: PdfColor.fromInt(0xff2f2e41),
+                //             fontWeight: pw.FontWeight.bold,
+                //           ),
+                //           textAlign: pw.TextAlign.left,
+                //         ),
+                //         pw.SizedBox(
+                //           child: pw.SizedBox(
+                //               width: 50.0,
+                //               height: 50.0,
+                //               child:
+                //                   pw.Image(pw.MemoryImage(widget.sign)) == null
+                //                       ? null
+                //                       : pw.Image(pw.MemoryImage(widget.sign))
+                //               //  child: null,
+                //               ),
+                //         ),
+                //         pw.Text(
+                //           'Authorised Signatory',
+                //           style: pw.TextStyle(
+                //             fontSize: 10,
+                //             color: PdfColor.fromInt(0xff2f2e41),
+                //             fontWeight: pw.FontWeight.bold,
+                //           ),
+                //           textAlign: pw.TextAlign.left,
+                //         ),
+                //       ]),
+                // ),
+                 pw.SizedBox(height: 50),
                 pw.Align(
                     alignment: pw.Alignment.center,
                     child: pw.Text(
@@ -1054,11 +1068,15 @@ class _PurchasePdfState extends State<PurchasePdf> {
                       ),
                       textAlign: pw.TextAlign.left,
                     )),
+              
               ],
             );
           },
+        
+        
+        
           build: (context) => <pw.Widget>[
-                //     pw.Table.fromTextArray(data: List<List<Widget>>.generate(l.length~/3+1, (index) => null)),
+                //    pw.Table.fromTextArray(data: List<List<Widget>>.generate(l.length~/3+1, (index) => null)),
                 pw.Container(
                   child: pw.Column(
                     children: [
@@ -1190,6 +1208,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                     ],
                   ),
                 ),
+                
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
                   l.length,
@@ -1298,8 +1317,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
                               pw.Container(
                                 alignment: pw.Alignment.center,
                                 width: 50,
-                                child: pw.Text(
-                                  l[index]['totalamount'],
+                                child: pw.Text('erro here mohit',
+                                 // l[index]['totalamount'],
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.normal),
@@ -1675,16 +1694,17 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                 alignment: pw.Alignment.center,
                                 width: 50,
                                 child: pw.Text(
-                                  (double.parse(taxes.entries
-                                              .elementAt(index)
-                                              .key
-                                              .toString()) *
-                                          double.parse((taxes.entries
-                                                  .elementAt(index)
-                                                  .value)
-                                              .toString()) /
-                                          100.toInt())
-                                      .toString(),
+                                  'here the error',
+                                  // (double.tryParse(taxes.entries
+                                  //             .elementAt(index)
+                                  //             .key
+                                  //             .toString()) *
+                                  //         double.tryParse((taxes.entries
+                                  //                 .elementAt(index)
+                                  //                 .value)
+                                  //             .toString()) /
+                                  //         100.toInt())
+                                  //     .toString(),
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.bold),
@@ -1698,6 +1718,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                     ),
                   ),
                 )),
+              
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
                   l2.length,
@@ -1930,9 +1951,10 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                   alignment: pw.Alignment.center,
                                   width: 50,
                                   child: pw.Text(
-                                    '-' +
-                                        (discount * totalamount / 100)
-                                            .toString(),
+                                    '- Error Here Mohit', 
+                                    // +
+                                    //     (discount * totalamount / 100)
+                                    //         .toString(),
                                     style: pw.TextStyle(
                                         fontSize: 13,
                                         fontWeight: pw.FontWeight.bold),
@@ -1946,6 +1968,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                       ),
                     ),
                   ]),
+
                 if (tcs != 0.0)
                   pw.Wrap(children: [
                     pw.Container(
@@ -2054,7 +2077,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                   alignment: pw.Alignment.center,
                                   width: 50,
                                   child: pw.Text(
-                                    (tcs * totalamount / 100).toString(),
+                                    'Error here mohit',
+                                    //(tcs * totalamount / 100).toString(),
                                     style: pw.TextStyle(
                                         fontSize: 13,
                                         fontWeight: pw.FontWeight.bold),
@@ -2349,10 +2373,11 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                         textAlign: pw.TextAlign.left,
                                       ),
                                       pw.Text(
-                                        'INR ' +
-                                            NumberToWord().convert(
-                                                'en-in', finalamount.toInt()) +
-                                            'Only',
+                                         'error here',
+                                        // 'INR ' +
+                                        //     NumberToWord().convert(
+                                        //         'en-in', finalamount.toInt()) +
+                                        //     'Only',
                                         style: pw.TextStyle(
                                           fontSize: 13,
                                           color: PdfColor.fromInt(0xff2f2e41),
@@ -2460,6 +2485,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                   ),
                 ])
               ]),
+    
     );
     uploadtostorage();
 

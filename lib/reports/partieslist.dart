@@ -49,7 +49,7 @@ class _PartiesListState extends State<PartiesList> {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
-      var sheet = excel['mySheet'];
+      var sheet = excel['partiesList'];
 
       sheet.appendRow([
         'Name/Company Name',

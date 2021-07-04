@@ -230,7 +230,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
         ' ',
         ' ',
         ' ',
-        ' ',
+        DateTime.now(),
         ' ',
         ' ',
         null,

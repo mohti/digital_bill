@@ -1,74 +1,132 @@
 import 'dart:typed_data';
 
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
+import 'package:digitalbillbook/customwidgets/EachrowTextfield.dart';
 import 'package:digitalbillbook/models/invoicemodel.dart';
+import 'package:digitalbillbook/pdf/pdfviewer2.dart';
 import 'package:digitalbillbook/purchase/purchasepdf.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-class Eachrow extends StatelessWidget {
-  final TextEditingController controller1, controller2;
-  final String s1, s2;
-  Eachrow(this.controller1, this.s1, this.controller2, this.s2);
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: 50,
-              child: TextFormField(
-                controller: controller1,
-                decoration: InputDecoration(
-                  labelText: s1,
-                  fillColor: Colors.white,
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return null;
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: 50,
-              child: TextFormField(
-                controller: controller2,
-                decoration: InputDecoration(
-                  labelText: s2,
-                  fillColor: Colors.white,
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return null;
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class Eachrow extends StatelessWidget {
+//   final TextEditingController controller1, controller2;
+//   final String s1, s2;
+//   Function validation;
+//   Eachrow(this.controller1, this.s1, this.controller2, this.s2);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//       children: <Widget>[
+//         Padding(
+//           padding: const EdgeInsets.all(0.0),
+//           child: Card(
+//             elevation: 4,
+//             child: Container(
+//               width: MediaQuery.of(context).size.width * 0.45,
+//               child: TextFormField(
+//                 controller: controller1,
+//                 decoration: CoustumInputDecorationWidget(s1).decoration(),
+
+//                 // The validator receives the text that the user has entered.
+//                 validator: (value) {
+//                   if (value.isEmpty) {
+//                     return null;
+//                   }
+//                   return null;
+//                 },
+//               ),
+//             ),
+//           ),
+//         ),
+//         Padding(
+//           padding: const EdgeInsets.all(0.0),
+//           child: Card(
+//             elevation: 4,
+//             child: Container(
+//               width: MediaQuery.of(context).size.width * 0.45,
+//               child: TextFormField(
+//                 controller: controller2,
+//                 decoration: CoustumInputDecorationWidget(s2).decoration(),
+//                 validator: (value) {
+//                   if (value.isEmpty) {
+//                     return null;
+//                   }
+//                   return null;
+//                 },
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class Eachrows extends StatelessWidget {
+//   final TextEditingController controller1, controller2;
+//   final String s1, s2;
+//   Function validation1, validation2;
+//   Eachrows(this.controller1, this.s1, this.validation1, this.controller2,
+//       this.s2, this.validation2);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//       children: <Widget>[
+//         Padding(
+//           padding: const EdgeInsets.all(0.0),
+//           child: Card(
+//             elevation: 4,
+//             child: Container(
+//               width: MediaQuery.of(context).size.width * 0.45,
+//               child: TextFormField(
+//                   controller: controller1,
+//                   decoration: CoustumInputDecorationWidget(s1).decoration(),
+
+//                   // The validator receives the text that the user has entered.
+//                   validator: validation1
+
+//                   // (value) {
+//                   //   if (value.isEmpty) {
+//                   //     return null;
+//                   //   }
+//                   //   return null;
+//                   // },
+//                   ),
+//             ),
+//           ),
+//         ),
+//         Padding(
+//           padding: const EdgeInsets.all(0.0),
+//           child: Card(
+//             elevation: 4,
+//             child: Container(
+//               width: MediaQuery.of(context).size.width * 0.45,
+//               child: TextFormField(
+//                   controller: controller2,
+//                   decoration: CoustumInputDecorationWidget(s2).decoration(),
+//                   validator: validation2
+
+//                   // (value) {
+//                   //   if (value.isEmpty) {
+//                   //     return null;
+//                   //   }
+//                   //   return null;
+//                   // },
+//                   ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class PurchaseInvoice extends StatefulWidget {
   final String uid;
@@ -145,7 +203,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
   final transporterid = TextEditingController();
   final transportername = TextEditingController();
   final tracnsportdocno = TextEditingController();
-  final tdate = TextEditingController();
+  // final tdate = DateTime(year);
   final vehiclemode = TextEditingController();
   final vehicleno = TextEditingController();
   final from = TextEditingController();
@@ -160,7 +218,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
   List<Customtexteditingcontroller> t = List<Customtexteditingcontroller>();
   List<OtherCharges> othercharges = List<OtherCharges>();
   var date = DateTime.now();
+  var tdate = DateTime.now();
   int noofproducts = 1;
+
   var newProduct = new InvoiceProduct(
     '',
     '',
@@ -173,6 +233,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     '',
     '',
   );
+
   final newInvoice = new InvoiceModel(
       null,
       null,
@@ -204,7 +265,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
       null,
       null,
       null);
+
   final _keyForm = GlobalKey<FormState>();
+
   bool generalInvoiceornot = false;
 
   Uint8List logo, sign, stamp;
@@ -278,9 +341,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     super.initState();
     // ignore: todo
     // TODO: implement initState
-    downloadURLExample();
-    downloadURLExamplesign();
-    downloadURLExamplestamp();
+    // downloadURLExample();
+    // downloadURLExamplesign();
+    //downloadURLExamplestamp();
   }
 
   @override
@@ -359,13 +422,16 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
       newInvoice.transporterid = transporterid.text;
       newInvoice.transportername = transportername.text;
       newInvoice.tracnsportdocno = tracnsportdocno.text;
-      newInvoice.tdate = tdate.text;
+      newInvoice.tdate = tdate;
       newInvoice.vehiclemode = vehiclemode.text;
       newInvoice.vehicleno = vehicleno.text;
       newInvoice.othercharges = othercharges;
-      newInvoice.discount = double.parse(discountrate.text);
-      newInvoice.tcs = double.parse(tcs.text);
-      newInvoice.roundoff = double.parse(roundoffamount.text);
+      // newInvoice.discount = double.parse(discountrate.text);
+      // newInvoice.tcs = double.parse(tcs.text);
+      // newInvoice.roundoff = double.parse(roundoffamount.text);
+      newInvoice.discount = discountrate.text;
+      newInvoice.tcs = tcs.text;
+      newInvoice.roundoff = roundoffamount.text;
 
       // Call the user's CollectionReference to add a new user
       return db
@@ -376,7 +442,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
           .set(newInvoice.toJson());
     }
 
-    Future<Null> _selectDate(BuildContext context) async {
+    Future<Null> _selectDate(BuildContext context, DateTime dateTime) async {
       final DateTime picked = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
@@ -385,7 +451,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
           lastDate: DateTime(2101));
       if (picked != null)
         setState(() {
-          date = picked;
+          dateTime = picked;
         });
     }
 
@@ -468,13 +534,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: DropdownButtonFormField<String>(
                           value: 'IGST',
                           icon: Icon(Icons.arrow_downward),
-                          decoration: InputDecoration(
-                            labelText: "Tax Type",
-                          ),
+                          decoration:CoustumInputDecorationWidget("Tax Type").decoration(),
+                          //  InputDecoration(
+                          //   labelText: ,
+                          // ),
                           items: taxtypes.map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -510,17 +577,15 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           controller: invoiceno,
-                          decoration: InputDecoration(
-                            labelText: "Receipt No.",
-                            fillColor: Colors.white,
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget('Receipt No.')
+                                  .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
-                              return null;
+                              return 'Enter invoiceno';
                             }
                             return null;
                           },
@@ -547,21 +612,42 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  Eachrow(sname, "Name/Company Name", sphone, 'Phone Number'),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  Eachrow(
+                      sname,
+                      "Name/Company Name",
+                      TextInputType.text,
+                      (value) {
+                        if (value.isEmpty) {
+                          return 'enter please';
+                        }
+                        return null;
+                      },
+                      sphone,
+                      'Phone Number',
+                      TextInputType.number,
+                      (value) {
+                        if (value.isEmpty || value.length != 10) {
+                          return 'Please Enter ';
+                        }
+                        return null;
+                      },
+                      10),
+                  // Eachrow(sname, "Name/Company Name", (value) {}, sphone,
+                  //     'Phone Number', null),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Card(
                         elevation: 4,
                         child: InkWell(
-                          onTap: () => _selectDate(context),
+                          onTap: () => _selectDate(context, date),
                           child: Container(
+                            height: 50,
                             alignment: Alignment.center,
                             width: MediaQuery.of(context).size.width * 0.45,
-                            height: 50,
                             child: Text(
                                 "Date " + DateFormat().add_yMd().format(date)),
                           ),
@@ -571,15 +657,22 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         elevation: 4,
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.45,
-                          height: 50,
                           child: TextFormField(
+                            textCapitalization:
+                                      TextCapitalization.characters,
                             controller: sgstn,
-                            decoration: InputDecoration(
-                              labelText: "GSTN",
-                            ),
+                            decoration: CoustumInputDecorationWidget('GSTN')
+                                .decoration(),
                             // The validator receives the text that the user has entered.
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(15),
+                            ],
                             validator: (value) {
-                              if (value.isEmpty) {}
+                              if (value.isEmpty ||
+                                  value.length != 15 ||
+                                  value.characters.last != 'Z') {
+                                return 'enter GSTN';
+                              }
                               return null;
                             },
                           ),
@@ -590,11 +683,22 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                   SizedBox(
                     height: 10,
                   ),
-                  Eachrow(scity, "City", sstate, 'State'),
+                  Eachrow(scity, "City", TextInputType.text, null, sstate,
+                      'State', TextInputType.text, null, 40),
+
+                  //              Eachrow(scity, "City", sstate, 'State'),
+
                   SizedBox(
                     height: 10,
                   ),
-                  Eachrow(scountry, "Country", spin, 'Pin Code'),
+                  //                  Eachrow(scountry, "Country", spin, 'Pin Code'),
+                  Eachrow(scountry, "Country", TextInputType.text, null, spin,
+                      'Pin Code', TextInputType.number, ((value) {
+                    if (value.isEmpty && value.length != 6) {
+                      return 'Please Enter ' + 'Pincode';
+                    }
+                    return null;
+                  }), 6),
                 ],
               ),
               Padding(
@@ -627,7 +731,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
                                 child: TextFormField(
                                   onChanged: (value) {
                                     changeQuantity1(index, value);
@@ -649,10 +752,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     });
                                   },
                                   controller: t[index].productCode,
-                                  decoration: InputDecoration(
-                                    labelText: "Product Code",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration: CoustumInputDecorationWidget(
+                                          'Product Code')
+                                      .decoration(),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -670,14 +772,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
                                 child: TextFormField(
                                   enabled: false,
                                   controller: t[index].productName,
-                                  decoration: InputDecoration(
-                                    labelText: 'Product Name',
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration: CoustumInputDecorationWidget('Product Name').decoration(),
+                                  // decoration: InputDecoration(
+                                  //   labelText: 'Product Name',
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -700,14 +802,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
                                 child: TextFormField(
                                   controller: t[index].hsncode,
                                   enabled: false,
-                                  decoration: InputDecoration(
-                                    labelText: "HSN Code",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:CoustumInputDecorationWidget("HSN Code").decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: ,
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -725,13 +827,13 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
                                 child: TextFormField(
                                   controller: t[index].taxrate,
-                                  decoration: InputDecoration(
-                                    labelText: 'tax Rate',
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration: CoustumInputDecorationWidget("Tax Rate").decoration(),
+                                  // InputDecoration(
+                                  //   labelText: 'tax Rate',
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -757,14 +859,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 50,
                                 child: TextFormField(
                                   controller: t[index].quantity,
 
-                                  decoration: InputDecoration(
-                                    labelText: "Quantity",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:CoustumInputDecorationWidget("Quantity").decoration(), 
+                                  // InputDecoration(
+                                  //   labelText: "Quantity",
+                                  //   fillColor: Colors.white,
+                                  // ),
 
                                   onChanged: (value) {
                                     print(value);
@@ -788,18 +890,19 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                height: 50,
                                 child: DropdownButtonFormField<String>(
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontFamily: 'Arial',
-                                    fontSize: 13,
+                                    fontSize: 12,
                                   ),
                                   value: 'OTH-OTHERS',
                                   icon: Icon(Icons.arrow_downward),
-                                  decoration: InputDecoration(
-                                    labelText: "Unit",
-                                  ),
+                                  decoration:CoustumInputDecorationWidget("Unit").decoration(),
+                                  // InputDecoration(
+                                  //   labelText: "Unit",
+                                  // ),
                                   items: units.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -862,27 +965,36 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       SizedBox(
                         height: 10,
                       ),
-                      Eachrow(t[index].sellingrate, 'Selling Rate',
-                          t[index].taxamount, "TAX Amount"),
+                      Eachrow(
+                          t[index].sellingrate,
+                          'Selling Rate',
+                          TextInputType.text,
+                          null,
+                          t[index].taxamount,
+                          "TAX Amount",
+                          TextInputType.text,
+                          null,
+                          10),
                       SizedBox(
                         height: 10,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(0.0),
                             child: Card(
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                height: 50,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
-                                  decoration: InputDecoration(
-                                    labelText: "Total Amount",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:CoustumInputDecorationWidget("Total Amount").decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: "Total Amount",
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -898,13 +1010,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             elevation: 4,
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.45,
-                              height: 60,
+                              height: 50,
                               child: DropdownButtonFormField<String>(
                                 value: 'None',
                                 icon: Icon(Icons.arrow_downward),
-                                decoration: InputDecoration(
-                                  labelText: "foc",
-                                ),
+                                decoration:CoustumInputDecorationWidget("Foc").decoration(),
+                                //  InputDecoration(
+                                //   labelText: "foc",
+                                // ),
                                 items: foc.map((String value) {
                                   return new DropdownMenuItem<String>(
                                     value: value,
@@ -990,13 +1103,25 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
+                    decoration: BoxDecoration(
+                       borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(15.0)),
+                    ),
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Column(
                       children: [
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
+                               
                               context: context,
+                             
                               builder: (BuildContext context) {
                                 return Container(
                                   decoration: BoxDecoration(
@@ -1008,6 +1133,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                       ], // red to yellow
                                       // repeats the gradient over the canvas
                                     ),
+                                     borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
                                   ),
                                   child: Column(children: [
                                     SizedBox(
@@ -1060,9 +1188,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                       .size
                                                       .width *
                                                   0.4,
-                                              height: 50,
-                                              child: TextFormField(
-                                                  controller: chargename),
+                                              child: TextFormField(                                                
+                                                  controller: chargename
+                                                  ),
                                             )
                                           ],
                                         ),
@@ -1083,7 +1211,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                       .size
                                                       .width *
                                                   0.45,
-                                              height: 50,
                                               child: TextFormField(
                                                   controller: chargevalue),
                                             )
@@ -1096,7 +1223,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        othercharges.add(OtherCharges(
+                                        othercharges.add(
+                                          OtherCharges(
                                             chargename.text.toString(),
                                             double.parse(chargevalue.text)));
                                         chargevalue.text = '';
@@ -1130,6 +1258,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               },
                             );
                           },
+                          
+                          
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.45,
                             height: 30,
@@ -1162,11 +1292,19 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           height: 2,
                         ),
                         InkWell(
+                         
                           onTap: () {
+                         
                             showModalBottomSheet<void>(
+                               shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
+                                 
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
@@ -1176,6 +1314,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         ], // red to yellow
                                         // repeats the gradient over the canvas
                                       ),
+                                         borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
                                     ),
                                     child: Column(children: [
                                       Padding(
@@ -1209,13 +1350,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                     .size
                                                     .width *
                                                 0.4,
-                                            height: 50,
                                             child: TextFormField(
                                                 controller: discountrate),
                                           ),
                                           Container(
                                             color: Colors.white,
-                                            height: 50,
                                             child: Text('%'),
                                           ),
                                         ],
@@ -1224,7 +1363,18 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         height: 10,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          if (discountrate.text.isNotEmpty)
+                                            Navigator.pop(context);
+                                          else {
+                                            Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.black12,
+                                                textColor:
+                                                    const Color(0xff3f3d56));
+                                          }
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1280,16 +1430,26 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             ),
                           ),
                         ),
+                        
                         SizedBox(
                           height: 2,
                         ),
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
+                               shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
+                                     borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                   
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1331,13 +1491,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                     .size
                                                     .width *
                                                 0.4,
-                                            height: 50,
                                             child:
                                                 TextFormField(controller: tcs),
                                           ),
                                           Container(
                                             color: Colors.white,
-                                            height: 50,
                                             child: Text('%'),
                                           ),
                                         ],
@@ -1346,7 +1504,18 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         height: 10,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                           if ( tcs.text.isNotEmpty)
+                                            Navigator.pop(context);
+                                          else {
+                                            Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.black12,
+                                                textColor:
+                                                    const Color(0xff3f3d56));
+                                          }
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1408,10 +1577,19 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
+                                      borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                 
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1453,7 +1631,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                     .size
                                                     .width *
                                                 0.4,
-                                            height: 50,
                                             child: TextFormField(
                                                 controller: roundoffamount),
                                           ),
@@ -1463,7 +1640,17 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         height: 10,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          if ( roundoffamount.text.isNotEmpty)
+                                            Navigator.pop(context);
+                                          else {
+                                            Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.black12,
+                                                textColor:
+                                                    const Color(0xff3f3d56));
+                                          }},
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1561,6 +1748,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       Card(
                         child: Container(
                           decoration: BoxDecoration(
+                            
                             color: Colors.white,
                           ),
                           width: MediaQuery.of(context).size.width * 0.4,
@@ -1635,13 +1823,67 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              Eachrow(transporterid, "Transporter id", transportername,
-                  'Transporter Name'),
+              Eachrow(
+                  transporterid,
+                  "Transporter id",
+                  TextInputType.text,
+                  null,
+                  transportername,
+                  'Transporter Name',
+                  TextInputType.text,
+                  null,
+                  40),
               SizedBox(
                 height: 10,
               ),
-              Eachrow(
-                  tracnsportdocno, "Transporter Doc/Bilty No", tdate, 'Date'),
+
+              // mohit have to change here
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: tracnsportdocno,
+                            decoration: CoustumInputDecorationWidget(
+                                    "Transporter Doc/Bilty No")
+                                .decoration(),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            }),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: InkWell(
+                        onTap: () => _selectDate(context, tdate),
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.45,
+                          height: 50,
+                          child: Text(
+                              "Date " + DateFormat('dd/MM/yyyy').format(sdate)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Eachrow(
+              //     tracnsportdocno, "Transporter Doc/Bilty No", tdate, 'Date'),
+
               SizedBox(
                 height: 10,
               ),
@@ -1667,7 +1909,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: DropdownButtonFormField<String>(
                           style: TextStyle(
                             color: Colors.black87,
@@ -1676,9 +1918,10 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           ),
                           value: 'Road',
                           icon: Icon(Icons.arrow_downward),
-                          decoration: InputDecoration(
-                            labelText: "Mode",
-                          ),
+                          decoration:CoustumInputDecorationWidget("Mode").decoration(), 
+                          // InputDecoration(
+                          //   labelText: "Mode",
+                          // ),
                           items: vehiclemodes.map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -1706,13 +1949,15 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        //height: 60,
                         child: TextFormField(
                           controller: vehicleno,
-                          decoration: InputDecoration(
-                            labelText: 'Vehicle no',
-                            fillColor: Colors.white,
-                          ),
+                          decoration: CoustumInputDecorationWidget('Vehicle no')
+                              .decoration(),
+                          //  InputDecoration(
+                          //   labelText: 'Vehicle no',
+                          //   fillColor: Colors.white,
+                          // ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty && value.length != 15) {
@@ -1738,13 +1983,13 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           controller: from,
-                          decoration: InputDecoration(
-                            labelText: "from",
-                            fillColor: Colors.white,
-                          ),
+                          decoration:CoustumInputDecorationWidget("Form").decoration(),
+                          //  InputDecoration(
+                          //   labelText: "from",
+                          //   fillColor: Colors.white,
+                          // ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
@@ -1788,8 +2033,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PurchasePdf(widget.uid,
-                                    false, invoiceno.text, sign, stamp, logo)));
+                                builder: (context) =>
+                                    // PdfViewer2(widget.uid,
+                                    //     false, invoiceno.text, sign, stamp, logo)
+                                    PurchasePdf(widget.uid, false,
+                                        invoiceno.text, sign, stamp, logo)));
                       });
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(

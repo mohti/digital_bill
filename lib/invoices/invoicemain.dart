@@ -1,5 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:digitalbillbook/Invoicestyle.dart';
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
+import 'package:digitalbillbook/customwidgets/EachrowTextfield.dart';
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:digitalbillbook/pdf/pdfviewer.dart';
 import 'package:digitalbillbook/pdf/pdfviewer2.dart';
@@ -7,69 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-class Eachrow extends StatelessWidget {
-  final TextEditingController controller1, controller2;
-  final String s1, s2;
-  Eachrow(this.controller1, this.s1, this.controller2, this.s2);
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: 60,
-              child: TextFormField(
-                controller: controller1,
-                decoration: InputDecoration(
-                  labelText: s1,
-                  fillColor: Colors.white,
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please Enter ' + s1;
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: 60,
-              child: TextFormField(
-                controller: controller2,
-                decoration: InputDecoration(
-                  labelText: s2,
-                  fillColor: Colors.white,
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty && value.length != 15) {
-                    return 'Please Enter correct ' + s2;
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+/*
+  #$%$############### READ FOR BETTER UNDERSTANDING ######################
+search  after cntrl+f 
+generalInvoiceornot == false
+to see the ternary operator code  
+*/
 
 class InvoiceMain extends StatefulWidget {
   final String uid;
@@ -147,7 +97,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
   final transporterid = TextEditingController();
   final transportername = TextEditingController();
   final tracnsportdocno = TextEditingController();
-  final tdate = TextEditingController();
+  // final tdate = TextEditingController();
   final vehiclemode = TextEditingController();
   final vehicleno = TextEditingController();
   final chargename = TextEditingController();
@@ -159,6 +109,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
   final taxtype = TextEditingController();
   var bdate = DateTime.now();
   var sdate = DateTime.now();
+  var tdate = DateTime.now();
 
   List<Customtexteditingcontroller> t = List<Customtexteditingcontroller>();
   List<OtherCharges> othercharges = List<OtherCharges>();
@@ -197,6 +148,58 @@ class _InvoiceMainState extends State<InvoiceMain> {
       null);
   final _keyForm = GlobalKey<FormState>();
   bool generalInvoiceornot = true;
+
+  String numberOfInvoies;
+  String invoiceStyle;
+
+  int productCount=0;
+
+  //use this funtion when u need  to call field empty validation
+  Function ifemptyvalidation = (value) {
+    if (value.isEmpty) {
+      return 'Please Enter value';
+    }
+    return null;
+  };
+
+  Future<Null> numberOfInvoices(String uid) async {
+
+    QuerySnapshot productCollection = await FirebaseFirestore.instance
+        .collection("userData")
+        .doc(uid)
+        .collection('Invoice')
+        .get();
+    setState(() {
+      if(productCollection.size==null)
+      productCount = productCollection.size;
+    });
+
+  }
+
+  Future<Null> invoiceNumDetails(String uid) async {
+    print("invoiceNumdetails is called mohit");
+    final db = FirebaseFirestore.instance;
+    {
+      await db
+          .collection("userData")
+          .doc(uid)
+          .collection("invoiceSettings")
+          .doc("invoiceSettings")
+          .get()
+          .then((valuee) {
+        setState(() {
+          String invoiceprefix = valuee.data()['invoiceprefix'] == null
+              ? ''
+              : valuee.data()['invoiceprefix'];
+          String invoiceStartingSerialNum = valuee.data()['invoiceprefix'] == null
+              ? ''
+              : valuee.data()['startingserialno'];
+          int numberofInvoice = int.parse(invoiceStartingSerialNum) + productCount;
+          invoiceno.text = invoiceprefix + numberofInvoice.toString();
+        });
+      });
+    }
+  }
 
   Uint8List logo, sign, stamp;
   Future<void> downloadURLExamplesign() async {
@@ -269,6 +272,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
     super.initState();
     // ignore: todo
     // TODO: implement initState
+    numberOfInvoices(widget.uid);
+    invoiceNumDetails(widget.uid);
     downloadURLExample();
     downloadURLExamplesign();
     downloadURLExamplestamp();
@@ -303,11 +308,33 @@ class _InvoiceMainState extends State<InvoiceMain> {
       }
     }
 
-    final db = FirebaseFirestore.instance;
     // ignore: unused_local_variable
     List<InvoiceProduct> l2 = List<InvoiceProduct>();
 
-    Future<void> generateInvoice() {
+    Future<Null> invoiceStyleDetails(String uid) async {
+      final db = FirebaseFirestore.instance;
+      {
+        await db
+            .collection("userData")
+            .doc(uid)
+            .collection("invoiceStyle")
+            .doc("invoiceStyle")
+            .get()
+            .then((valuee) {
+          setState(() {
+            invoiceStyle = valuee.data()['invoiceStyle'] == null
+                ? ''
+                : valuee.data()['invoiceStyle'];
+          });
+        });
+      }
+    }
+
+    Future<void> generateInvoice() async {
+      final db = FirebaseFirestore.instance;
+      //mohit genrate invoice
+      print('genrate Invoice Triggred ');
+      //final db = FirebaseFirestore.instance;
       /*    var newProduct =
           new InvoiceProduct('', '', '', '', '', '', '', '', '', '');
       t.forEach((element) {
@@ -328,7 +355,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
         print(element.productCode);
       });*/
 
-      addproducts(noofproducts);
+      //addproducts(noofproducts);
+
+      print(widget.uid.toString() + 'here the uid in genrate fun');
+      print(newInvoice.toString() + 'here the invoice text');
+
       newInvoice.invoiceno = invoiceno.text;
       newInvoice.bname = bname.text;
       newInvoice.bphone = bphone.text;
@@ -352,14 +383,25 @@ class _InvoiceMainState extends State<InvoiceMain> {
       newInvoice.transporterid = transporterid.text;
       newInvoice.transportername = transportername.text;
       newInvoice.tracnsportdocno = tracnsportdocno.text;
-      newInvoice.tdate = tdate.text;
+      newInvoice.tdate = tdate;
       newInvoice.vehiclemode = vehiclemode.text;
       newInvoice.vehicleno = vehicleno.text;
       newInvoice.othercharges = othercharges;
-      newInvoice.discount = double.parse(discountrate.text);
-      newInvoice.tcs = double.parse(tcs.text);
-      newInvoice.roundoff = double.parse(roundoffamount.text);
+      newInvoice.discount = discountrate.text;
+
+      newInvoice.tcs = tcs.text;
+      newInvoice.roundoff = //double.parse(
+          roundoffamount.text;
+      //'g');
       // Call the user's CollectionReference to add a new user
+      //mohit here invoice not genrating
+      // return db
+      //     .collection("userData")
+      //     .doc(widget.uid)
+      //     .collection("Invoice")
+      //     .doc(invoiceno.text)
+      //     .set(newInvoice.toJson());
+
       return db
           .collection("userData")
           .doc(widget.uid)
@@ -368,7 +410,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
           .set(newInvoice.toJson());
     }
 
-    Future<Null> _selectDate(BuildContext context) async {
+    Future<Null> _selectDate(BuildContext context, DateTime dateTime) async {
       final DateTime picked = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
@@ -491,7 +533,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -499,13 +541,16 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               width: MediaQuery.of(context).size.width * 0.3,
                               child: TextField(
                                 enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'General Invoice',
-                                  fillColor: Colors.white,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                ),
+                                decoration: CoustumInputDecorationWidget(
+                                        "General Invoice")
+                                    .decoration(),
+                                // InputDecoration(
+                                //   labelText: 'General Invoice',
+                                //   fillColor: Colors.white,
+                                //   enabledBorder: OutlineInputBorder(
+                                //     borderRadius: BorderRadius.circular(2.0),
+                                //   ),
+                                // ),
                                 // The validator receives the text that the user has entered.
                               ),
                             ),
@@ -529,20 +574,23 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: Row(
                           children: [
                             Container(
                               width: MediaQuery.of(context).size.width * 0.3,
                               child: TextFormField(
                                 enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Bill to Ship Invoice',
-                                  fillColor: Colors.white,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                ),
+                                decoration: CoustumInputDecorationWidget(
+                                        'Bill to Ship Invoice')
+                                    .decoration(),
+                                //  InputDecoration(
+                                //   labelText: 'Bill to Ship Invoice',
+                                //   fillColor: Colors.white,
+                                //   enabledBorder: OutlineInputBorder(
+                                //     borderRadius: BorderRadius.circular(2.0),
+                                //   ),
+                                // ),
                                 // The validator receives the text that the user has entered.
                               ),
                             ),
@@ -563,25 +611,21 @@ class _InvoiceMainState extends State<InvoiceMain> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(0),
                     child: Card(
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
                         child: TextFormField(
                           controller: invoiceno,
-                          decoration: InputDecoration(
-                            labelText: "Invoice No",
-                            fillColor: Colors.white,
-                          ),
-                          // The validator receives the text that the user has entered.
+                          decoration: CoustumInputDecorationWidget('Invoice No')
+                              .decoration(),
                           validator: (value) {
                             if (value.isEmpty) {
-                              return null;
+                              return 'Enter value';
                             }
                             return null;
                           },
@@ -595,18 +639,20 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: DropdownButtonFormField<String>(
                           style: TextStyle(
                             color: Colors.black87,
                             fontFamily: 'Arial',
-                            fontSize: 13,
+                            fontSize: 12,
                           ),
                           value: 'IGST',
                           icon: Icon(Icons.arrow_downward),
-                          decoration: InputDecoration(
-                            labelText: "Tax Type",
-                          ),
+                          decoration: CoustumInputDecorationWidget("Tax Type")
+                              .decoration(),
+                          //  InputDecoration(
+                          //   labelText: "Tax Type",
+                          // ),
                           items: taxtypes.map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -649,7 +695,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           ),
                         ),
                         Eachrow(
-                            sname, "Name/Company Name", sphone, 'Phone Number'),
+                            sname,
+                            "Name/Company Name",
+                            TextInputType.text,
+                            ifemptyvalidation,
+                            sphone,
+                            'Phone Number',
+                            TextInputType.number, (value) {
+                          if (value.isEmpty || value.length != 10) {
+                            return 'Please Enter ';
+                          }
+                          return null;
+                        }, 10),
                         SizedBox(
                           height: 10,
                         ),
@@ -659,14 +716,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             Card(
                               elevation: 4,
                               child: InkWell(
-                                onTap: () => _selectDate(context),
+                                onTap: () => _selectDate(context, sdate),
                                 child: Container(
-                                  alignment: Alignment.center,
+                                  //alignment: Alignment.center,
                                   width:
                                       MediaQuery.of(context).size.width * 0.45,
-                                  height: 60,
-                                  child: Text("Date " +
-                                      DateFormat('dd/MM/yyyy').format(sdate)),
+                                  height: 50,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 15, 1, 1),
+                                    child: Text("Date       " +
+                                        DateFormat('dd/MM/yyyy').format(sdate)),
+                                  ),
                                 ),
                               ),
                             ),
@@ -674,17 +735,27 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                //height: 60,
                                 child: TextFormField(
+                                  textCapitalization:
+                                      TextCapitalization.characters,
                                   controller: sgstn,
-                                  maxLength: 15,
-                                  decoration: InputDecoration(
-                                      labelText: "GSTN", counterText: ''),
+                                  //maxLength: 15,
+                                  inputFormatters: [
+                                    new LengthLimitingTextInputFormatter(15)
+                                  ],
+                                  decoration:
+                                      CoustumInputDecorationWidget("GSTN")
+                                          .decoration(),
+                                  // InputDecoration(
+                                  //     labelText: "GSTN", counterText: ''),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty ||
                                         value.length != 15 ||
-                                        value.characters.last != 'Z') {}
+                                        value.characters.last != 'Z') {
+                                      return 'Enter Correct Gstn ';
+                                    }
                                     return null;
                                   },
                                 ),
@@ -695,11 +766,72 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(scity, "City", sstate, 'State'),
+                        Eachrow(scity, "City", TextInputType.text, null, sstate,
+                            'State', TextInputType.text, null, 40),
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(scountry, "Country", spin, 'Pin Code'),
+                        Eachrow(scountry, "Country", TextInputType.text, null,
+                            spin, 'Pin Code', TextInputType.number, ((value) {
+                          if (value.isEmpty && value.length != 6) {
+                            return 'Please Enter ' + 'Pincode';
+                          }
+                          return null;
+                        }), 6),
+
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //   children: <Widget>[
+                        //     Padding(
+                        //       padding: const EdgeInsets.all(0.0),
+                        //       child: Card(
+                        //         elevation: 4,
+                        //         child: Container(
+                        //           width:
+                        //               MediaQuery.of(context).size.width * 0.45,
+                        //           child: TextFormField(
+                        //               controller: scountry,
+                        //               decoration: CoustumInputDecorationWidget(
+                        //                       'country')
+                        //                   .decoration(),
+                        //               // The validator receives the text that the user has entered.
+                        //               validator: (value) {
+                        //                 if (value.isEmpty) {
+                        //                   return 'Please Enter ';
+                        //                 }
+                        //                 return null;
+                        //               }),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Padding(
+                        //       padding: const EdgeInsets.all(0.0),
+                        //       child: Card(
+                        //         elevation: 4,
+                        //         child: Container(
+                        //           width:
+                        //               MediaQuery.of(context).size.width * 0.45,
+                        //           child: TextFormField(
+                        //             keyboardType:TextInputType.phone,
+                        //             inputFormatters: [new LengthLimitingTextInputFormatter(6)],
+                        //               controller: spin,
+                        //               decoration: CoustumInputDecorationWidget(
+                        //                       'pincode')
+                        //                   .decoration(),
+
+                        //               validator: (value) {
+                        //                 if (value.isEmpty &&
+                        //                     value.length != 6) {
+                        //                   return 'Please Enter Pincode';
+                        //                 }
+                        //                 return null;
+                        //               }),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+
                         Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
@@ -713,8 +845,61 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             textAlign: TextAlign.left,
                           ),
                         ),
-                        Eachrow(
-                            bname, "Name/Company Name", bphone, 'Phone Number'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(0.0),
+                              child: Card(
+                                elevation: 4,
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.45,
+                                  child: TextFormField(
+                                      controller: bname,
+                                      decoration: CoustumInputDecorationWidget(
+                                              "Name/Company Name")
+                                          .decoration(),
+                                      // The validator receives the text that the user has entered.
+
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return null;
+                                        }
+                                        return null;
+                                      }),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(0.0),
+                              child: Card(
+                                elevation: 4,
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.45,
+                                  child: TextFormField(
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(10)
+                                      ],
+                                      keyboardType: TextInputType.phone,
+                                      controller: bphone,
+                                      decoration: CoustumInputDecorationWidget(
+                                              'Phone No')
+                                          .decoration(),
+                                      // The validator receives the text that the user has entered.
+                                      validator: (value) {
+                                        if (value.isEmpty ||
+                                            value.length != 10) {
+                                          return 'Please Enter ';
+                                        }
+                                        return null;
+                                      }),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         SizedBox(
                           height: 10,
                         ),
@@ -726,12 +911,16 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               child: InkWell(
                                 onTap: () => _selectDate1(context),
                                 child: Container(
-                                  alignment: Alignment.center,
+                                  // alignment: Alignment.center,
                                   width:
                                       MediaQuery.of(context).size.width * 0.45,
-                                  height: 60,
-                                  child: Text("Date " +
-                                      DateFormat().add_yMd().format(bdate)),
+                                  height: 50,
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 15, 1, 2),
+                                    child: Text("Date    " +
+                                        DateFormat().add_yMd().format(bdate)),
+                                  ),
                                 ),
                               ),
                             ),
@@ -739,15 +928,22 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                height: 50,
                                 child: TextFormField(
                                   controller: bgstn,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  //inputFormatters: [],
                                   maxLength: 15,
                                   decoration: InputDecoration(
                                       labelText: "GSTN", counterText: ''),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
-                                    if (value.isEmpty) {}
+                                    if (value.isEmpty ||
+                                        value.length != 15 ||
+                                        value.characters.last != 'Z') {
+                                      return 'Enter Correct Gstn ';
+                                    }
                                     return null;
                                   },
                                 ),
@@ -758,11 +954,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(bcity, "City", bstate, 'State'),
+                        Eachrow(bcity, "City", TextInputType.text, null, bstate,
+                            'State', TextInputType.text, null, 50),
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(bcountry, "Country", bpin, 'Pin Code'),
+                        Eachrow(bcountry, "Country", TextInputType.text, null,
+                            bpin, 'Pin Code', TextInputType.number, (value) {
+                          if (value.isEmpty && value.length != 6) {
+                            return 'Pease enter Pincode';
+                          }
+                          return null;
+                        }, 6),
                       ],
                     )
                   : Column(
@@ -783,10 +986,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           ),
                         ),
                         Eachrow(
-                            sname, "Name/Company Name", sphone, 'Phone Number'),
-                        SizedBox(
-                          height: 10,
-                        ),
+                            sname,
+                            "Name/Company Name",
+                            TextInputType.text,
+                            null,
+                            sphone,
+                            'Phone Number',
+                            TextInputType.phone, (value) {
+                          if (value.isEmpty || value.length != 10) {
+                            return 'Please Enter ';
+                          }
+                          return null;
+                        }, 10),
                         SizedBox(
                           height: 10,
                         ),
@@ -796,14 +1007,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             Card(
                               elevation: 4,
                               child: InkWell(
-                                onTap: () => _selectDate(context),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  height: 60,
-                                  child: Text("Date " +
-                                      DateFormat('dd/MM/yyyy').format(sdate)),
+                                onTap: () => _selectDate(context, sdate),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.44,
+                                    height: 50,
+                                    child: Text("Date    " +
+                                        DateFormat('dd/MM/yyyy').format(sdate)),
+                                  ),
                                 ),
                               ),
                             ),
@@ -811,15 +1026,26 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
                                 child: TextFormField(
+                                  textCapitalization:
+                                      TextCapitalization.characters,
                                   controller: sgstn,
-                                  maxLength: 15,
-                                  decoration: InputDecoration(
-                                      labelText: "GSTN", counterText: ''),
-                                  // The validator receives the text that the user has entered.
+                                  keyboardType: TextInputType.text,
+                                  // maxLength:15,
+                                  // maxLengthEnforced: true,
+                                  inputFormatters: [
+                                    new LengthLimitingTextInputFormatter(16),
+                                  ],
+                                  decoration:
+                                      CoustumInputDecorationWidget("GSTN")
+                                          .decoration(),
+
                                   validator: (value) {
-                                    if (value.isEmpty) {}
+                                    if (value.isEmpty ||
+                                        value.length != 15 ||
+                                        value.characters.last != 'Z') {
+                                      return 'Enter Correct Gstn ';
+                                    }
                                     return null;
                                   },
                                 ),
@@ -830,11 +1056,36 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(scity, "City", sstate, 'State'),
+                        Eachrow(
+                            scity,
+                            "City",
+                            TextInputType.text,
+                            (value) {
+                              if (value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            },
+                            sstate,
+                            'State',
+                            TextInputType.text,
+                            (value) {
+                              if (value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            },
+                            50),
                         SizedBox(
                           height: 10,
                         ),
-                        Eachrow(scountry, "Country", spin, 'Pin Code'),
+                        Eachrow(scountry, "Country", TextInputType.text, null,
+                            spin, 'Pincoode', TextInputType.number, (value) {
+                          if (value.isEmpty && value.length != 6) {
+                            return 'Pease enter Pincode';
+                          }
+                          return null;
+                        }, 6),
                       ],
                     ),
               Padding(
@@ -867,10 +1118,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                //height: 60,
                                 child: TextFormField(
                                   onChanged: (value) {
-                                    changeQuantity1(index, value);
+                                    if (value.length > 3)
+                                      changeQuantity1(index, value);
+
                                     FirebaseFirestore.instance
                                         .collection("userData")
                                         .doc(widget.uid)
@@ -885,18 +1138,25 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             valuee.data()['hsncode'];
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
+                                        t[index].quantity.text =
+                                            valuee.data()['quantity'];
+                                        t[index].totalamount.text =
+                                            valuee.data()['totalAmount'];
                                       });
                                     });
                                   },
                                   controller: t[index].productCode,
-                                  decoration: InputDecoration(
-                                    labelText: "Product Code",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration: CoustumInputDecorationWidget(
+                                          "Product Code")
+                                      .decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: "Product Code",
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Enter productCode';
                                     }
                                     return null;
                                   },
@@ -910,14 +1170,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                //height: 60,
                                 child: TextFormField(
                                   enabled: false,
                                   controller: t[index].productName,
-                                  decoration: InputDecoration(
-                                    labelText: 'Product Name',
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration: CoustumInputDecorationWidget(
+                                          'Product Name')
+                                      .decoration(),
+                                  // InputDecoration(
+                                  //   labelText: 'Product Name',
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -940,14 +1203,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                // height: 60,
                                 child: TextFormField(
                                   controller: t[index].hsncode,
                                   enabled: false,
-                                  decoration: InputDecoration(
-                                    labelText: "HSN Code",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:
+                                      CoustumInputDecorationWidget("HSN Code")
+                                          .decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: "HSN Code",
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -965,13 +1231,16 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                //height: 60,
                                 child: TextFormField(
                                   controller: t[index].taxrate,
-                                  decoration: InputDecoration(
-                                    labelText: 'tax Rate',
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:
+                                      CoustumInputDecorationWidget("Tax Rate")
+                                          .decoration(),
+                                  // InputDecoration(
+                                  //   labelText: 'tax Rate',
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -997,22 +1266,24 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                //height: 60,
                                 child: TextFormField(
                                   controller: t[index].quantity,
-
-                                  decoration: InputDecoration(
-                                    labelText: "Quantity",
-                                    fillColor: Colors.white,
-                                  ),
+                                  decoration:
+                                      CoustumInputDecorationWidget("Quantity")
+                                          .decoration(),
 
                                   onChanged: (value) {
                                     changeQuantity2(index, value);
+                                    setState(() {
+                                      //mohit
+                                      //  totalamount = value * sellingrate;
+                                    });
                                   },
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'enter Quantity';
                                     }
                                     return null;
                                   },
@@ -1026,18 +1297,21 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                // height: 60,
                                 child: DropdownButtonFormField<String>(
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontFamily: 'Arial',
-                                    fontSize: 13,
+                                    fontSize: 12,
                                   ),
                                   value: 'OTH-OTHERS',
                                   icon: Icon(Icons.arrow_downward),
-                                  decoration: InputDecoration(
-                                    labelText: "Unit",
-                                  ),
+                                  decoration:
+                                      CoustumInputDecorationWidget("Unit ")
+                                          .decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: "Unit",
+                                  // ),
                                   items: units.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -1100,12 +1374,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         height: 10,
                       ),
                       Eachrow(t[index].sellingrate, 'Selling Rate',
-                          t[index].taxamount, "TAX Amount"),
+                          TextInputType.text, (value) {
+                        if (value.isEmpty) {
+                          return 'Enter Correct SR';
+                        }
+                        return null;
+                      }, t[index].taxamount, "TAX Amount", TextInputType.text,
+                          null, 20),
                       SizedBox(
                         height: 10,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(5.0),
@@ -1113,17 +1393,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                height: 60,
+                                // height: 60,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
-                                  decoration: InputDecoration(
-                                    labelText: "Total Amount",
-                                    fillColor: Colors.white,
-                                  ),
+
+                                  decoration: CoustumInputDecorationWidget(
+                                          'Total Amount')
+                                      .decoration(),
+
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Enter Amount';
                                     }
                                     return null;
                                   },
@@ -1135,13 +1416,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             elevation: 4,
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.45,
-                              height: 60,
+                              //height: 60,
                               child: DropdownButtonFormField<String>(
                                 value: 'None',
                                 icon: Icon(Icons.arrow_downward),
-                                decoration: InputDecoration(
-                                  labelText: "foc",
-                                ),
+                                decoration: CoustumInputDecorationWidget("Foc")
+                                    .decoration(),
+                                //  InputDecoration(
+                                //   labelText: "foc",
+                                // ),
                                 items: foc.map((String value) {
                                   return new DropdownMenuItem<String>(
                                     value: value,
@@ -1214,16 +1497,27 @@ class _InvoiceMainState extends State<InvoiceMain> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
+                    //   decoration: BoxDecoration( borderRadius: BorderRadius. only(topLeft: Radius. circular(25.0), topRight: Radius. circular(25.0)),
+                    //  ),
+
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Column(
                       children: [
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
+                           shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                   decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
                                     gradient: LinearGradient(
                                       begin: Alignment.topCenter,
                                       colors: <Color>[
@@ -1239,14 +1533,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     ),
                                     Row(
                                       children: [
-                                        Text(
-                                          'Add Other Charges',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 24,
-                                            color: const Color(0xffffffff),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Add Other Charges',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 24,
+                                              color: const Color(0xffffffff),
+                                            ),
+                                            textAlign: TextAlign.left,
                                           ),
-                                          textAlign: TextAlign.left,
                                         ),
                                         SizedBox(
                                           width: 10,
@@ -1385,122 +1682,162 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         SizedBox(
                           height: 2,
                         ),
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        colors: <Color>[
-                                          Color(0xff573666),
-                                          Color(0xff1B1B2A)
-                                        ], // red to yellow
-                                        // repeats the gradient over the canvas
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15.0),
+                                topRight: Radius.circular(15.0)),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(15.0)),
+                            onTap: () {
+                              showModalBottomSheet<void>(
+                                context: context,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
+                                //                            shape: RoundedRectangleBorder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0)),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          colors: <Color>[
+                                            Color(0xff573666),
+                                            Color(0xff1B1B2A)
+                                          ], // red to yellow
+                                          // repeats the gradient over the canvas
+                                        ),
                                       ),
-                                    ),
-                                    child: Column(children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'Discount',
+                                      child: Column(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Discount',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 24,
+                                              color: const Color(0xffffffff),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          'Discount Rate',
                                           style: TextStyle(
                                             fontFamily: 'Arial',
-                                            fontSize: 24,
+                                            fontSize: 12,
                                             color: const Color(0xffffffff),
                                           ),
                                           textAlign: TextAlign.left,
                                         ),
-                                      ),
-                                      Text(
-                                        'Discount Rate',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 12,
-                                          color: const Color(0xffffffff),
+                                        SizedBox(
+                                          height: 10,
                                         ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            color: Colors.white,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            height: 50,
-                                            child: TextFormField(
-                                                controller: discountrate),
-                                          ),
-                                          Container(
-                                            color: Colors.white,
-                                            height: 50,
-                                            child: Text('%'),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: 80,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              'ADD',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 16,
-                                                color: const Color(0xff3f3d56),
-                                                fontWeight: FontWeight.w700,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              color: Colors.white,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.4,
+                                              height: 50,
+                                              child: TextFormField(
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  controller: discountrate),
+                                            ),
+                                            Container(
+                                              color: Colors.white,
+                                              height: 50,
+                                              child: Text('%'),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            if (discountrate.text.isNotEmpty)
+                                              Navigator.pop(context);
+                                            else
+                                              Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor:
+                                                    const Color(0xff3f3d56),
+                                              );
+                                          },
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            width: 80,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Text(
+                                                'ADD',
+                                                style: TextStyle(
+                                                  fontFamily: 'Arial',
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0xff3f3d56),
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                textAlign: TextAlign.left,
                                               ),
-                                              textAlign: TextAlign.left,
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    ]));
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                boxShadow: []),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Discount',
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 14,
-                                    color: const Color(0xff2f2e41),
-                                    fontWeight: FontWeight.w700,
+                                        )
+                                      ]));
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: []),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Discount',
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 14,
+                                      color: const Color(0xff2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
                                   ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  color: Colors.green,
-                                )
-                              ],
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.green,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -1510,10 +1847,19 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
+                                      borderRadius: new BorderRadius.only(
+                                          topLeft: const Radius.circular(15.0),
+                                          topRight:
+                                              const Radius.circular(15.0)),
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1570,7 +1916,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         height: 10,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          if (tcs.text.isNotEmpty)
+                                            Navigator.pop(context);
+                                          else
+                                            Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.black12,
+                                                textColor:
+                                                    const Color(0xff3f3d56));
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1630,12 +1986,24 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           height: 2,
                         ),
                         InkWell(
+                          borderRadius: new BorderRadius.only(
+                              topLeft: const Radius.circular(15.0),
+                              topRight: const Radius.circular(15.0)),
                           onTap: () {
                             showModalBottomSheet<void>(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
+                                      borderRadius: new BorderRadius.only(
+                                          topLeft: const Radius.circular(15.0),
+                                          topRight:
+                                              const Radius.circular(15.0)),
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1687,7 +2055,17 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         height: 10,
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          if (roundoffamount.text.isNotEmpty)
+                                            Navigator.pop(context);
+                                          else
+                                            Fluttertoast.showToast(
+                                                msg: 'Enter Value',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.black12,
+                                                textColor:
+                                                    const Color(0xff3f3d56));
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1718,9 +2096,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.45,
                             height: 30,
+                            //  color: Colors.transparent,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
+                                color: Colors.transparent,
                                 boxShadow: []),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1859,13 +2238,74 @@ class _InvoiceMainState extends State<InvoiceMain> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              Eachrow(transporterid, "Transporter id", transportername,
-                  'Transporter Name'),
+              Eachrow(
+                  transporterid,
+                  "Transporter id",
+                  TextInputType.text,
+                  null,
+                  transportername,
+                  'Transporter Name',
+                  TextInputType.text,
+                  null,
+                  30),
               SizedBox(
                 height: 10,
               ),
-              Eachrow(
-                  tracnsportdocno, "Transporter Doc/Bilty No", tdate, 'Date'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: tracnsportdocno,
+                            decoration: CoustumInputDecorationWidget(
+                                    "Transporter Doc/Bilty No")
+                                .decoration(),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            }),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: InkWell(
+                        onTap: () => _selectDate(context, tdate),
+                        child: Container(
+                          // alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.45,
+                          height: 50,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 15, 2, 1),
+                            child: Text("Date    " +
+                                DateFormat('dd/MM/yyyy').format(sdate)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Eachrow(
+              //     tracnsportdocno,
+              //     "Transporter Doc/Bilty No",
+              //     TextInputType.text,
+              //     null,
+              //     tdate,
+              //     'Date',
+              //     TextInputType.datetime,
+              //     null),
               SizedBox(
                 height: 10,
               ),
@@ -1891,18 +2331,20 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: DropdownButtonFormField<String>(
                           style: TextStyle(
                             color: Colors.black87,
                             fontFamily: 'Arial',
-                            fontSize: 13,
+                            fontSize: 12,
                           ),
                           value: 'Road',
                           icon: Icon(Icons.arrow_downward),
-                          decoration: InputDecoration(
-                            labelText: "Mode",
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget("Mode").decoration(),
+                          // InputDecoration(
+                          //   labelText: "Mode",
+                          // ),
                           items: vehiclemodes.map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -1930,13 +2372,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
                         child: TextFormField(
+                          textCapitalization: TextCapitalization.characters,
                           controller: vehicleno,
-                          decoration: InputDecoration(
-                            labelText: 'Vehicle no',
-                            fillColor: Colors.white,
-                          ),
+                          decoration: CoustumInputDecorationWidget('Vehicle no')
+                              .decoration(),
+                          // InputDecoration(
+                          //   labelText: 'Vehicle no',
+                          //   fillColor: Colors.white,
+                          // ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty && value.length != 15) {
@@ -1962,13 +2406,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 60,
+                        height: 50,
                         child: TextFormField(
                           controller: from,
-                          decoration: InputDecoration(
-                            labelText: "from",
-                            fillColor: Colors.white,
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget("From").decoration(),
+                          //  InputDecoration(
+                          //   labelText: "from",
+                          //   fillColor: Colors.white,
+                          // ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
@@ -2009,6 +2455,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       // If the form is valid, display a Snackbar.
                       generateInvoice();
 
+                      //mohit here have  to work
+                      invoiceStyleDetails(widget.uid);
+                      print(invoiceStyle + '============================here');
+
                       Future.delayed(new Duration(milliseconds: 10), () {
                         if (widget.i == null) {
                           FocusScope.of(context).unfocus();
@@ -2021,7 +2471,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               content: Text('Please upload sign/stamp/logo')));
                         }
 
-                        widget.i == true
+                        // widget.i == true
+                        invoiceStyle == 'pdf2'
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(

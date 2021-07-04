@@ -68,11 +68,15 @@ class InvoiceModel {
   String transporterid;
   String transportername;
   String tracnsportdocno;
-  String tdate;
+  DateTime tdate;
   String vehiclemode;
-  double discount;
-  double tcs;
-  double roundoff;
+  // double discount;
+  // double tcs;
+  // double roundoff;
+  String discount;
+   String tcs;
+  String roundoff;
+  
   String vehicleno;
   String from;
   List<OtherCharges> othercharges = [];

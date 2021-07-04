@@ -113,10 +113,15 @@ class _PdfViewer2State extends State<PdfViewer2> {
   final taxtype = TextEditingController();
   final transportdocno = TextEditingController();
 
-  double discount;
-  double roundoff;
-  double tcs;
+  String discountStr;
+  String roundoffStr;
+  String tcsStr;
+
+  double discount = 0;
+  double roundoff = 0;
+  double tcs = 0;
   double totaltax = 0;
+
   final businessInfo = new BusinessProfile(
       '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
   final invoicedetails = new InvoiceModel(
@@ -142,7 +147,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
       ' ',
       ' ',
       ' ',
-      ' ',
+     DateTime.now(),
       ' ',
       ' ',
       '',
@@ -290,11 +295,20 @@ class _PdfViewer2State extends State<PdfViewer2> {
             valuee.data()['tdate'] == null ? '' : valuee.data()['tdate'];
         taxtype.text =
             valuee.data()['taxtype'] == null ? '' : valuee.data()['taxtype'];
-        discount =
+        discountStr =
             valuee.data()['discount'] == null ? '' : valuee.data()['discount'];
-        tcs = valuee.data()['tcs'] == null ? '' : valuee.data()['tcs'];
-        roundoff =
+        if (discountStr.isNotEmpty) {
+          discount = double.parse(discountStr);
+        }
+        tcsStr = valuee.data()['tcs'] == null ? '' : valuee.data()['tcs'];
+         if (tcsStr.isNotEmpty) {
+          discount = double.parse(tcsStr);
+        }
+        roundoffStr =
             valuee.data()['roundoff'] == null ? '' : valuee.data()['roundoff'];
+         if (  roundoffStr.isNotEmpty) {
+          discount = double.parse(  roundoffStr);
+        }
         l = List.castFrom(valuee.data()['listOfProducts']);
         l2 = List.castFrom(valuee.data()['othercharges']);
       });
@@ -369,7 +383,8 @@ class _PdfViewer2State extends State<PdfViewer2> {
           margin: pw.EdgeInsets.only(top: 10, right: 30, left: 30, bottom: 10),
           header: (pw.Context context) {
             return widget.generalreportornot == false
-                ? pw.Column(
+                ? 
+                pw.Column(
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
                         pw.Align(
@@ -1491,7 +1506,10 @@ class _PdfViewer2State extends State<PdfViewer2> {
                             ]),
                         pw.SizedBox(height: 20)
                       ])
-                : pw.Column(
+                
+                : 
+                
+                pw.Column(
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [

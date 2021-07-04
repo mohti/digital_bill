@@ -1,8 +1,11 @@
+import 'package:digitalbillbook/businessinfo.dart';
 import 'package:digitalbillbook/signup_and_loginpages/signup_otp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyHomePage extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
+
   /* final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -84,10 +87,11 @@ class MyHomePage extends StatelessWidget {
   }
 */
   final _formKey = GlobalKey<FormState>();
+ 
   @override
   Widget build(BuildContext context) {
-    final double h = MediaQuery.of(context).size.height;
-    final double w = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -96,8 +100,8 @@ class MyHomePage extends StatelessWidget {
               child: Column(children: <Widget>[
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
               Container(
-                width: w * 1,
-                height: h,
+                width: screenWidth * 1,
+                height: screenHeight,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: const AssetImage('assets/images/bg1.jpg'),
@@ -125,7 +129,7 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            height: h * 0.01,
+                            height: screenHeight * 0.01,
                           ),
                           Text(
                             'Digital Bill book, Signup to start',
@@ -138,7 +142,7 @@ class MyHomePage extends StatelessWidget {
                             textAlign: TextAlign.left,
                           ),
                           SizedBox(
-                            height: h * 0.02,
+                            height: screenHeight * 0.02,
                           ),
                           Container(
                             decoration: BoxDecoration(
@@ -155,6 +159,10 @@ class MyHomePage extends StatelessWidget {
                             child: TextFormField(
                               controller: _controller,
                               keyboardType: TextInputType.phone,
+                               inputFormatters: [
+                                      LengthLimitingTextInputFormatter(10),
+                                            ],
+                         
                               validator: (value) {
                                 if (value.length != 10) {
                                   return 'Phone Number should be of 10 digits';
@@ -182,9 +190,9 @@ class MyHomePage extends StatelessWidget {
                                   labelText: 'Phone Number'),
                             ),
                           ),
-                          SizedBox(
-                            height: h * 0.02,
-                          ),
+   
+                           SizedBox( height: screenHeight * 0.02,),
+  
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -236,8 +244,11 @@ class MyHomePage extends StatelessWidget {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      Signupotp(
-                                                          _controller.text)));
+                                           //  BusinessInfo(widget.uid)
+                                              Signupotp(
+                                                  _controller.text)
+                                                 ));
+                                              
                                           Scaffold.of(context).showSnackBar(
                                               SnackBar(
                                                   content:
@@ -279,8 +290,8 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  width: w * 1,
-                  height: h * 418 / 870,
+                  width: screenWidth * 1,
+                  height: screenHeight * 418 / 870,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(45.0),

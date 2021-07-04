@@ -1,6 +1,10 @@
 import 'package:digitalbillbook/models/partydetails.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Eachrow extends StatelessWidget {
   final TextEditingController controller1, controller2;
@@ -17,7 +21,6 @@ class Eachrow extends StatelessWidget {
             elevation: 4,
             child: Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: 50,
               child: TextFormField(
                 maxLines: 1,
                 controller: controller1,
@@ -45,7 +48,6 @@ class Eachrow extends StatelessWidget {
             elevation: 4,
             child: Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: 50,
               child: TextFormField(
                 maxLines: 1,
                 controller: controller2,
@@ -103,6 +105,9 @@ class _AddPartyState extends State<AddParty> {
   final newParty =
       new AddNewParty(null, null, null, null, null, null, null, null);
   final _keyForm = GlobalKey<FormState>();
+
+  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+
   @override
   Widget build(BuildContext context) {
     final db = FirebaseFirestore.instance;
@@ -126,6 +131,7 @@ class _AddPartyState extends State<AddParty> {
           .set(newParty.toJson());
     }
 
+    bool hiderrors = false;
     return Scaffold(
       key: _keyForm,
       appBar: AppBar(
@@ -144,6 +150,8 @@ class _AddPartyState extends State<AddParty> {
       ),
       body: Form(
         key: _keyForm,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidate:true,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -177,17 +185,12 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           maxLines: 1,
                           controller: partyNameController,
-                          decoration: InputDecoration(
-                            labelText: "Name/Company Name",
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget('Company name')
+                                  .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
@@ -205,18 +208,15 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
-                          maxLines: 1,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(10),
+                          ],
                           keyboardType: TextInputType.number,
                           controller: phoneController,
-                          decoration: InputDecoration(
-                            labelText: 'phone Number',
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget('Phone Number')
+                                  .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty || value.length != 10) {
@@ -242,18 +242,13 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
-                          maxLines: 1,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(15),
+                          ],
                           controller: gstnController,
-
-                          decoration: InputDecoration(
-                            labelText: "GSTN",
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget("GSTN").decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty ||
@@ -273,17 +268,10 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
-                          maxLines: 1,
                           controller: addressController,
-                          decoration: InputDecoration(
-                            labelText: 'Address',
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration: CoustumInputDecorationWidget("Address")
+                              .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty) {
@@ -309,19 +297,15 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           maxLines: 1,
                           expands: false,
                           controller: cityValue,
-                          decoration: InputDecoration(
-                            labelText: "city",
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration:
+                              CoustumInputDecorationWidget("City").decoration(),
+
                           // The validator receives the text that the user has entered.
+
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please Enter ' + "city";
@@ -338,18 +322,20 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           maxLines: 1,
                           controller: stateValue,
-                          decoration: InputDecoration(
-                            labelText: 'state',
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
-                          // The validator receives the text that the user has entered.
+                          decoration: CoustumInputDecorationWidget("State")
+                              .decoration(),
+
+                          // The validator receives the text that the user has entered
+                          // onTap: () {
+                          //   setState(() {
+                          //     hiderrors = true;
+                          //     autovalidateMode =
+                          //         AutovalidateMode.onUserInteraction;
+                          //   });
+                          // },
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please Enter ' + 'state';
@@ -374,18 +360,13 @@ class _AddPartyState extends State<AddParty> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
                           maxLines: 1,
                           controller: countryValue,
-                          decoration: InputDecoration(
-                            labelText: "country",
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration: CoustumInputDecorationWidget("Country")
+                              .decoration(),
                           // The validator receives the text that the user has entered.
+
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please Enter ' + "country";
@@ -397,24 +378,21 @@ class _AddPartyState extends State<AddParty> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(0.0),
+                    padding: const EdgeInsets.all(3.0),
                     child: Card(
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
                         child: TextFormField(
-                          maxLines: 1,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(6),
+                          ],
                           keyboardType: TextInputType.number,
                           controller: pincodeController,
-                          decoration: InputDecoration(
-                            labelText: 'Pincode',
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
-                          ),
+                          decoration: CoustumInputDecorationWidget("Pincode")
+                              .decoration(),
                           // The validator receives the text that the user has entered.
+
                           validator: (value) {
                             if (value.isEmpty || value.length != 6) {
                               return 'Please Enter ' + 'Pincode';
@@ -433,17 +411,17 @@ class _AddPartyState extends State<AddParty> {
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
-                    /*       if (_formKey.currentState.validate()) {
+                    /* if (_formKey.currentState.validate()) {
                                           // If the form is valid, display a Snackbar.
-                                          addParty(),
+                                          addParty(),Company name'
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                  builder: (context) =>
+                                                  builder: (context) =>Company name'
                                                       Signupotp(
                                                           _controller.text)));
                                           Scaffold.of(context).showSnackBar(
                                               SnackBar(
-                                                  content:
+                                                  content:Company name'
                                                       Text('')));
                                         } else {
                                           Scaffold.of(context).showSnackBar(
@@ -453,9 +431,17 @@ class _AddPartyState extends State<AddParty> {
                                         }
                                       },*/
                     onPressed: () {
+                      setState(() {
+                        autovalidateMode = AutovalidateMode.onUserInteraction;
+                        print('updated autovalidateMode');
+                      });
                       if (_keyForm.currentState.validate()) {
                         // If the form is valid, display a Snackbar.
                         addParty();
+                        Fluttertoast.showToast(
+                            msg: "Added",
+                            toastLength: Toast.LENGTH_SHORT,
+                            timeInSecForIosWeb: 1);
                         Navigator.pop(context);
                         Scaffold.of(context)
                             .showSnackBar(SnackBar(content: Text('')));

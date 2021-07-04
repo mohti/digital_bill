@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/businessprofile.dart';
 import 'package:digitalbillbook/models/invoicesettingsmodel.dart';
 import 'package:digitalbillbook/models/plandetails.dart';
+import 'package:digitalbillbook/models/userCredantial%20.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../home.dart';
 
@@ -18,9 +21,16 @@ class Signupotp extends StatefulWidget {
 class _SignupotpState extends State<Signupotp>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+
   // ignore: unused_field
   Animation _animation;
   FocusNode _focusNode = FocusNode();
+
+  //mohit  changed  uid
+  //make  it empty after dubgs
+  String uid;
+  //= 'uBk4wRDOdBRdwjyAfZzORFs7kcU2';
+  
 
   @override
   void initState() {
@@ -28,6 +38,7 @@ class _SignupotpState extends State<Signupotp>
     _verifyPhone();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
     _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
       ..addListener(() {
         setState(() {});
@@ -71,8 +82,6 @@ class _SignupotpState extends State<Signupotp>
           ),
         )
       ]);
-
-  String uid;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +157,6 @@ class _SignupotpState extends State<Signupotp>
                                     bottom: bottom),
                                 child: PinPut(
                                   onTap: () {},
-
                                   fieldsCount: 6,
                                   keyboardType: TextInputType.number,
                                   textStyle: const TextStyle(
@@ -163,6 +171,15 @@ class _SignupotpState extends State<Signupotp>
                                   //    eachFieldPadding: EdgeInsets.all(10),
                                   //   eachFieldMargin: EdgeInsets.all(0),
                                   pinAnimationType: PinAnimationType.fade,
+                                  // onSubmit: (pin)  async {
+                                  //   Navigator.pushAndRemoveUntil(
+                                  //             context,
+                                  //             MaterialPageRoute(
+                                  //                 builder: (context) =>
+                                  //                     Home('GMl4S5PXe2eIDthRS0bpwZGrRuy2'))
+                                  //                     ,(route) => false);
+
+                                  // },
                                   onSubmit: (pin) async {
                                     print('TRIED');
                                     try {
@@ -178,8 +195,17 @@ class _SignupotpState extends State<Signupotp>
                                         if (value
                                                 .additionalUserInfo.isNewUser ==
                                             true) {
-                                          setState(() {
+                                          setState(() async {
+                                             
                                             uid = value.user.uid;
+                                            // obtain shared preferences
+                                              final prefs = await SharedPreferences.getInstance();
+                                            // set value
+                                            prefs.setString('UID',uid);
+                                            
+                                            userCredantial user =
+                                                userCredantial();
+                                            user.setUserid = uid;
                                           });
                                           print('newuser');
                                           setUpdatabase();

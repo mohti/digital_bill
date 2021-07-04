@@ -38,7 +38,7 @@ dependencies:
   country_state_city_picker: ^1.2.7
   permission_handler: ^4.4.0+hotfix.2
   downloads_path_provider_28: ^0.1.0
-
+  shared_preferences: any
   path_provider: any
   adobe_xd: ^1.1.0+1
   printing: ^4.1.0
@@ -47,6 +47,7 @@ dependencies:
   cloud_firestore: "^0.16.0+1"
   firebase_auth: ^0.20.1
   pinput: ^1.0.0
+  gst_verification: ^1.0.2
   flutter_svg: ^0.18.0
   change_app_package_name: ^0.1.2
   flutter:

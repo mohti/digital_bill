@@ -21,6 +21,8 @@ class LowStock extends StatefulWidget {
 }
 
 class _LowStockState extends State<LowStock> {
+  Widget widgetTable;
+
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
@@ -97,6 +99,7 @@ class _LowStockState extends State<LowStock> {
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
     Future<Null> selectDate1(BuildContext context) async {
       final DateTime picked1 = await showDatePicker(
           context: context,
@@ -272,6 +275,30 @@ class _LowStockState extends State<LowStock> {
             SizedBox(
               height: 20,
             ),
+            Container(
+              height: 50,
+            
+              width: MediaQuery.of(context).size.width * 0.42,
+              child: RaisedButton(
+                  color: const Color(0xff2f2e41),
+                  onPressed: () => {
+                        setState(() => {
+                              widgetTable = LowStockTable(
+                                  widget.uid, initialdate, finaldate)
+                            })
+                      },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    'Get Low Stock',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+            ),
             /*         Container(
               decoration: BoxDecoration(
                   color: const Color(0xfff3F3D56),
@@ -294,7 +321,86 @@ class _LowStockState extends State<LowStock> {
             SizedBox(
               height: 20,
             ),
-            LowStockTable(widget.uid, initialdate, finaldate)
+            widgetTable == null
+                ? Container(
+                  height: 30,
+                 decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+                    child: Row(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Product Code ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Product Name ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'HSN Code ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Quantity ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Status ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : widgetTable
           ],
         ),
       ),

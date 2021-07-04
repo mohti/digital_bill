@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
 import 'package:digitalbillbook/tables/salsummarytable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
@@ -35,6 +36,22 @@ class _SalesSummary extends State<SalesSummary> {
     return permission == PermissionStatus.granted;
   }
 
+  String textfieldValues;
+  String askValues = 'productCode';
+  String selectbyfilter;
+  String settingUitextvalues = 'Product code';
+  Widget widgetTable;
+
+  String selctbyFilter;
+  final listofSelect = [
+    'Product Code',
+    'Product name',
+    'Quanitity',
+    'Tax Rate',
+    'Date',
+    'Ammount'
+  ];
+
   @override
   void initState() {
     // ignore: todo
@@ -45,6 +62,7 @@ class _SalesSummary extends State<SalesSummary> {
 
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
     Future<Null> selectDate1(BuildContext context) async {
       final DateTime picked1 = await showDatePicker(
           context: context,
@@ -92,22 +110,43 @@ class _SalesSummary extends State<SalesSummary> {
         querySnapshot.docs.forEach((product) {
           final Timestamp timestamp = (product['sdate']) as Timestamp;
           final DateTime d = timestamp.toDate();
-          if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-              d.day == initialdate.day ||
-              d.day == finaldate.day)
+
+          if (textfieldValues == null || textfieldValues == '') {
+            if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
+                d.day == initialdate.day ||
+                d.day == finaldate.day)
+              sheet.appendRow([
+                product['invoiceno'],
+                DateFormat('dd/MM/yyyy').format(d),
+                product['listOfProducts'][0]['productCode'],
+                product['listOfProducts'][0]['productName'],
+                product['sname'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['hsncode'],
+                product['bname'],
+                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['taxrate'],
+                product['listOfProducts'][0]['totalamount'],
+                product['listOfProducts'][0]['taxamount'],
+              ]);
+          }
+          else{
+             if((d.isBefore(finaldate) && d.isAfter(initialdate)) &&
+                  (textfieldValues == product['listOfProducts'][0][askValues]) ||
+              (d.day == initialdate.day || d.day == finaldate.day))
             sheet.appendRow([
-              product['invoiceno'],
-              DateFormat('dd/MM/yyyy').format(d),
-              product['listOfProducts'][0]['productCode'],
-              product['listOfProducts'][0]['productName'],
-              product['sname'] == null ? '' : product['sgstn'],
-              product['listOfProducts'][0]['hsncode'],
-              product['bname'],
-              product['sgstn'] == null ? '' : product['sgstn'],
-              product['listOfProducts'][0]['taxrate'],
-              product['listOfProducts'][0]['totalamount'],
-              product['listOfProducts'][0]['taxamount'],
-            ]);
+                product['invoiceno'],
+                DateFormat('dd/MM/yyyy').format(d),
+                product['listOfProducts'][0]['productCode'],
+                product['listOfProducts'][0]['productName'],
+                product['sname'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['hsncode'],
+                product['bname'],
+                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['taxrate'],
+                product['listOfProducts'][0]['totalamount'],
+                product['listOfProducts'][0]['taxamount'],
+              ]);
+          }
         });
       });
 
@@ -245,15 +284,21 @@ class _SalesSummary extends State<SalesSummary> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  'Date',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 12,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.20,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                    child: Text(
+                      'Date',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 12,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  textAlign: TextAlign.left,
                 ),
                 Card(
                   elevation: 4,
@@ -261,7 +306,7 @@ class _SalesSummary extends State<SalesSummary> {
                     onTap: () => selectDate1(context),
                     child: Container(
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.35,
                       height: 50,
                       child: Text("From " +
                           DateFormat('dd-MM-yyyy').format(initialdate)),
@@ -274,7 +319,7 @@ class _SalesSummary extends State<SalesSummary> {
                     onTap: () => selectDate2(context),
                     child: Container(
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.35,
                       height: 50,
                       child: Text(
                           "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
@@ -289,6 +334,128 @@ class _SalesSummary extends State<SalesSummary> {
             SizedBox(
               height: 20,
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.20,
+                    child: Text(
+                      '$settingUitextvalues',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 12,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Card(
+                    elevation: 4,
+                    child: InkWell(
+                      //todo
+                      //onTap: () => selectDate1(context),
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        height: 50,
+                        child: TextField(
+                          onChanged: (text) {
+                            setState(() {
+                              textfieldValues = text;
+                            });
+                            print('First text field: $text');
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 4,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      height: 50,
+                      child: DropdownButtonFormField<String>(
+                        value: selectbyfilter,
+                        icon: Icon(Icons.arrow_downward),
+                        decoration: CoustumInputDecorationWidget('select by')
+                            .decoration(),
+                        items: listofSelect.map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            selectbyfilter = newValue;
+                            if (selectbyfilter == 'product Code') {
+                              askValues = 'productCode';
+                            }
+                            if (selectbyfilter == 'Product name') {
+                              askValues = 'productName';
+                            }
+                            if (selectbyfilter == 'Quanitity') {
+                              askValues = 'quantity';
+                            }
+                            if (selectbyfilter == 'Tax Rate') {
+                              askValues = 'cgst';
+                            }
+                            if (selectbyfilter == 'Invoice No') {
+                              askValues = 'invoiceno';
+                            }
+
+                            if (selectbyfilter == 'Ammount') {
+                              askValues = 'totalAmount';
+                            }
+
+                            settingUitextvalues = selectbyfilter;
+                          });
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Pease select by';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width * 0.42,
+              child: RaisedButton(
+                  color: const Color(0xff2f2e41),
+                  onPressed: () {
+                    setState(() {
+                      widgetTable = SalesSummaryTable(widget.uid, initialdate,
+                          finaldate, textfieldValues, askValues);
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    'Get Stock Summury',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+            ),
+
             /*         Container(
               decoration: BoxDecoration(
                   color: const Color(0xfff3F3D56),
@@ -311,7 +478,180 @@ class _SalesSummary extends State<SalesSummary> {
             SizedBox(
               height: 20,
             ),
-            SalesSummaryTable(widget.uid, initialdate, finaldate)
+            widgetTable == null
+                ? Container(
+                    decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+                    child: Row(
+                      /*  'Receipt No.',
+        'Date',
+        'Pro Code',
+        'Pro Name',
+        'GSTN',
+        'Buyer Name',
+        'HSN',
+        'Quantity',
+        'TAX',
+        'Invoice Value',
+        'TAX Value'*/
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Receipt No.',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.05,
+                          child: Text(
+                            'Date',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Pro Code',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Pro Name',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'GSTN',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Buyer Name',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'HSN',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Quantity',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.05,
+                          child: Text(
+                            'TAX',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Invoice Value',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'TAX Value',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : widgetTable
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/invoicesettingsmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SetPrefix extends StatelessWidget {
   final invoicePrefixController = TextEditingController();
@@ -98,6 +99,7 @@ class SetPrefix extends StatelessWidget {
                           color: Colors.white,
                           width: MediaQuery.of(context).size.width * 0.6,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             controller: startingserialnoController,
                           ),
                         )
@@ -110,7 +112,14 @@ class SetPrefix extends StatelessWidget {
                 height: 20,
               ),
               FlatButton(
-                  onPressed: () => {invoicebutton(), Navigator.pop(context)},
+                  onPressed: () => {
+                        if (invoicePrefixController.text.isNotEmpty &&
+                            startingserialnoController.text.isNotEmpty)
+                          {invoicebutton(), Navigator.pop(context)}
+                          else{
+                            Fluttertoast.showToast(msg: 'Enter values')
+                          }
+                      },
                   child: Container(
                     width: 100,
                     height: 50,

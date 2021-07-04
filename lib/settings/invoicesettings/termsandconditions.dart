@@ -40,9 +40,9 @@ class _TermsAndConditionState extends State<TermsAndCondition> {
     });
   }
 
-  Future<void> invoicebutton() {
+  Future<void> invoicebutton() async{
     // Call the user's CollectionReference to add a new user
-    return db
+    return await db
         .collection("userData")
         .doc(widget.uid)
         .collection("termsAndConditiononInvoice")

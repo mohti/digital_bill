@@ -209,6 +209,7 @@ class Table1 extends StatelessWidget {
                 ),
               ],
             ),
+        
           ),
           Container(
             height: 600,

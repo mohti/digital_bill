@@ -108,14 +108,14 @@ class _ReminderSettingState extends State<ReminderSetting> {
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
 
-    Future<void> reminderSettingsfc() {
+    Future<void> reminderSettingsfc() async{
       reminderSettings.lowStockALert = lowStockAlert;
       reminderSettings.gstr1 = gstr1;
 
       reminderSettings.gstr3b = gstr3b;
       // Call the user's CollectionReference to add a new user
       final db = FirebaseFirestore.instance;
-      return db
+      return await db
           .collection("userData")
           .doc(widget.uid)
           .collection("ReminderSettings")

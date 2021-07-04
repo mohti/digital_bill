@@ -18,7 +18,7 @@ import 'package:digitalbillbook/reports/stocksummary.dart';
 import 'package:digitalbillbook/settings/settings.dart';
 import 'package:digitalbillbook/signup_and_loginpages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -52,6 +52,7 @@ List<String> row3 = ['Notification', 'Setting', 'Support', 'Logout'];
 class HomeIcons extends StatelessWidget {
   final List<Widgetfunction> l1, l2, l3;
   final List<String> s1, s2, s3;
+
   HomeIcons(this.l1, this.l2, this.l3, this.s1, this.s2, this.s3);
   @override
   Widget build(BuildContext context) {
@@ -124,16 +125,19 @@ class _HomeState extends State<Home> {
   void initState() {
     // ignore: todo
     // TODO: implement initState
+    print('mohit home.dart  intilized  uid == ' + widget.uid);
+    if (widget.uid != null) {
+      String uid = widget.uid;
+      check();
+    } else {
+      print('error occured ');
 
-    _getBusinessDetails(widget.uid);
-    _getBusinessDetails2(widget.uid);
-    _getBusinessDetails3(widget.uid);
-    _getBusinessDetails4(widget.uid);
-    _getBusinessDetails5(widget.uid);
-    _getBusinessDetails6(widget.uid);
-
+      // Toast('somthing  wrong')
+    }
     super.initState();
   }
+
+  String _downloadURL;
 
   final settings = new InvoiceSettingsmodel('', '');
 
@@ -166,9 +170,9 @@ class _HomeState extends State<Home> {
   String subtitle21 = '';
   String subtitle22 = '';
   String subtitle23 = '';
+
   Future<Null> _signOut() async {
     await FirebaseAuth.instance.signOut();
-
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -177,6 +181,31 @@ class _HomeState extends State<Home> {
   }
 
   bool invoice0or1 = false;
+   check() async {
+      //db =  await FirebaseFirestore.instance;
+      await downloadURLExample(widget.uid);
+      await _getBusinessDetails(widget.uid);
+      await _getBusinessDetails2(widget.uid);
+      await _getBusinessDetails3(widget.uid);
+      await _getBusinessDetails4(widget.uid);
+      await _getBusinessDetails5(widget.uid);
+      await _getBusinessDetails6(widget.uid);
+    }
+
+
+  Future<void> downloadURLExample(String uid) async {
+    String downloadURL = await firebase_storage.FirebaseStorage.instance
+        .ref(uid + '/business/logo.png')
+        .getDownloadURL();
+
+    setState(() {
+      print(downloadURL);
+      _downloadURL = downloadURL;
+    });
+    // Within your widgets:
+    // Image.network(downloadURL);
+  }
+
   Future<Null> _getBusinessDetails2(String uid) async {
     await db
         .collection("userData")
@@ -220,11 +249,9 @@ class _HomeState extends State<Home> {
         .get()
         .then((valuee) {
       setState(() {
-        subtitle01 =
-            'Product Name : ' + valuee.docs.first.data()['productName'];
-        subtitle02 =
-            'Product Code : ' + valuee.docs.first.data()['productCode'];
-        subtitle03 = 'Remaining Quantity : ' +
+        subtitle01 = 'Product Name: ' + valuee.docs.first.data()['productName'];
+        subtitle02 = 'Product Code: ' + valuee.docs.first.data()['productCode'];
+        subtitle03 = 'Remaining Quantity: ' +
             valuee.docs.first.data()['quantity'].toString();
       });
     });
@@ -314,9 +341,11 @@ class _HomeState extends State<Home> {
       // Navigator.pop on the Selection Screen.
       final result = await Navigator.push(
         context,
+
         // Create the SelectionScreen in the next step.
         MaterialPageRoute(builder: (context) => InvoiceStyle()),
       );
+
       setState(() {
         invoice0or1 = result;
       });
@@ -577,123 +606,162 @@ class _HomeState extends State<Home> {
                   elevation: 6,
                   child: Container(
                       width: w * 0.95,
-                      child: Column(
-                        children: [
+                     // height: MediaQuery.of(context).size.height * 0.18,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(children: [
                           Container(
-                            padding: EdgeInsets.all(5),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Buissiness Info',
-                              style: TextStyle(
-                                fontFamily: 'Bell MT',
-                                fontSize: 12,
-                                color: const Color(0xff707070),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            width: 200,
-                            child: Text(
-                              businessNameController.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 22,
-                                color: const Color(0xff2f2e41),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            width: 200,
-                            child: Text(
-                              businesAddressController.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5707070),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            width: 200,
-                            child: Text(
-                              gstNumberController.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5707070),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            width: 200,
-                            child: Text(
-                              phoneController.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5707070),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            width: 200,
-                            child: Text(
-                              emailController.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 10,
-                                color: const Color(0xe5707070),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.centerRight,
-                            padding: EdgeInsets.all(10),
-                            child: InkWell(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BusinessInfo(widget.uid),
+                            width: w * 0.35,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.topLeft,
+                                  child: Text("Business Info"),
+                                  //color: Colors.black,
                                 ),
-                              ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 60,
-                                height: 20,
-                                child: Text(
-                                  'View More',
-                                  style: TextStyle(
-                                    fontFamily: 'Bell MT',
-                                    fontSize: 10,
-                                    color: const Color(0xe5dde8f8),
-                                    fontWeight: FontWeight.w700,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 8, 10, 0),
+                                  child: Container(
+                                    height: 80,
+                                    width: w * 0.25,
+                                    // child: RaisedButton(
+                                    child: (_downloadURL == null)
+                                        ? InkWell(
+                                            // width: w * 0.24,
+                                            onTap: () => (downloadURLExample(
+                                                widget.uid)),
+                                            child: Text("Tab to Retry"),
+                                          )
+                                        : Image.network(
+                                            _downloadURL,
+                                          ),
                                   ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(11.0),
-                                  color: const Color(0xd902020a),
-                                  border: Border.all(
-                                      width: 1.0,
-                                      color: const Color(0xd93f3d56)),
-                                ),
-                              ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
+                          ),
+                          // SizedBox(
+                          // width: 10,
+                          // ),
+                          Container(
+                            width: w * 0.558,
+                            child: Column(
+                              children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                      businessNameController.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 22,
+                                        color: const Color(0xff2f2e41),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                      businesAddressController.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 10,
+                                        color: const Color(0xe5707070),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                      gstNumberController.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 10,
+                                        color: const Color(0xe5707070),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                      phoneController.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 10,
+                                        color: const Color(0xe5707070),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                      emailController.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 10,
+                                        color: const Color(0xe5707070),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Positioned(
+                              //   right: 2,
+                              //   bottom: 2,
+                              //   child:
+                                 Container(
+                                  alignment: Alignment.bottomRight,
+                                  padding: EdgeInsets.all(10),
+                                  child: InkWell(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BusinessInfo(widget.uid),
+                                      ),
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      width: 60,
+                                      height: 20,
+                                      child: Text(
+                                        'View More',
+                                        style: TextStyle(
+                                          fontFamily: 'Bell MT',
+                                          fontSize: 10,
+                                          color: const Color(0xe5dde8f8),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(11.0),
+                                        color: const Color(0xd902020a),
+                                        border: Border.all(
+                                            width: 1.0,
+                                            color: const Color(0xd93f3d56)),
+                                      ),
+                                    ),
+                                 // ),
+                                ),
+                              )
+                            ]),
+                          ),
+                        ]),
                       ),
                       color: Color.fromRGBO(241, 243, 246, 1)),
                 ),

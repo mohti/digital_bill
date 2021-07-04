@@ -194,6 +194,7 @@ class LowStockTable extends StatelessWidget {
                 ),
               ],
             ),
+         
           ),
           Container(
             height: 600,

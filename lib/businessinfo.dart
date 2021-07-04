@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gst_verification/gst_verification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/models/businessprofile.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +19,10 @@ class EditRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width * 0.99;
     return Container(
-      decoration:
-          BoxDecoration(color: Colors.white, border: Border.all(width: 0.1)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(width: 0.1),
+      ),
       width: w,
       child: Row(
         children: [
@@ -27,7 +32,7 @@ class EditRow extends StatelessWidget {
           Container(
             width: w * 0.4,
             child: Padding(
-              padding: const EdgeInsets.only(top: 14.0, bottom: 14),
+              padding: const EdgeInsets.only(top: 14.0, bottom: 14, left: 30),
               child: Text(
                 s1,
                 style: TextStyle(
@@ -81,13 +86,15 @@ class BusinessInfo extends StatefulWidget {
 class _BusinessInfoState extends State<BusinessInfo> {
   bool clicked = false;
   List<String> listOfStr = List();
-
+  bool isvalueIdentified = false;
   bool isLoading = false;
   @override
   void initState() {
     super.initState();
     _getBusinessDetails(widget.uid);
     downloadURLExample();
+    downloadURLExamplesign();
+    downloadURLExamplestamp();
   }
 
   FilePickerResult _result;
@@ -95,6 +102,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
   FilePickerResult _resultstamp;
   FileType _pickType = FileType.custom;
 
+  double valueOp = 0;
+  String gstNo, response = '';
+  String key_secret = '7EvQzBkCZINgbme1YHPFKiuFk6d2';
   // ignore: unused_field
   bool _loadingPath = false;
   void openFileExplorer() async {
@@ -169,13 +179,56 @@ class _BusinessInfoState extends State<BusinessInfo> {
     downloadURLExamplestamp();
   }
 
+  bool verifyGSTNumber() {
+    valueOp = 1;
+
+    setState(() {});
+
+    GstVerification.verifyGST(gstNo, key_secret).then((result) {
+      //package link here
+      //https://pub.dev/packages/gst_verification/versions/1.0.1/example
+      //json results
+      // String Result = result.toString();
+      // print(Result + "gstverification RESULT");
+      String gstn = result["taxpayerInfo"]["gstin"];
+      print("mohit gstn === " + gstn);
+      String pincode = result["taxpayerInfo"]["pradr"]["addr"]["pncd"];
+      String bnm = result["taxpayerInfo"]["pradr"]["addr"]["bnm"];
+      String streat = result["taxpayerInfo"]["pradr"]["addr"]["st"];
+      String loc = result["taxpayerInfo"]["pradr"]["addr"]["loc"];
+      String typeOfBusiness = result["taxpayerInfo"]["nba"][0];
+      String typeOfIndustry = result["taxpayerInfo"]["pradr"]["ntr"];
+      print(typeOfIndustry + "mohit");
+      var address = bnm + " ," + streat + " ," + loc + " ," + pincode;
+      // String industryType =result[]
+      print("mohit address ==>" + address.toString());
+      valueOp = 0;
+      setState(() {
+        gstNumberController.text = gstn;
+        businesAddressController.text = address;
+        businessTypeController.text = typeOfBusiness;
+        industryTypeController.text = typeOfIndustry;
+        isvalueIdentified = true;
+      });
+    }).catchError((error) {
+      print(error + "error mohit ");
+      valueOp = 0;
+      // Fluttertoast.showToast(msg: "Please enter Correct Values");
+      setState(() {
+        isvalueIdentified = false;
+      });
+    });
+    return isvalueIdentified;
+  }
+
   String _downloadURL, _downloadURLsign, _downloadURLstamp;
   Future<void> downloadURLExample() async {
     String downloadURL = await firebase_storage.FirebaseStorage.instance
         .ref(widget.uid + '/business/logo.png')
         .getDownloadURL();
+
     setState(() {
-      print(_downloadURL);
+      print(downloadURL);
       _downloadURL = downloadURL;
     });
     // Within your widgets:
@@ -214,6 +267,8 @@ class _BusinessInfoState extends State<BusinessInfo> {
   final businessStampController = TextEditingController();
   final emailController = TextEditingController();
   final gstNumberController = TextEditingController();
+  final gstNumberControllerForQuery = TextEditingController();
+
   final businesAddressController = TextEditingController();
   final industryTypeController = TextEditingController();
   final businessTypeController = TextEditingController();
@@ -310,6 +365,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
 
     // ignore: unused_local_variable
     final double w = MediaQuery.of(context).size.width;
+
     final firebaseStorageref = FirebaseFirestore.instance
         .collection("userData")
         .doc(widget.uid)
@@ -394,45 +450,53 @@ class _BusinessInfoState extends State<BusinessInfo> {
                             )),
                         Row(
                           children: [
-                            Container(
-                              width: w * 0.7,
-                              decoration: BoxDecoration(color: Colors.white),
-                              child: _edit
-                                  ? TextFormField(
-                                      controller: businessNameController,
-                                      decoration: InputDecoration(
-                                        labelText: '',
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(30, 8, 0, 8),
+                              child: Container(
+                                width: w * 0.6,
+                                decoration: BoxDecoration(color: Colors.white),
+                                child: _edit
+                                    ? TextFormField(
+                                        controller: businessNameController,
+                                        decoration: InputDecoration(
+                                          labelText: '',
+                                        ),
+                                        // The validator receives the text that the user has entered.
+                                      )
+                                    : Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 12,
+                                          color: const Color(0xff2f2e41),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
                                       ),
-                                      // The validator receives the text that the user has entered.
-                                    )
-                                  : Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 12,
-                                        color: const Color(0xff2f2e41),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                              ),
                             ),
                             _edit
-                                ? Container(
-                                    height: 100,
-                                    width: w * 0.2,
-                                    child: RaisedButton(
-                                        child: (_downloadURL == null)
-                                            ? null
-                                            : Image.network(
-                                                _downloadURL,
-                                              ),
-                                        onPressed: () => {
-                                              openFileExplorer(),
-                                              downloadURLExample(),
-                                              saveImages([
-                                                File(_result.files.first.path),
-                                              ], firebaseStorageref)
-                                            }),
+                                ? Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 8, 10, 0),
+                                    child: Container(
+                                      height: 100,
+                                      width: w * 0.25,
+                                      child: RaisedButton(
+                                          child: (_downloadURL == null)
+                                              ? null
+                                              : Image.network(
+                                                  _downloadURL,
+                                                ),
+                                          onPressed: () => {
+                                                openFileExplorer(),
+                                                downloadURLExample(),
+                                                saveImages([
+                                                  File(
+                                                      _result.files.first.path),
+                                                ], firebaseStorageref)
+                                              }),
+                                    ),
                                   )
                                 : Container(
                                     height: 100,
@@ -482,18 +546,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                           width: w,
                           child: Row(
                             children: [
-                              SizedBox(
-                                width: w * 0.01,
-                              ),
                               Container(
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14),
+                                      top: 14.0, bottom: 14, right: 30),
                                   child: Column(
                                     children: [
                                       Text(
-                                        'Singature',
+                                        'signature',
                                         style: TextStyle(
                                           fontFamily: 'Arial',
                                           fontSize: 12,
@@ -572,14 +633,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                           width: w,
                           child: Row(
                             children: [
-                              SizedBox(
-                                width: w * 0.01,
-                              ),
                               Container(
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14),
+                                    top: 14.0,
+                                    bottom: 14,
+                                  ),
                                   child: Column(
                                     children: [
                                       Text(
@@ -671,7 +731,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14),
+                                      top: 14.0, bottom: 14, left: 30),
                                   child: Text(
                                     'Phone Number',
                                     style: TextStyle(
@@ -750,7 +810,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14),
+                                      top: 14.0, bottom: 14, left: 30),
                                   child: Text(
                                     'GST Number',
                                     style: TextStyle(
@@ -769,19 +829,60 @@ class _BusinessInfoState extends State<BusinessInfo> {
                               Container(
                                 width: w * 0.5,
                                 child: _edit
-                                    ? TextFormField(
+                                    ?
+                                    // TextField(
+                                    //     decoration: InputDecoration(
+                                    //       labelText: 'GST Number',
+                                    //       counterText: '',
+                                    //     ),
+                                    //     onChanged: (text) {
+                                    //       setState(() {
+                                    //         gstNo = text;
+                                    //         if (gstNo.length > 14) {
+                                    //           {
+                                    //             verifyGSTNumber();
+                                    //           }
+                                    //         }
+                                    //       });
+                                    //       print('First text field: $text' +
+                                    //           'mohit');
+                                    //     },
+
+                                    //  )
+
+                                    TextFormField(
                                         maxLength: 15,
+                                        controller: gstNumberController,
+                                        onChanged: (text) {
+                                          setState(() {
+                                            gstNo = text;
+                                            if (gstNo.length > 14) {
+                                              {
+                                                verifyGSTNumber();
+                                              }
+                                            }
+                                          });
+                                          print('First text field: $text' +
+                                              'mohit');
+                                        },
 
                                         validator: (value) {
                                           if (value.isEmpty ||
-                                              value.characters.last != 'Z' ||
                                               value.length != 15) {
-                                            return 'Please Enter Correct ' +
-                                                "GSTN";
+                                            return null;
+                                          } else {
+                                            bool v = verifyGSTNumber();
+                                            print(v.toString() +
+                                                "mohit bool value");
+                                            if (v == true) {
+                                              return null;
+                                            } else {
+                                              return "something is wrong";
+                                            }
                                           }
-                                          return null;
                                         },
-                                        controller: gstNumberController,
+                                        //mohit
+                                        //controller: gstNumberController,
                                         decoration: InputDecoration(
                                           labelText: 'GST Number',
                                           counterText: '',
@@ -858,7 +959,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Edit Details',
+                                  'Save Details',
                                   style: TextStyle(
                                     fontFamily: 'Arial',
                                     fontSize: 16,
@@ -905,42 +1006,48 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                         )),
                                     Row(
                                       children: [
-                                        Container(
-                                          width: w * 0.7,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white),
-                                          child: _edit
-                                              ? TextFormField(
-                                                  controller:
-                                                      businessNameController,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Business Name',
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2.0),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              30, 8, 0, 8),
+                                          child: Container(
+                                            width: w * 0.6,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white),
+                                            child: _edit
+                                                ? TextFormField(
+                                                    controller:
+                                                        businessNameController,
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          'Business Name',
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(2.0),
+                                                      ),
                                                     ),
+                                                    // The validator receives the text that the user has entered.
+                                                  )
+                                                : Text(
+                                                    snapshot.data.docs[index][
+                                                                'businessName'] ==
+                                                            ' '
+                                                        ? ' '
+                                                        : snapshot.data
+                                                                .docs[index]
+                                                            ['businessName'],
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 12,
+                                                      color: const Color(
+                                                          0xff2f2e41),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
                                                   ),
-                                                  // The validator receives the text that the user has entered.
-                                                )
-                                              : Text(
-                                                  snapshot.data.docs[index][
-                                                              'businessName'] ==
-                                                          ' '
-                                                      ? ' '
-                                                      : snapshot
-                                                              .data.docs[index]
-                                                          ['businessName'],
-                                                  style: TextStyle(
-                                                    fontFamily: 'Arial',
-                                                    fontSize: 12,
-                                                    color:
-                                                        const Color(0xff2f2e41),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  textAlign: TextAlign.left,
-                                                ),
+                                          ),
                                         ),
                                         _edit
                                             ? Container(
@@ -1006,14 +1113,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                       width: w,
                                       child: Row(
                                         children: [
-                                          SizedBox(
-                                            width: w * 0.01,
-                                          ),
                                           Container(
                                             width: w * 0.4,
                                             child: Padding(
                                               padding: const EdgeInsets.only(
-                                                  top: 14.0, bottom: 14),
+                                                top: 14.0,
+                                                bottom: 14,
+                                                right: 30,
+                                              ),
                                               child: Column(
                                                 children: [
                                                   Text(
@@ -1108,9 +1215,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                       width: w,
                                       child: Row(
                                         children: [
-                                          SizedBox(
-                                            width: w * 0.01,
-                                          ),
+                                          // SizedBox(
+                                          //   width: w * 0.01,
+                                          // ),
                                           Container(
                                             width: w * 0.4,
                                             child: Padding(
@@ -1258,7 +1365,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                             width: w * 0.4,
                                             child: Padding(
                                               padding: const EdgeInsets.only(
-                                                  top: 14.0, bottom: 14),
+                                                  top: 14.0,
+                                                  bottom: 14,
+                                                  left: 30),
                                               child: Text(
                                                 'GST Number',
                                                 style: TextStyle(

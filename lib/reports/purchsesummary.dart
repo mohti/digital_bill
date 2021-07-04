@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
 import 'package:digitalbillbook/tables/purchasesummarytable.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
@@ -21,6 +22,22 @@ class PurchaseSummary extends StatefulWidget {
 }
 
 class _PurchaseSummary extends State<PurchaseSummary> {
+  Widget widgetTable;
+  String selctbyFilter;
+
+  String textfieldValues;
+  String askValues = 'productCode';
+  String selectbyfilter;
+  String settingUitextvalues = 'Product code';
+  final listofSelect = [
+    'Product Code',
+    'Product name',
+    'Quanitity',
+    'Tax Rate',
+    //'Invoice No',
+    'Ammount'
+  ];
+
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
@@ -37,9 +54,6 @@ class _PurchaseSummary extends State<PurchaseSummary> {
 
   @override
   void initState() {
-    // ignore: todo
-    // TODO: implement initState
-
     super.initState();
   }
 
@@ -92,20 +106,40 @@ class _PurchaseSummary extends State<PurchaseSummary> {
         querySnapshot.docs.forEach((product) {
           final Timestamp timestamp = (product['sdate']) as Timestamp;
           final DateTime d = timestamp.toDate();
-          if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-              d.day == initialdate.day ||
-              d.day == finaldate.day)
-            sheet.appendRow([
-              product['invoiceno'],
-              DateFormat('dd/MM/yyyy').format(d),
-              product['listOfProducts'][0]['productCode'],
-              product['sname'] == null ? '' : product['sgstn'],
-              product['listOfProducts'][0]['hsncode'],
-              product['sgstn'] == null ? '' : product['sgstn'],
-              product['listOfProducts'][0]['taxrate'],
-              product['listOfProducts'][0]['totalamount'],
-              product['listOfProducts'][0]['taxamount'],
-            ]);
+          if (textfieldValues == null || textfieldValues == '') {
+            if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
+                d.day == initialdate.day ||
+                d.day == finaldate.day)
+              sheet.appendRow([
+                product['invoiceno'],
+                DateFormat('dd/MM/yyyy').format(d),
+                product['listOfProducts'][0]['productCode'],
+                product['sname'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['hsncode'],
+                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['taxrate'],
+                product['listOfProducts'][0]['totalamount'],
+                product['listOfProducts'][0]['taxamount'],
+              ]);
+          }
+          else
+          {
+           if((d.isBefore(finaldate) && d.isAfter(initialdate)) &&
+                  (textfieldValues == product['listOfProducts'][0][askValues]) ||
+              (d.day == initialdate.day || d.day == finaldate.day))
+            
+              sheet.appendRow([
+                product['invoiceno'],
+                DateFormat('dd/MM/yyyy').format(d),
+                product['listOfProducts'][0]['productCode'],
+                product['sname'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['hsncode'],
+                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['taxrate'],
+                product['listOfProducts'][0]['totalamount'],
+                product['listOfProducts'][0]['taxamount'],
+              ]);
+          }
         });
       });
 
@@ -140,6 +174,8 @@ class _PurchaseSummary extends State<PurchaseSummary> {
       OpenFile.open("$appDocPath/excel.xlsx");
     }
 
+    var w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       floatingActionButton: InkWell(
         onTap: () => fc(),
@@ -155,20 +191,23 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                 pinRight: true,
                 pinTop: true,
                 pinBottom: true,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                    color: const Color(0xffffffff),
-                    border:
-                        Border.all(width: 1.0, color: const Color(0xff2f2e41)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x66404040),
-                        offset: Offset(6, 6),
-                        blurRadius: 12,
-                      ),
-                    ],
+                child: InkWell(
+                  onTap: () => fc(),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                      color: const Color(0xffffffff),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xff2f2e41)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0x66404040),
+                          offset: Offset(6, 6),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -245,15 +284,24 @@ class _PurchaseSummary extends State<PurchaseSummary> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  'Date',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 12,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.20,
+                    child: Text(
+                      'Date',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 12,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  textAlign: TextAlign.left,
+                ),
+                SizedBox(
+                  width: 10,
                 ),
                 Card(
                   elevation: 4,
@@ -261,7 +309,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     onTap: () => selectDate1(context),
                     child: Container(
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.35,
                       height: 50,
                       child: Text("From " +
                           DateFormat('dd-MM-yyyy').format(initialdate)),
@@ -274,7 +322,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     onTap: () => selectDate2(context),
                     child: Container(
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.35,
                       height: 50,
                       child: Text(
                           "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
@@ -289,6 +337,134 @@ class _PurchaseSummary extends State<PurchaseSummary> {
             SizedBox(
               height: 20,
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.20,
+                    child: Text(
+                      '$settingUitextvalues',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 12,
+                        color: const Color(0xff2f2e41),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Card(
+                    elevation: 4,
+                    child: InkWell(
+                      //todo
+                      //onTap: () => selectDate1(context),
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        height: 50,
+                        child: TextField(
+                          onChanged: (text) {
+                            setState(() {
+                              textfieldValues = text;
+                            });
+                            print('First text field: $text');
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 4,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      height: 50,
+                      child: DropdownButtonFormField<String>(
+                        value: selectbyfilter,
+                        icon: Icon(Icons.arrow_downward),
+                        decoration: CoustumInputDecorationWidget('select by')
+                            .decoration(),
+                        items: listofSelect.map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            selectbyfilter = newValue;
+                            if (selectbyfilter == 'product Code') {
+                              askValues = 'productCode';
+                            }
+                            if (selectbyfilter == 'Product name') {
+                              askValues = 'productName';
+                            }
+                            if (selectbyfilter == 'Quanitity') {
+                              askValues = 'quantity';
+                            }
+                            if (selectbyfilter == 'Tax Rate') {
+                              askValues = 'cgst';
+                            }
+                            if (selectbyfilter == 'Invoice No') {
+                              askValues = 'invoiceno';
+                            }
+
+                            if (selectbyfilter == 'Ammount') {
+                              askValues = 'totalAmount';
+                            }
+
+                            settingUitextvalues = selectbyfilter;
+                          });
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Pease select by';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(
+              height: 20,
+            ),
+
+            Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width * 0.44,
+              child: RaisedButton(
+                  color: const Color(0xff2f2e41),
+                  onPressed: () => {
+                        setState(() {
+                          widgetTable = PurchaseSummarytable(
+                              widget.uid,
+                              initialdate,
+                              finaldate,
+                              textfieldValues,
+                              askValues);
+                        }),
+                      },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    'Purchase Summury',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+            ),
+
             /*         Container(
               decoration: BoxDecoration(
                   color: const Color(0xfff3F3D56),
@@ -311,7 +487,182 @@ class _PurchaseSummary extends State<PurchaseSummary> {
             SizedBox(
               height: 20,
             ),
-            PurchaseSummarytable(widget.uid, initialdate, finaldate)
+            widgetTable == null
+                ? Container(
+                    decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+                    child: Row(
+                      /*  'Receipt No.',
+        'Date',
+        'Pro Code',
+        'Pro Name',
+        'GSTN',
+        'Buyer Name',
+        'HSN',
+        'Quantity',
+        'TAX',
+        'Invoice Value',
+        'TAX Value'*/
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Receipt No.',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.05,
+                          child: Text(
+                            'Date',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Pro Code',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Pro Name',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'GSTN',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Buyer Name',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'HSN',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Quantity',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.05,
+                          child: Text(
+                            'TAX',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Invoice Value',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'TAX Value',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : widgetTable,
+
+            // PurchaseSummarytable(widget.uid, initialdate, finaldate, textfieldValues, askValues)
           ],
         ),
       ),

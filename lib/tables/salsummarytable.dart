@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
-    DateTime id, DateTime fd) {
+    DateTime id, DateTime fd,String textfieldValues, String askValues) {
   final Timestamp timestamp = (product['sdate']) as Timestamp;
   final DateTime d = timestamp.toDate();
-
-  return ((d.isBefore(fd) && d.isAfter(id)) ||
+  if (textfieldValues == null || textfieldValues == ''){
+    return ((d.isBefore(fd) && d.isAfter(id)) ||
           d.day == id.day ||
           d.day == fd.day)
       ? Container(
@@ -172,12 +172,179 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
           ),
         )
       : null;
+  }else{
+    return ((d.isBefore(fd) && d.isAfter(id)) 
+             && (textfieldValues == product['listOfProducts'][0][askValues])
+                    )
+      ? Container(
+          child: Column(
+            children: [
+              Container(
+                width: w,
+                height: 30,
+                decoration: BoxDecoration(
+                    color: Colors.white, border: Border.all(width: 0.1)),
+                child: Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['invoiceno'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.05,
+                      child: Text(
+                        '',
+                        //         DateFormat('dd/MM/yyyy').format(d),
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['listOfProducts'][0]['productCode'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['listOfProducts'][0]['productName'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.05,
+                      child: Text(
+                        product['sgstn'] == null ? '' : product['sgstn'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['sname'] == null ? '' : product['sgstn'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['listOfProducts'][0]['hsncode'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['sgstn'] == null ? '' : product['sgstn'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.05,
+                      child: Text(
+                        product['listOfProducts'][0]['taxrate'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['listOfProducts'][0]['totalamount'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: w * 0.1,
+                      child: Text(
+                        product['listOfProducts'][0]['taxamount'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      : null;
+  }
 }
 
 class SalesSummaryTable extends StatelessWidget {
   final String uid;
   final DateTime id, fd;
-  SalesSummaryTable(this.uid, this.id, this.fd);
+    String textfiledValues, askvalues;
+  SalesSummaryTable(this.uid, this.id, this.fd,this.textfiledValues, this.askvalues);
 
   @override
   Widget build(BuildContext context) {
@@ -379,6 +546,7 @@ class SalesSummaryTable extends StatelessWidget {
                 ),
               ],
             ),
+         
           ),
           Container(
             height: 600,
@@ -390,7 +558,7 @@ class SalesSummaryTable extends StatelessWidget {
                       itemCount: snapshot.data.docs.length,
                       itemBuilder: (BuildContext context, int index) =>
                           buildtable(
-                              context, snapshot.data.docs[index], w, id, fd));
+                              context, snapshot.data.docs[index], w, id, fd,textfiledValues, askvalues));
                 }),
           ),
         ],

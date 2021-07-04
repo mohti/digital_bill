@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,7 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
+  var widgetTable;
   var initialdate = DateTime.now(), finaldate = DateTime.now();
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
@@ -44,6 +46,7 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
     Future<Null> selectDate1(BuildContext context) async {
       final DateTime picked1 = await showDatePicker(
           context: context,
@@ -74,13 +77,29 @@ class _ProductListState extends State<ProductList> {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
-      var sheet = excel['mySheet'];
+      Sheet sheet = excel['productList'];
+      /*
+      * excel.link(String 'sheetName', Sheet sheetObject);
+      * 
+      * Any operations performed on (object of 'sheetName') or sheetObject then the operation is performed on both.
+      * if 'sheetName' does not exist then it will be automatically created and linked with the sheetObject's operation.
+      *
+      */
+
+      //excel.link('productList', sheet);
       sheet.appendRow([
         'From ' +
             DateFormat('dd/MM/yyyy').format(initialdate).toString() +
             ' to ' +
             DateFormat('dd/MM/yyyy').format(finaldate).toString(),
       ]);
+      /* 
+     * sheetObject.appendRow(list-iterables);
+     * sheetObject created by calling - // Sheet sheetObject = excel['SheetName'];
+     * list-iterables === list of iterables
+     */
+
+      //  sheet.appendRow(["Flutter", "till", "Eternity"]);
 
       FirebaseFirestore.instance
           .collection('userData')
@@ -101,6 +120,9 @@ class _ProductListState extends State<ProductList> {
               doc['purchaserate'],
               doc['sellingprice']
             ]);
+          print(sheet.toString());
+          print(doc['productCode'].toString() +
+              'hello mohit product code  from firebase ');
         });
       });
 
@@ -114,15 +136,19 @@ class _ProductListState extends State<ProductList> {
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
-
+      print(appDocPath.toString() + 'hello mohit');
       final isPermissionStatusGranted = await _requestPermissions();
       if (isPermissionStatusGranted) {
         excel.encode().then((onValue) {
-          File(join("$appDocPath/excel.xlsx"))
+          File(join('${appDocDir.path}/$excel.xlsx'))
             ..createSync(recursive: true)
             ..writeAsBytesSync(onValue);
+          print('sucess writing exel document');
+          //"$appDocPath/excel.xlsx"
         });
       } else {
+        Fluttertoast.showToast(msg: 'user deciled permission');
+        // Toast('user deciled ').show;
         // handle the scenario when user declines the permissions
       }
       OpenFile.open("$appDocPath/excel.xlsx");
@@ -130,6 +156,7 @@ class _ProductListState extends State<ProductList> {
 
     return Scaffold(
       floatingActionButton: InkWell(
+        //mohit here the  button is  clicked
         onTap: () => fc(),
         child: SizedBox(
           width: 65.0,
@@ -277,6 +304,30 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
+            Container(
+              height: 50,
+          
+              width: MediaQuery.of(context).size.width * 0.42,
+              child: RaisedButton(
+                   color:const Color(0xff2f2e41), 
+                  onPressed: () => {
+                        setState(() => {
+                              widgetTable =
+                                  Table1(widget.uid, initialdate, finaldate)
+                            })
+                      },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    'Product List',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
+            ),
             /*         Container(
               decoration: BoxDecoration(
                   color: const Color(0xfff3F3D56),
@@ -299,7 +350,85 @@ class _ProductListState extends State<ProductList> {
             SizedBox(
               height: 20,
             ),
-            Table1(widget.uid, initialdate, finaldate)
+            widgetTable == null
+                ? Container(
+                    decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+                    child: Row(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Product Code ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Product Name ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'HSN Code ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.2,
+                          child: Text(
+                            'Purchase Rate ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: w * 0.1,
+                          child: Text(
+                            'Selling Rate ',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 10,
+                              color: const Color(0xfff1f3f6),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : widgetTable
           ],
         ),
       ),
