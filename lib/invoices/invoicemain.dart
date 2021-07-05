@@ -152,7 +152,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
   String numberOfInvoies;
   String invoiceStyle;
 
-  int productCount=0;
+  int productCount = 0;
 
   //use this funtion when u need  to call field empty validation
   Function ifemptyvalidation = (value) {
@@ -163,17 +163,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
   };
 
   Future<Null> numberOfInvoices(String uid) async {
-
     QuerySnapshot productCollection = await FirebaseFirestore.instance
         .collection("userData")
         .doc(uid)
         .collection('Invoice')
         .get();
     setState(() {
-      if(productCollection.size==null)
-      productCount = productCollection.size;
+      if (productCollection.size == null) productCount = productCollection.size;
     });
-
   }
 
   Future<Null> invoiceNumDetails(String uid) async {
@@ -191,10 +188,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
           String invoiceprefix = valuee.data()['invoiceprefix'] == null
               ? ''
               : valuee.data()['invoiceprefix'];
-          String invoiceStartingSerialNum = valuee.data()['invoiceprefix'] == null
-              ? ''
-              : valuee.data()['startingserialno'];
-          int numberofInvoice = int.parse(invoiceStartingSerialNum) + productCount;
+          String invoiceStartingSerialNum =
+              valuee.data()['invoiceprefix'] == null
+                  ? ''
+                  : valuee.data()['startingserialno'];
+          int numberofInvoice =
+              int.parse(invoiceStartingSerialNum) + productCount;
           invoiceno.text = invoiceprefix + numberofInvoice.toString();
         });
       });
@@ -1138,10 +1137,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             valuee.data()['hsncode'];
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
-                                        t[index].quantity.text =
-                                            valuee.data()['quantity'];
-                                        t[index].totalamount.text =
-                                            valuee.data()['totalAmount'];
+                                        // t[index].quantity.text = valuee
+                                        //     .data()['quantity']
+                                        //     .toString();
+                                        t[index].taxrate.text =
+                                            valuee.data()['igst;'];
+                                        // t[index].totalamount.text = valuee
+                                        //     .data()['totalAmount']
+                                        //     .toString();
                                       });
                                     });
                                   },
@@ -1276,7 +1279,31 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   onChanged: (value) {
                                     changeQuantity2(index, value);
                                     setState(() {
-                                      //mohit
+                                      //
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var q = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;
+                                      int tam =
+                                          int.parse(q) * int.parse(sellingRate);
+                                      // print(tam.toString() + "mohit");
+                                      var ttam =
+                                          (tam * int.parse(result)) / 100;
+
+                                 
+                                      // //mohit
+                                       t[index].taxamount.text = ttam.toString();
+                                      // print(t[index].taxamount.text +
+                                      //     "mohit tax amount");
+                                      t[index].totalamount.text =
+                                          tam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+
+                                      // tam;
                                       //  totalamount = value * sellingrate;
                                     });
                                   },
@@ -1396,6 +1423,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 // height: 60,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
+                                  //t[index].totalamount.text= (int.parse( t[index].totalamount)*int.parse( t[index].sellingrate.text)).toString(),
 
                                   decoration: CoustumInputDecorationWidget(
                                           'Total Amount')
@@ -1506,11 +1534,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
-                           shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
@@ -1696,10 +1724,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               showModalBottomSheet<void>(
                                 context: context,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15.0),
+                                      topRight: Radius.circular(15.0)),
+                                ),
                                 //                            shape: RoundedRectangleBorder(
                                 builder: (BuildContext context) {
                                   return Container(
@@ -1848,10 +1876,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           onTap: () {
                             showModalBottomSheet<void>(
                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
@@ -1992,10 +2020,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           onTap: () {
                             showModalBottomSheet<void>(
                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(

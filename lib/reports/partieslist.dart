@@ -60,7 +60,7 @@ class _PartiesListState extends State<PartiesList> {
         'country',
         'pincode'
       ]);
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('userData')
           .doc(widget.uid)
           .collection('Party')
@@ -166,6 +166,7 @@ class _PartiesListState extends State<PartiesList> {
           ),
         ),
       ),
+      
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),

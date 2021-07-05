@@ -52,7 +52,10 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
                       alignment: Alignment.center,
                       width: w * 0.1,
                       child: Text(
-                        product['listOfProducts'][0]['productCode'],
+                       // product['listOfProducts'][0]['productCode']==null?
+                       // '':
+                       // product['listOfProducts'][0]['productCode'],
+                       'testin',
                         style: TextStyle(
                           fontFamily: 'Arial',
                           fontSize: 10,

@@ -24,6 +24,7 @@ class Eachrow extends StatelessWidget {
               //height: 50,
               width: MediaQuery.of(context).size.width * 0.45,
               child: TextFormField(
+                
                 keyboardType: keyboardTypeC1,
                 controller: controller1,
                 decoration: CoustumInputDecorationWidget(s1).decoration(),

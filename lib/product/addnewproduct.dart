@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-
 class Addproduct extends StatefulWidget {
   final String uid;
   Addproduct(this.uid);
@@ -36,13 +35,13 @@ class _AddproductState extends State<Addproduct> {
   final sellingpriceController = TextEditingController();
   var date = DateTime.now();
   final totalAmount = TextEditingController();
- 
+
   Function validation = (value) {
-                  if (value.isEmpty) {
-                    return 'Please Enter value';
-                  }
-                  return null;
-                } ; 
+    if (value.isEmpty) {
+      return 'Please Enter value';
+    }
+    return null;
+  };
 
   final newProduct = new AddProduct(
       null, null, null, null, null, null, null, null, null, null, null, null);
@@ -167,7 +166,6 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 20,
               ),
-              
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
@@ -184,16 +182,29 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 20,
               ),
-              
-              Eachrow(productCodeController, "Product Code",TextInputType.text,
-                      validation
-                      ,productNameController, 'Product Name',TextInputType.text,
-                      validation,50),              
+              Eachrow(
+                  productCodeController,
+                  "Product Code",
+                  TextInputType.text,
+                  validation,
+                  productNameController,
+                  'Product Name',
+                  TextInputType.text,
+                  validation,
+                  50),
               SizedBox(
                 height: 30,
-              ),             
-              Eachrow(hsncodeController, "HSN Code",TextInputType.text,validation,quantityController,
-                  'Quantity',TextInputType.number,validation,10),
+              ),
+              Eachrow(
+                  hsncodeController,
+                  "HSN Code",
+                  TextInputType.text,
+                  validation,
+                  quantityController,
+                  'Quantity',
+                  TextInputType.number,
+                  validation,
+                  10),
               SizedBox(
                 height: 30,
               ),
@@ -209,10 +220,9 @@ class _AddproductState extends State<Addproduct> {
                         value: cgst,
                         icon: Icon(Icons.arrow_downward),
                         decoration: InputDecoration(
-                          labelText: "CGST + SGST",contentPadding: const EdgeInsets.only(
-                          left: 8.0,
-                          bottom: 1.0,
-                          top: 2.0),
+                          labelText: "CGST + SGST",
+                          contentPadding: const EdgeInsets.only(
+                              left: 8.0, bottom: 1.0, top: 2.0),
                         ),
                         items: [
                           "14+14%",
@@ -241,7 +251,6 @@ class _AddproductState extends State<Addproduct> {
                       ),
                     ),
                   ),
-                                 
                   Card(
                     elevation: 4,
                     child: Container(
@@ -251,9 +260,10 @@ class _AddproductState extends State<Addproduct> {
                         value: igst,
                         icon: Icon(Icons.arrow_downward),
                         decoration: InputDecoration(
-                          labelText: "IGST",contentPadding: const EdgeInsets.only(
-                       left: 8.0,
-                       ),
+                          labelText: "IGST",
+                          contentPadding: const EdgeInsets.only(
+                            left: 8.0,
+                          ),
                         ),
                         items: listofIGST.map((String value) {
                           return new DropdownMenuItem<String>(
@@ -274,14 +284,87 @@ class _AddproductState extends State<Addproduct> {
                         },
                       ),
                     ),
-                  ),                
+                  ),
                 ],
               ),
               SizedBox(
                 height: 30,
               ),
-              Eachrow(purchaserateController, "Purchase Rate",TextInputType.numberWithOptions(),validation,
-                  sellingpriceController, "Selling price",TextInputType.numberWithOptions(),validation,10),
+              // Eachrow(
+              //     purchaserateController,
+              //     "Purchase Rate",
+              //     TextInputType.numberWithOptions(),
+              //     validation,
+              //     sellingpriceController,
+              //     "Selling price",
+              //     TextInputType.numberWithOptions(),
+              //     validation,
+              //     10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        //height: 50,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {
+                                String taxRate = igst;
+                                String result;
+                                result =
+                                    taxRate.substring(0, taxRate.length - 1);
+                                var tam =
+                                    (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text) *
+                                            int.parse(result)) /
+                                        100;
+                                totalAmount.text = tam.toString();
+                              });
+                            },
+                            controller: purchaserateController,
+                            decoration:
+                                CoustumInputDecorationWidget("Purchase Rate")
+                                    .decoration(),
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "enter value";
+                              }
+                              return null;
+                            }),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        //height: 50,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                            //inputFormatters: [new LengthLimitingTextInputFormatter(inputformates)],
+                            //  keyboardType: keyboardTypeC2,
+                            controller: sellingpriceController,
+                            decoration:
+                                CoustumInputDecorationWidget("Selling price")
+                                    .decoration(),
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "enter value";
+                              }
+                              return null;
+                            }),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),
@@ -293,14 +376,14 @@ class _AddproductState extends State<Addproduct> {
                     child: InkWell(
                       onTap: () => _selectDate(context),
                       child: Container(
-                      //  alignment: Alignment.center,
+                        //  alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 0.45,
                         height: 50,
-                        child:
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8,18,8,0),
-                              child: Text("Date          " + DateFormat().add_yMd().format(date)),
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 18, 8, 0),
+                          child: Text("Date          " +
+                              DateFormat().add_yMd().format(date)),
+                        ),
                       ),
                     ),
                   ),
@@ -308,14 +391,11 @@ class _AddproductState extends State<Addproduct> {
                     elevation: 4,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.45,
-                    //  height: 50,
+                      //  height: 50,
                       child: TextFormField(
                         controller: totalAmount,
-                        decoration:CoustumInputDecorationWidget("Total Amount")
-                              .decoration(),
-                        //  InputDecoration(
-                        //   labelText: "Total Amount",
-                        // ),
+                        decoration: CoustumInputDecorationWidget("Total Amount")
+                            .decoration(),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
                           if (value.isEmpty) {
@@ -337,7 +417,7 @@ class _AddproductState extends State<Addproduct> {
                   Padding(
                     padding: const EdgeInsets.all(0),
                     child: Card(
-                     // elevation: 4,
+                      // elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
                         height: 50,
@@ -349,14 +429,10 @@ class _AddproductState extends State<Addproduct> {
                           ),
                           value: 'OTH-OTHERS',
                           icon: Icon(Icons.arrow_downward),
-                          decoration: 
-                          InputDecoration(
+                          decoration: InputDecoration(
                             labelText: "Unit",
                             contentPadding: const EdgeInsets.only(
-                            left: 8.0,
-                            bottom: 1.0,
-                            top: 1,
-                            right:0),
+                                left: 8.0, bottom: 1.0, top: 1, right: 0),
                           ),
                           items: units.map((String value) {
                             return new DropdownMenuItem<String>(
@@ -386,10 +462,10 @@ class _AddproductState extends State<Addproduct> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                       
                         child: TextFormField(
                           controller: lowstockreminderat,
-                          decoration: CoustumInputDecorationWidget('Remind Low Stock at')
+                          decoration: CoustumInputDecorationWidget(
+                                  'Remind Low Stock at')
                               .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
@@ -406,7 +482,7 @@ class _AddproductState extends State<Addproduct> {
               ),
               SizedBox(
                 height: 30,
-                ),
+              ),
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(

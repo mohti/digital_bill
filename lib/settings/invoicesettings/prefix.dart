@@ -3,27 +3,72 @@ import 'package:digitalbillbook/models/invoicesettingsmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SetPrefix extends StatelessWidget {
-  final invoicePrefixController = TextEditingController();
-  final startingserialnoController = TextEditingController();
-  final settings = new InvoiceSettingsmodel(null, null);
-  final _keyForm = GlobalKey<FormState>();
+class SetPrefix extends StatefulWidget {
   final String uid;
   SetPrefix(this.uid);
+
   @override
-  Widget build(BuildContext context) {
-    final db = FirebaseFirestore.instance;
+  _SetPrefixState createState() => _SetPrefixState();
+}
+
+class _SetPrefixState extends State<SetPrefix> {
+
+
+      final db = FirebaseFirestore.instance;
     Future<void> invoicebutton() {
       settings.invoiceprefix = invoicePrefixController.text;
       settings.startingserialno = startingserialnoController.text;
       // Call the user's CollectionReference to add a new user
       return db
           .collection("userData")
-          .doc(uid)
+          .doc(widget.uid)
           .collection("invoiceSettings")
           .doc('invoiceSettings')
           .set(settings.toJson());
     }
+
+   Future<void> getInvoicedata() {
+      settings.invoiceprefix = invoicePrefixController.text;
+      settings.startingserialno = startingserialnoController.text;
+      // Call the user's CollectionReference to add a new user
+      return db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("invoiceSettings")
+          .doc('invoiceSettings')
+          .get()
+          .then(
+            (value) => setState(() => {
+                  invoicePrefixController.text = value["invoiceprefix"] == null
+                      ? ''
+                      : value["invoiceprefix"],
+                  startingserialnoController.text =
+                      value["invoiceprefix"] == null
+                          ? ''
+                          : value["invoiceprefix"]
+                }),
+          );
+    }
+
+
+
+   
+  void initState() {
+    //assert(_debugLifecycleState == _StateLifecycle.created);
+    getInvoicedata();
+  }
+
+  final invoicePrefixController = TextEditingController();
+
+  final startingserialnoController = TextEditingController();
+
+  final settings = new InvoiceSettingsmodel(null, null);
+
+  final _keyForm = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+  
 
     return Scaffold(
       body: SafeArea(
@@ -116,9 +161,8 @@ class SetPrefix extends StatelessWidget {
                         if (invoicePrefixController.text.isNotEmpty &&
                             startingserialnoController.text.isNotEmpty)
                           {invoicebutton(), Navigator.pop(context)}
-                          else{
-                            Fluttertoast.showToast(msg: 'Enter values')
-                          }
+                        else
+                          {Fluttertoast.showToast(msg: 'Enter values')}
                       },
                   child: Container(
                     width: 100,

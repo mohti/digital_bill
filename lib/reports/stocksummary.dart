@@ -118,7 +118,7 @@ class _StockSummaryState extends State<StockSummary> {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
-      var sheet = excel['mySheet'];
+      var sheet = excel['stocksummary'];
       sheet.appendRow([
         'From ' +
             DateFormat('dd/MM/yyyy').format(initialdate).toString() +
@@ -203,7 +203,7 @@ class _StockSummaryState extends State<StockSummary> {
 
     return Scaffold(
       floatingActionButton: InkWell(
-        //onTap: () => fc(),
+        onTap: () => fc(),
         child: SizedBox(
           width: 65.0,
           height: 65.0,
