@@ -317,11 +317,15 @@ class _AddproductState extends State<Addproduct> {
                                 String result;
                                 result =
                                     taxRate.substring(0, taxRate.length - 1);
-                                var tam =
+                                var taxammount =
                                     (int.parse(purchaserateController.text) *
                                             int.parse(quantityController.text) *
                                             int.parse(result)) /
                                         100;
+                                var tam =
+                                 (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text)) +
+                                        taxammount;
                                 totalAmount.text = tam.toString();
                               });
                             },

@@ -43,9 +43,9 @@ class _SetPrefixState extends State<SetPrefix> {
                       ? ''
                       : value["invoiceprefix"],
                   startingserialnoController.text =
-                      value["invoiceprefix"] == null
+                      value["startingserialno"] == null
                           ? ''
-                          : value["invoiceprefix"]
+                          : value["startingserialno"]
                 }),
           );
     }

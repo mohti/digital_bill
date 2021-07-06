@@ -173,6 +173,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
     });
   }
 
+  
+
   Future<Null> invoiceNumDetails(String uid) async {
     print("invoiceNumdetails is called mohit");
     final db = FirebaseFirestore.instance;
@@ -276,6 +278,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
     downloadURLExample();
     downloadURLExamplesign();
     downloadURLExamplestamp();
+
+
   }
 
   @override
@@ -583,13 +587,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 decoration: CoustumInputDecorationWidget(
                                         'Bill to Ship Invoice')
                                     .decoration(),
-                                //  InputDecoration(
-                                //   labelText: 'Bill to Ship Invoice',
-                                //   fillColor: Colors.white,
-                                //   enabledBorder: OutlineInputBorder(
-                                //     borderRadius: BorderRadius.circular(2.0),
-                                //   ),
-                                // ),
+                             
                                 // The validator receives the text that the user has entered.
                               ),
                             ),
@@ -778,58 +776,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           return null;
                         }), 6),
 
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //   children: <Widget>[
-                        //     Padding(
-                        //       padding: const EdgeInsets.all(0.0),
-                        //       child: Card(
-                        //         elevation: 4,
-                        //         child: Container(
-                        //           width:
-                        //               MediaQuery.of(context).size.width * 0.45,
-                        //           child: TextFormField(
-                        //               controller: scountry,
-                        //               decoration: CoustumInputDecorationWidget(
-                        //                       'country')
-                        //                   .decoration(),
-                        //               // The validator receives the text that the user has entered.
-                        //               validator: (value) {
-                        //                 if (value.isEmpty) {
-                        //                   return 'Please Enter ';
-                        //                 }
-                        //                 return null;
-                        //               }),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     Padding(
-                        //       padding: const EdgeInsets.all(0.0),
-                        //       child: Card(
-                        //         elevation: 4,
-                        //         child: Container(
-                        //           width:
-                        //               MediaQuery.of(context).size.width * 0.45,
-                        //           child: TextFormField(
-                        //             keyboardType:TextInputType.phone,
-                        //             inputFormatters: [new LengthLimitingTextInputFormatter(6)],
-                        //               controller: spin,
-                        //               decoration: CoustumInputDecorationWidget(
-                        //                       'pincode')
-                        //                   .decoration(),
-
-                        //               validator: (value) {
-                        //                 if (value.isEmpty &&
-                        //                     value.length != 6) {
-                        //                   return 'Please Enter Pincode';
-                        //                 }
-                        //                 return null;
-                        //               }),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
 
                         Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -1119,7 +1065,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 //height: 60,
                                 child: TextFormField(
-                                  onChanged: (value) {
+                                   onChanged: (value) {
                                     if (value.length > 3)
                                       changeQuantity1(index, value);
 
@@ -1137,14 +1083,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             valuee.data()['hsncode'];
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
-                                        // t[index].quantity.text = valuee
-                                        //     .data()['quantity']
-                                        //     .toString();
                                         t[index].taxrate.text =
                                             valuee.data()['igst;'];
-                                        // t[index].totalamount.text = valuee
-                                        //     .data()['totalAmount']
-                                        //     .toString();
                                       });
                                     });
                                   },
@@ -1152,11 +1092,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration: CoustumInputDecorationWidget(
                                           "Product Code")
                                       .decoration(),
-                                  //  InputDecoration(
-                                  //   labelText: "Product Code",
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Enter productCode';
@@ -1173,19 +1108,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                //height: 60,
                                 child: TextFormField(
                                   enabled: false,
                                   controller: t[index].productName,
                                   decoration: CoustumInputDecorationWidget(
                                           'Product Name')
                                       .decoration(),
-                                  // InputDecoration(
-                                  //   labelText: 'Product Name',
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
+                               validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
                                     }
@@ -1206,17 +1135,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                // height: 60,
                                 child: TextFormField(
                                   controller: t[index].hsncode,
                                   enabled: false,
                                   decoration:
                                       CoustumInputDecorationWidget("HSN Code")
                                           .decoration(),
-                                  //  InputDecoration(
-                                  //   labelText: "HSN Code",
-                                  //   fillColor: Colors.white,
-                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -1240,11 +1164,31 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration:
                                       CoustumInputDecorationWidget("Tax Rate")
                                           .decoration(),
-                                  // InputDecoration(
-                                  //   labelText: 'tax Rate',
-                                  //   fillColor: Colors.white,
-                                  // ),
                                   // The validator receives the text that the user has entered.
+                                  onChanged: (value){
+
+                                    setState(() {
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var quanitity = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                      // //mohit
+                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].totalamount.text =
+                                          totalam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+                                    
+                                    });
+                                      
+                                  },
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
@@ -1278,33 +1222,25 @@ class _InvoiceMainState extends State<InvoiceMain> {
 
                                   onChanged: (value) {
                                     changeQuantity2(index, value);
-                                    setState(() {
-                                      //
+                                    setState(() {                                      
                                       String taxRate = t[index].taxrate.text;
                                       String result;
                                       result = taxRate.substring(
                                           0, taxRate.length - 1);
-                                      var q = t[index].quantity.text;
+                                      var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;
-                                      int tam =
-                                          int.parse(q) * int.parse(sellingRate);
-                                      // print(tam.toString() + "mohit");
-                                      var ttam =
-                                          (tam * int.parse(result)) / 100;
-
-                                 
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = ttam.toString();
-                                      // print(t[index].taxamount.text +
-                                      //     "mohit tax amount");
+                                       t[index].taxamount.text = totalTaxam.toString();
                                       t[index].totalamount.text =
-                                          tam.toString();
+                                          totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-
-                                      // tam;
-                                      //  totalamount = value * sellingrate;
+                                    
                                     });
                                   },
                                   // The validator receives the text that the user has entered.
@@ -1400,14 +1336,88 @@ class _InvoiceMainState extends State<InvoiceMain> {
                       SizedBox(
                         height: 10,
                       ),
-                      Eachrow(t[index].sellingrate, 'Selling Rate',
-                          TextInputType.text, (value) {
-                        if (value.isEmpty) {
-                          return 'Enter Correct SR';
-                        }
-                        return null;
-                      }, t[index].taxamount, "TAX Amount", TextInputType.text,
-                          null, 20),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                child: TextFormField(
+                                  controller:t[index].sellingrate,
+                                  decoration:
+                                      CoustumInputDecorationWidget('Selling Rate')
+                                          .decoration(),
+                                  onChanged: (value){
+                                    setState(() {
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var quanitity = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                      // //mohit
+                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].totalamount.text =
+                                          totalam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+                                    
+                                    });
+                                      
+                                  },
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                child: TextFormField(
+                                  controller: t[index].taxamount,
+                                  enabled: false,
+                                  decoration:
+                                      CoustumInputDecorationWidget("TAX Amount")
+                                          .decoration(),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return null;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Eachrow(t[index].sellingrate, 'Selling Rate',
+                      //     TextInputType.text, (value) {
+                      //   if (value.isEmpty) {
+                      //     return 'Enter Correct SR';
+                      //   }
+                      //   return null;
+                      // }, t[index].taxamount, "TAX Amount", TextInputType.text,
+                      //     null, 20),
                       SizedBox(
                         height: 10,
                       ),
@@ -1423,8 +1433,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 // height: 60,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
-                                  //t[index].totalamount.text= (int.parse( t[index].totalamount)*int.parse( t[index].sellingrate.text)).toString(),
-
+                             
                                   decoration: CoustumInputDecorationWidget(
                                           'Total Amount')
                                       .decoration(),
@@ -1450,9 +1459,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 icon: Icon(Icons.arrow_downward),
                                 decoration: CoustumInputDecorationWidget("Foc")
                                     .decoration(),
-                                //  InputDecoration(
-                                //   labelText: "foc",
-                                // ),
                                 items: foc.map((String value) {
                                   return new DropdownMenuItem<String>(
                                     value: value,
