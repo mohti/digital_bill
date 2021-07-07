@@ -42,7 +42,7 @@ class Eachrow extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(0.0),
+          padding: const EdgeInsets.all(0.0), 
           child: Card(
             elevation: 4,
             child: Container(

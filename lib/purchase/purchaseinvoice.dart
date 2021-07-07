@@ -669,8 +669,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             ],
                             validator: (value) {
                               if (value.isEmpty ||
-                                  value.length != 15 ||
-                                  value.characters.last != 'Z') {
+                                  value.length != 15 
+                                  ) {
                                 return 'enter GSTN';
                               }
                               return null;
@@ -830,6 +830,28 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 child: TextFormField(
                                   controller: t[index].taxrate,
                                   decoration: CoustumInputDecorationWidget("Tax Rate").decoration(),
+                                  onChanged: (value){
+                                     setState(() {                                      
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var quanitity = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                      // //mohit
+                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].totalamount.text =
+                                          totalam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+                                    
+                                    });
+                                  },
                                   // InputDecoration(
                                   //   labelText: 'tax Rate',
                                   //   fillColor: Colors.white,
@@ -872,6 +894,26 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     print(value);
 
                                     changeQuantity2(index, value);
+                                     setState(() {                                      
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var quanitity = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                      // //mohit
+                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].totalamount.text =
+                                          totalam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+                                    
+                                    });
                                   },
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
@@ -965,16 +1007,92 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       SizedBox(
                         height: 10,
                       ),
-                      Eachrow(
-                          t[index].sellingrate,
-                          'Selling Rate',
-                          TextInputType.text,
-                          null,
-                          t[index].taxamount,
-                          "TAX Amount",
-                          TextInputType.text,
-                          null,
-                          10),
+                       Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Card(
+            elevation: 4,
+            child: Container(
+              //height: 50,
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: TextFormField(
+                
+            
+                controller:t[index].sellingrate,
+      
+                decoration: CoustumInputDecorationWidget('Selling Rate').decoration(),
+                onChanged: (value){
+                     setState(() {                                      
+                                      String taxRate = t[index].taxrate.text;
+                                      String result;
+                                      result = taxRate.substring(
+                                          0, taxRate.length - 1);
+                                      var quanitity = t[index].quantity.text;
+                                      var sellingRate =
+                                          t[index].sellingrate.text;                                                                          
+                                      var totalTaxam =
+                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
+                                      var totalam =
+                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                      // //mohit
+                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].totalamount.text =
+                                          totalam.toString();
+                                      print(t[index].totalamount.text +
+                                          "mohit tax amount");
+                                    
+                                    });
+
+                },
+                    validator:(value) {
+                        if (value.isEmpty) {
+                          return null;
+                        }
+                        return null;
+                      }
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Card(
+            elevation: 4,
+            child: Container(
+               //height: 50,
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: TextFormField(
+                  controller:  t[index].taxamount,
+                  decoration: CoustumInputDecorationWidget(     "TAX Amount",
+                     ).decoration(),
+                  // The validator receives the text that the user has entered.
+                  validator: 
+                      (value) {
+                          if (value.isEmpty) {
+                            return null;
+                          }
+                          return null;
+                        }
+                      ),
+            ),
+          ),
+        ),
+      ],
+    ),
+
+
+                      // Eachrow(
+                      //     t[index].sellingrate,
+                      //     'Selling Rate',
+                      //     TextInputType.text,
+                      //     null,
+                      //     t[index].taxamount,
+                      //     "TAX Amount",
+                      //     TextInputType.text,
+                      //     null,
+                      //     10),
                       SizedBox(
                         height: 10,
                       ),

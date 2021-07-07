@@ -145,13 +145,14 @@ class _ProductListState extends State<ProductList> {
             ..writeAsBytesSync(onValue);
           print('sucess writing exel document');
           //"$appDocPath/excel.xlsx"
+            OpenFile.open("$appDocPath/excel.xlsx");
         });
       } else {
         Fluttertoast.showToast(msg: 'user deciled permission');
         // Toast('user deciled ').show;
         // handle the scenario when user declines the permissions
       }
-      OpenFile.open("$appDocPath/excel.xlsx");
+    
     }
 
     return Scaffold(
@@ -312,6 +313,9 @@ class _ProductListState extends State<ProductList> {
                    color:const Color(0xff2f2e41), 
                   onPressed: () => {
                         setState(() => {
+                          print(initialdate.toString()+"mohit"),
+                            print(finaldate.toString()+"mohit"),
+                              print(widget.uid.toString()+"mohit"),
                               widgetTable =
                                   Table1(widget.uid, initialdate, finaldate)
                             })
@@ -428,7 +432,9 @@ class _ProductListState extends State<ProductList> {
                       ],
                     ),
                   )
-                : widgetTable
+                :
+                // Table1(widget.uid, initialdate, finaldate)
+                widgetTable
           ],
         ),
       ),

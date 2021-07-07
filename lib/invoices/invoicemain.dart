@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:gst_verification/gst_verification.dart';
 import 'package:digitalbillbook/Invoicestyle.dart';
 import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
 import 'package:digitalbillbook/customwidgets/EachrowTextfield.dart';
@@ -162,6 +163,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
     return null;
   };
 
+  bool isvalueIdentified = false;
+  String gstNo, response = '';
+  String key_secret = '7EvQzBkCZINgbme1YHPFKiuFk6d2';
+
   Future<Null> numberOfInvoices(String uid) async {
     QuerySnapshot productCollection = await FirebaseFirestore.instance
         .collection("userData")
@@ -169,11 +174,48 @@ class _InvoiceMainState extends State<InvoiceMain> {
         .collection('Invoice')
         .get();
     setState(() {
-      if (productCollection.size == null) productCount = productCollection.size;
+      if (productCollection.size == null) {
+        productCount = 1;
+      } else {
+        productCount = productCollection.size;
+      }
     });
   }
 
-  
+  bool verifyGSTNumber(String gst) {
+    gstNo = gst;
+    GstVerification.verifyGST(gstNo, key_secret).then((result) {
+      //package link here
+      //https://pub.dev/packages/gst_verification/versions/1.0.1/example
+      //json results
+      // String Result = result.toString();
+      // print(Result + "gstverification RESULT");
+      String gstn = result["taxpayerInfo"]["gstin"];
+      String businessName = result["taxpayerInfo"]["tradeNam"];
+      print("mohit gstn === " + gstn);
+      String pincode = result["taxpayerInfo"]["pradr"]["addr"]["pncd"];
+      String bnm = result["taxpayerInfo"]["pradr"]["addr"]["bnm"];
+      String streat = result["taxpayerInfo"]["pradr"]["addr"]["st"];
+      String loc = result["taxpayerInfo"]["pradr"]["addr"]["loc"];
+      String typeOfBusiness = result["taxpayerInfo"]["nba"][0];
+      String typeOfIndustry = result["taxpayerInfo"]["pradr"]["ntr"];
+      print(typeOfIndustry + "mohit");
+      var address = bnm + " ," + streat + " ," + loc + " ," + pincode;
+      // String industryType =result[]
+      print("mohit address ==>" + address.toString());
+      setState(() {
+        isvalueIdentified = true;
+      });
+    }).catchError((error) {
+      isvalueIdentified = false;
+      //  setState(() {
+      //   isvalueIdentified = false;
+      // });
+      print(error + "error mohit ");
+      // Fluttertoast.showToast(msg: "Please enter Correct Values");
+    });
+    return isvalueIdentified;
+  }
 
   Future<Null> invoiceNumDetails(String uid) async {
     print("invoiceNumdetails is called mohit");
@@ -278,8 +320,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
     downloadURLExample();
     downloadURLExamplesign();
     downloadURLExamplestamp();
-
-
   }
 
   @override
@@ -587,7 +627,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 decoration: CoustumInputDecorationWidget(
                                         'Bill to Ship Invoice')
                                     .decoration(),
-                             
+
                                 // The validator receives the text that the user has entered.
                               ),
                             ),
@@ -744,16 +784,28 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration:
                                       CoustumInputDecorationWidget("GSTN")
                                           .decoration(),
-                                  // InputDecoration(
-                                  //     labelText: "GSTN", counterText: ''),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty ||
-                                        value.length != 15 ||
-                                        value.characters.last != 'Z') {
-                                      return 'Enter Correct Gstn ';
+                                  onChanged: (value) {
+                                    if (value.length > 14) {
+                                      setState(() {
+                                        gstNo = sgstn.text;
+                                      });
+                                      verifyGSTNumber(sgstn.text);
                                     }
-                                    return null;
+                                  },
+
+                                  validator: (value) {
+                                    if (value.isEmpty || value.length != 15) {
+                                      return 'Enter Correct Gstn ';
+                                    } else {
+                                      verifyGSTNumber(sgstn.text);
+                                      bool v = verifyGSTNumber(sgstn.text);
+                                      print(v.toString() + "mohit bool value");
+                                      if (v == true) {
+                                        return null;
+                                      } else {
+                                        return "something is wrong";
+                                      }
+                                    }
                                   },
                                 ),
                               ),
@@ -775,8 +827,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           }
                           return null;
                         }), 6),
-
-
                         Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
@@ -883,13 +933,27 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration: InputDecoration(
                                       labelText: "GSTN", counterText: ''),
                                   // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty ||
-                                        value.length != 15 ||
-                                        value.characters.last != 'Z') {
-                                      return 'Enter Correct Gstn ';
+                                  onChanged: (value) {
+                                    if (value.length > 14) {
+                                      setState(() {
+                                        gstNo = bgstn.text;
+                                        verifyGSTNumber(bgstn.text);
+                                      });
                                     }
-                                    return null;
+                                  },
+                                  validator: (value) {
+                                    if (value.isEmpty || value.length != 15) {
+                                      return 'Enter Correct Gstn ';
+                                    } else {
+                                      verifyGSTNumber(bgstn.text);
+                                      bool v = verifyGSTNumber(bgstn.text);
+                                      print(v.toString() + "mohit bool value");
+                                      if (v == true) {
+                                        return null;
+                                      } else {
+                                        return "something is wrong";
+                                      }
+                                    }
                                   },
                                 ),
                               ),
@@ -984,12 +1048,24 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration:
                                       CoustumInputDecorationWidget("GSTN")
                                           .decoration(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      gstNo = sgstn.text;
+                                      verifyGSTNumber(sgstn.text);
+                                    });
+                                  },
 
                                   validator: (value) {
-                                    if (value.isEmpty ||
-                                        value.length != 15 ||
-                                        value.characters.last != 'Z') {
+                                    if (value.isEmpty || value.length != 15) {
                                       return 'Enter Correct Gstn ';
+                                    } else {
+                                      bool v = verifyGSTNumber(sgstn.text);
+                                      print(v.toString() + "mohit bool value");
+                                      if (v == true) {
+                                        return null;
+                                      } else {
+                                        return "something is wrong";
+                                      }
                                     }
                                     return null;
                                   },
@@ -1065,7 +1141,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 //height: 60,
                                 child: TextFormField(
-                                   onChanged: (value) {
+                                  onChanged: (value) {
                                     if (value.length > 3)
                                       changeQuantity1(index, value);
 
@@ -1114,7 +1190,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration: CoustumInputDecorationWidget(
                                           'Product Name')
                                       .decoration(),
-                               validator: (value) {
+                                  validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
                                     }
@@ -1165,8 +1241,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       CoustumInputDecorationWidget("Tax Rate")
                                           .decoration(),
                                   // The validator receives the text that the user has entered.
-                                  onChanged: (value){
-
+                                  onChanged: (value) {
                                     setState(() {
                                       String taxRate = t[index].taxrate.text;
                                       String result;
@@ -1174,20 +1249,22 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                           0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                          t[index].sellingrate.text;
+                                      var totalTaxam = (int.parse(quanitity) *
+                                              int.parse(sellingRate) *
+                                              int.parse(result)) /
+                                          100;
+                                      var totalam = int.parse(quanitity) *
+                                              int.parse(sellingRate) +
+                                          totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].taxamount.text =
+                                          totalTaxam.toString();
                                       t[index].totalamount.text =
                                           totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-                                    
                                     });
-                                      
                                   },
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -1222,25 +1299,28 @@ class _InvoiceMainState extends State<InvoiceMain> {
 
                                   onChanged: (value) {
                                     changeQuantity2(index, value);
-                                    setState(() {                                      
+                                    setState(() {
                                       String taxRate = t[index].taxrate.text;
                                       String result;
                                       result = taxRate.substring(
                                           0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                          t[index].sellingrate.text;
+                                      var totalTaxam = (int.parse(quanitity) *
+                                              int.parse(sellingRate) *
+                                              int.parse(result)) /
+                                          100;
+                                      var totalam = int.parse(quanitity) *
+                                              int.parse(sellingRate) +
+                                          totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].taxamount.text =
+                                          totalTaxam.toString();
                                       t[index].totalamount.text =
                                           totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-                                    
                                     });
                                   },
                                   // The validator receives the text that the user has entered.
@@ -1347,11 +1427,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
-                                  controller:t[index].sellingrate,
-                                  decoration:
-                                      CoustumInputDecorationWidget('Selling Rate')
-                                          .decoration(),
-                                  onChanged: (value){
+                                  controller: t[index].sellingrate,
+                                  decoration: CoustumInputDecorationWidget(
+                                          'Selling Rate')
+                                      .decoration(),
+                                  onChanged: (value) {
                                     setState(() {
                                       String taxRate = t[index].taxrate.text;
                                       String result;
@@ -1359,20 +1439,22 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                           0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                          t[index].sellingrate.text;
+                                      var totalTaxam = (int.parse(quanitity) *
+                                              int.parse(sellingRate) *
+                                              int.parse(result)) /
+                                          100;
+                                      var totalam = int.parse(quanitity) *
+                                              int.parse(sellingRate) +
+                                          totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].taxamount.text =
+                                          totalTaxam.toString();
                                       t[index].totalamount.text =
                                           totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-                                    
                                     });
-                                      
                                   },
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -1433,7 +1515,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 // height: 60,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
-                             
+
                                   decoration: CoustumInputDecorationWidget(
                                           'Total Amount')
                                       .decoration(),

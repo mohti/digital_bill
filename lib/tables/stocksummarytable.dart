@@ -7,6 +7,10 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
     DateTime id, DateTime fd, String textfieldValues, String askValues) {
   final Timestamp timestamp = (product['date']) as Timestamp;
   final DateTime d = timestamp.toDate();
+   print(d.toString() + "mohit firebase date");
+  print(id.toString() + "mohit initial date");
+  print(fd.toString() + "mohit final date");
+
 
   if (textfieldValues == null || textfieldValues == '') {
     return ((d.isBefore(fd) && d.isAfter(id)) ||
@@ -150,7 +154,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
           )
         : null;
   } else {
-    return ((d.isBefore(fd) && d.isAfter(id)) &&
+    return ((d.isBefore(fd) || d.isAfter(id)) &&
             (textfieldValues == product[askValues])
         //||(d.day == id.day ||d.day == fd.day)
         )

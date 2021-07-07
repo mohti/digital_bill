@@ -58,32 +58,7 @@ class _StockSummaryState extends State<StockSummary> {
     super.initState();
   }
 
-  double valueOp = 0;
-  String gstNo = '03ACDPM7062M1ZH';
-  String response = '';
-  String key_secret = '7EvQzBkCZINgbme1YHPFKiuFk6d2';
-
-  void verifyGSTNumber() {
-    print(gstNo + " , mohit");
-    print(key_secret + " mohit keysecret");
-
-    valueOp = 1;
-    setState(() {});
-
-    GstVerification.verifyGST(gstNo, key_secret).then((result) {
-      JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-      String prettyprint = encoder.convert(result) + "mohit";
-      print("mohit" + prettyprint + "prettyprint mohit");
-      response = "JSON Response:" + prettyprint;
-      print("mohit" + response + 'responce mohit');
-      valueOp = 0;
-      setState(() {});
-    }).catchError((error) {
-      print(error + "error mohit ");
-      valueOp = 0;
-      setState(() {});
-    });
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +146,16 @@ class _StockSummaryState extends State<StockSummary> {
           }
         });
       });
+      if (textfieldValues == null || textfieldValues == '') {}
+      else{sheet.appendRow([
+        'Filters',
+        askValues,
+        '=',
+        textfieldValues,
+      ]);
+
+
+      }
 
       sheet.appendRow([
         'productCode',
@@ -458,7 +443,7 @@ class _StockSummaryState extends State<StockSummary> {
               child: RaisedButton(
                   color: const Color(0xff2f2e41),
                   onPressed: () => {
-                       // verifyGSTNumber(),
+                        // verifyGSTNumber(),
                         setState(() => {
                               widgetTable = StockSummaryTable(
                                   widget.uid,

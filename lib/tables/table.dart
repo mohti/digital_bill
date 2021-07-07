@@ -7,10 +7,12 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
     DateTime id, DateTime fd) {
   final Timestamp timestamp = (product['date']) as Timestamp;
   final DateTime d = timestamp.toDate();
+  print(d.toString() + "mohit firebase date");
+  print(id.toString() + "mohit initial date");
+  print(fd.toString() + "mohit final date");
 
-  return ((d.isBefore(fd) && d.isAfter(id)) ||
-          d.day == id.day ||
-          d.day == fd.day)
+  return ((d.isBefore(fd) || d.day == fd.day) &&
+          (d.day == id.day || d.isAfter(id)))
       ? Container(
           child: Column(
             children: [
@@ -117,8 +119,6 @@ class Table1 extends StatelessWidget {
 
     final w = MediaQuery.of(context).size.width;
     var excel = Excel.createExcel();
-    // or
-    //var excel = Excel.decodeBytes(bytes);
 
     var sheet = excel['mySheet'];
     sheet.appendRow([
@@ -209,7 +209,6 @@ class Table1 extends StatelessWidget {
                 ),
               ],
             ),
-        
           ),
           Container(
             height: 600,

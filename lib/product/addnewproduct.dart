@@ -118,7 +118,7 @@ class _AddproductState extends State<Addproduct> {
       newProduct.sellingprice = sellingpriceController.text;
       newProduct.lowstockreminderat = int.parse(lowstockreminderat.text);
       newProduct.unit = unitController.text;
-      newProduct.totalAmount = int.parse(totalAmount.text);
+      newProduct.totalAmount = double.parse(totalAmount.text);
       // Call the user's CollectionReference to add a new user
       return db
           .collection("userData")
@@ -195,16 +195,84 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 30,
               ),
-              Eachrow(
-                  hsncodeController,
-                  "HSN Code",
-                  TextInputType.text,
-                  validation,
-                  quantityController,
-                  'Quantity',
-                  TextInputType.number,
-                  validation,
-                  10),
+              Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Card(
+            elevation: 4,
+            child: Container(
+              //height: 50,
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: TextFormField(
+                controller:hsncodeController,
+                decoration: CoustumInputDecorationWidget("HSN code").decoration(),
+                // The validator receives the text that the user has entered.
+                validator:                    
+                    (value) {
+                        if (value.isEmpty) {
+                          return null;
+                        }
+                        return null;
+                      }
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(0.0), 
+          child: Card(
+            elevation: 4,
+            child: Container(
+               //height: 50,
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: TextFormField(
+                  controller:  quantityController,
+                  decoration: CoustumInputDecorationWidget('Quantity').decoration(),
+                  onChanged:(value){ setState(() {
+                                String taxRate = igst;
+                                String result;
+                                result =
+                                    taxRate.substring(0, taxRate.length - 1);
+                                var taxammount =
+                                    (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text) *
+                                            int.parse(result)) /
+                                        100;
+                                var tam =
+                                 (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text)) +
+                                        taxammount;
+                                totalAmount.text = tam.toString();
+                              });
+                    
+                  } ,
+                  // The validator receives the text that the user has entered.
+                  validator: (value) {
+                          if (value.isEmpty) {
+                            return "Enter value";
+                          }
+                          return null;
+                        }
+                      ),
+            ),
+          ),
+        ),
+      ],
+    ),
+              
+              
+              // Eachrow(
+              //     hsncodeController,
+              //     "HSN Code",
+              //     TextInputType.text,
+              //     validation,
+              //     quantityController,
+              //     'Quantity',
+              //     TextInputType.number,
+              //     validation,
+              //     10),
               SizedBox(
                 height: 30,
               ),
@@ -258,6 +326,7 @@ class _AddproductState extends State<Addproduct> {
                       height: 50,
                       child: DropdownButtonFormField<String>(
                         value: igst,
+                       
                         icon: Icon(Icons.arrow_downward),
                         decoration: InputDecoration(
                           labelText: "IGST",
@@ -274,6 +343,22 @@ class _AddproductState extends State<Addproduct> {
                         onChanged: (String newValue) {
                           setState(() {
                             igst = newValue;
+                                String taxRate = igst;
+                                String result;
+                                result =
+                                    taxRate.substring(0, taxRate.length - 1);
+                                var taxammount =
+                                    (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text) *
+                                            int.parse(result)) /
+                                        100;
+                                var tam =
+                                 (int.parse(purchaserateController.text) *
+                                            int.parse(quantityController.text)) +
+                                        taxammount;
+                                totalAmount.text = tam.toString();
+                               
+
                           });
                         },
                         validator: (value) {

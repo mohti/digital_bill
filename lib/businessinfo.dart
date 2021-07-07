@@ -86,7 +86,7 @@ class BusinessInfo extends StatefulWidget {
 class _BusinessInfoState extends State<BusinessInfo> {
   bool clicked = false;
   List<String> listOfStr = List();
-  bool isvalueIdentified = false;
+  bool isvalueIdentified ;
   bool isLoading = false;
   @override
   void initState() {
@@ -179,18 +179,19 @@ class _BusinessInfoState extends State<BusinessInfo> {
     downloadURLExamplestamp();
   }
 
-  bool verifyGSTNumber() {
-    valueOp = 1;
-
-    setState(() {});
-
-    GstVerification.verifyGST(gstNo, key_secret).then((result) {
+  bool verifyGSTNumber(String gstno){
+   
+    gstNo = gstno;
+      GstVerification.verifyGST(gstNo, key_secret).then((result) {
       //package link here
       //https://pub.dev/packages/gst_verification/versions/1.0.1/example
       //json results
       // String Result = result.toString();
       // print(Result + "gstverification RESULT");
+     
+
       String gstn = result["taxpayerInfo"]["gstin"];
+      String businessName = result["taxpayerInfo"]["tradeNam"];
       print("mohit gstn === " + gstn);
       String pincode = result["taxpayerInfo"]["pradr"]["addr"]["pncd"];
       String bnm = result["taxpayerInfo"]["pradr"]["addr"]["bnm"];
@@ -200,10 +201,11 @@ class _BusinessInfoState extends State<BusinessInfo> {
       String typeOfIndustry = result["taxpayerInfo"]["pradr"]["ntr"];
       print(typeOfIndustry + "mohit");
       var address = bnm + " ," + streat + " ," + loc + " ," + pincode;
-      // String industryType =result[]
+     
       print("mohit address ==>" + address.toString());
       valueOp = 0;
       setState(() {
+        businessNameController.text = businessName;
         gstNumberController.text = gstn;
         businesAddressController.text = address;
         businessTypeController.text = typeOfBusiness;
@@ -218,6 +220,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
         isvalueIdentified = false;
       });
     });
+    
     return isvalueIdentified;
   }
 
@@ -853,12 +856,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                     TextFormField(
                                         maxLength: 15,
                                         controller: gstNumberController,
+                                        textCapitalization:
+                                            TextCapitalization.characters,
                                         onChanged: (text) {
                                           setState(() {
                                             gstNo = text;
                                             if (gstNo.length > 14) {
                                               {
-                                                verifyGSTNumber();
+                                                verifyGSTNumber(
+                                                    gstNumberController.text);
                                               }
                                             }
                                           });
@@ -870,8 +876,11 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                           if (value.isEmpty ||
                                               value.length != 15) {
                                             return null;
-                                          } else {
-                                            bool v = verifyGSTNumber();
+                                          } else{
+                                           
+                                             bool v; 
+                                             v=  verifyGSTNumber(
+                                                gstNumberController.text);
                                             print(v.toString() +
                                                 "mohit bool value");
                                             if (v == true) {

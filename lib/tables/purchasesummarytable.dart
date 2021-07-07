@@ -7,6 +7,9 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
     DateTime id, DateTime fd, String textfieldValues, String askValues) {
   final Timestamp timestamp = (product['sdate']) as Timestamp;
   final DateTime d = timestamp.toDate();
+  print(id.day.toString() + "mohit purches");
+
+  print(d.day.toString() + "mohit d purches");
 
   if (textfieldValues == null || textfieldValues == '') {
     return ((d.isBefore(fd) && d.isAfter(id)) ||
@@ -174,11 +177,11 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
             ),
           )
         : null;
-         }
-         else{
-             return ((d.isBefore(fd) && d.isAfter(id)) 
-        //|| (textfieldValues == product[askValues])       
-        &&textfieldValues == product['listOfProducts'][0][askValues])
+  } else {
+    return ((d.isBefore(fd) && d.isAfter(id))
+            //|| (textfieldValues == product[askValues])
+            &&
+            textfieldValues == product['listOfProducts'][0][askValues])
         ? Container(
             child: Column(
               children: [
@@ -339,9 +342,7 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
             ),
           )
         : null;
-           
-         }
-
+  }
 }
 
 class PurchaseSummarytable extends StatelessWidget {
@@ -554,7 +555,7 @@ class PurchaseSummarytable extends StatelessWidget {
             ),
           ),
           Container(
-            height: 600,
+             height: 600,
             child: StreamBuilder(
                 stream: getUsersTripsStreamSnapshots(context),
                 builder: (context, snapshot) {

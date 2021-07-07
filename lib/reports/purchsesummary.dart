@@ -388,7 +388,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                         items: listofSelect.map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
-                            child: new Text(value),
+                            child: new Text(value,style: TextStyle(fontSize: 12),),
                           );
                         }).toList(),
                         onChanged: (String newValue) {
@@ -443,6 +443,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
               child: RaisedButton(
                   color: const Color(0xff2f2e41),
                   onPressed: () => {
+                    //print('onpressed ')
                         setState(() {
                           widgetTable = PurchaseSummarytable(
                               widget.uid,

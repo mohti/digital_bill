@@ -8,7 +8,7 @@ class AddProduct {
   String purchaserate;
   String sellingprice;
   DateTime date;
-  int totalAmount;
+  double totalAmount;
   int lowstockreminderat;
   String unit;
   AddProduct(
@@ -30,7 +30,7 @@ class AddProduct {
         'hsncode': hsncode,
         'quantity': quantity,
         'cgst': cgst,
-        'igst;': igst,
+        'igst': igst,
         'purchaserate': purchaserate,
         'sellingprice': sellingprice,
         'date': date,

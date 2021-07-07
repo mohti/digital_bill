@@ -243,6 +243,7 @@ class _AddPartyState extends State<AddParty> {
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
                         child: TextFormField(
+                          textCapitalization: TextCapitalization.characters,
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(15),
                           ],
