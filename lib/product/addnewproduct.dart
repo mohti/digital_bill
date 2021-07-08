@@ -49,14 +49,14 @@ class _AddproductState extends State<Addproduct> {
   @override
   Widget build(BuildContext context) {
     List<String> listOfCgst = [
-      "14+14%",
-      "9+9%",
-      '6+6%',
-      '4.5+4.5%',
-      '2.5+2.5%',
-      '1.5+1.5%'
+      "14+14",
+      "9+9",
+      '6+6',
+      '4.5+4.5',
+      '2.5+2.5',
+      '1.5+1.5'
     ];
-    final listofIGST = ["28 %", "18%", '12%', '9%', '5%', '3%'];
+    final listofIGST = ["28 ", "18", '12', '9', '5', '3'];
     final units = [
       'BAG-BAGS',
       'BAL-BALE',
@@ -103,7 +103,7 @@ class _AddproductState extends State<Addproduct> {
       'OTH-OTHERS'
     ];
     String cgst = listOfCgst[0];
-    String igst = "28 %";
+    String igst = "28 ";
     final db = FirebaseFirestore.instance;
     Future<void> addproduct() {
       newProduct.productCode = productCodeController.text;
@@ -232,13 +232,13 @@ class _AddproductState extends State<Addproduct> {
                   decoration: CoustumInputDecorationWidget('Quantity').decoration(),
                   onChanged:(value){ setState(() {
                                 String taxRate = igst;
-                                String result;
-                                result =
-                                    taxRate.substring(0, taxRate.length - 1);
+                                // String result;
+                                // result =
+                                //     taxRate.substring(0, taxRate.length - 1);
                                 var taxammount =
                                     (int.parse(purchaserateController.text) *
                                             int.parse(quantityController.text) *
-                                            int.parse(result)) /
+                                            int.parse(taxRate)) /
                                         100;
                                 var tam =
                                  (int.parse(purchaserateController.text) *
@@ -293,16 +293,16 @@ class _AddproductState extends State<Addproduct> {
                               left: 8.0, bottom: 1.0, top: 2.0),
                         ),
                         items: [
-                          "14+14%",
-                          "9+9%",
-                          '6+6%',
-                          '4.5+4.5%',
-                          '2.5+2.5%',
-                          '1.5+1.5%'
+                          "14+14",
+                          "9+9",
+                          '6+6',
+                          '4.5+4.5',
+                          '2.5+2.5',
+                          '1.5+1.5'
                         ].map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
-                            child: new Text(value.toString()),
+                            child: new Text(value.toString()+" %"),
                           );
                         }).toList(),
                         onChanged: (String newValue) {
@@ -337,20 +337,20 @@ class _AddproductState extends State<Addproduct> {
                         items: listofIGST.map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
-                            child: new Text(value),
+                            child: new Text(value +" %"),
                           );
                         }).toList(),
                         onChanged: (String newValue) {
                           setState(() {
                             igst = newValue;
                                 String taxRate = igst;
-                                String result;
-                                result =
-                                    taxRate.substring(0, taxRate.length - 1);
+                                // String result;
+                                // result =
+                                //     taxRate.substring(0, taxRate.length - 1);
                                 var taxammount =
                                     (int.parse(purchaserateController.text) *
                                             int.parse(quantityController.text) *
-                                            int.parse(result)) /
+                                            int.parse(taxRate)) /
                                         100;
                                 var tam =
                                  (int.parse(purchaserateController.text) *
@@ -399,13 +399,13 @@ class _AddproductState extends State<Addproduct> {
                             onChanged: (value) {
                               setState(() {
                                 String taxRate = igst;
-                                String result;
-                                result =
-                                    taxRate.substring(0, taxRate.length - 1);
+                               // String result;
+                                // result =
+                                //     taxRate.substring(0, taxRate.length - 1);
                                 var taxammount =
-                                    (int.parse(purchaserateController.text) *
+                                    (int.parse(purchaserateController.text) *                                                                                                                                                                                                                                                                                                     
                                             int.parse(quantityController.text) *
-                                            int.parse(result)) /
+                                            int.parse(taxRate)) /
                                         100;
                                 var tam =
                                  (int.parse(purchaserateController.text) *

@@ -398,10 +398,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
         print(element.productCode);
       });*/
 
-      //addproducts(noofproducts);
+      addproducts(noofproducts);
 
-      print(widget.uid.toString() + 'here the uid in genrate fun');
-      print(newInvoice.toString() + 'here the invoice text');
+      print(widget.uid.toString() + 'mohit here the uid in genrate fun');
+      print(newInvoice.toString() + 'mohit here the invoice text');
 
       newInvoice.invoiceno = invoiceno.text;
       newInvoice.bname = bname.text;
@@ -1160,7 +1160,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
                                         t[index].taxrate.text =
-                                            valuee.data()['igst;'];
+                                            valuee.data()['igst'];
                                       });
                                     });
                                   },
@@ -1238,21 +1238,21 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 child: TextFormField(
                                   controller: t[index].taxrate,
                                   decoration:
-                                      CoustumInputDecorationWidget("Tax Rate")
+                                      CoustumInputDecorationWidget("Tax Rate %")
                                           .decoration(),
                                   // The validator receives the text that the user has entered.
                                   onChanged: (value) {
                                     setState(() {
                                       String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
+                                      // String result;
+                                      // result = taxRate.substring(
+                                      //     0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
                                           t[index].sellingrate.text;
                                       var totalTaxam = (int.parse(quanitity) *
                                               int.parse(sellingRate) *
-                                              int.parse(result)) /
+                                              int.parse(taxRate)) /
                                           100;
                                       var totalam = int.parse(quanitity) *
                                               int.parse(sellingRate) +
@@ -1301,15 +1301,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     changeQuantity2(index, value);
                                     setState(() {
                                       String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
+                                      // String result;
+                                      // result = taxRate.substring(
+                                      //     0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
                                           t[index].sellingrate.text;
                                       var totalTaxam = (int.parse(quanitity) *
                                               int.parse(sellingRate) *
-                                              int.parse(result)) /
+                                              int.parse(taxRate)) /
                                           100;
                                       var totalam = int.parse(quanitity) *
                                               int.parse(sellingRate) +
@@ -1434,15 +1434,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   onChanged: (value) {
                                     setState(() {
                                       String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
+                                      // String result;
+                                      // result = taxRate.substring(
+                                      //     0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
                                           t[index].sellingrate.text;
                                       var totalTaxam = (int.parse(quanitity) *
                                               int.parse(sellingRate) *
-                                              int.parse(result)) /
+                                              int.parse(taxRate)) /
                                           100;
                                       var totalam = int.parse(quanitity) *
                                               int.parse(sellingRate) +

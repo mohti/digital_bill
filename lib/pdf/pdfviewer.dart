@@ -1531,7 +1531,8 @@ class _PdfViewerState extends State<PdfViewer> {
 
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
-                  taxes.length,
+                //  taxes.length,
+                  1,
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
@@ -1670,6 +1671,7 @@ class _PdfViewerState extends State<PdfViewer> {
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
                   l2.length,
+                 
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(

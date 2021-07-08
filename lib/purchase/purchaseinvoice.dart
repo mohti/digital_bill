@@ -538,7 +538,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         child: DropdownButtonFormField<String>(
                           value: 'IGST',
                           icon: Icon(Icons.arrow_downward),
-                          decoration:CoustumInputDecorationWidget("Tax Type").decoration(),
+                          decoration: CoustumInputDecorationWidget("Tax Type")
+                              .decoration(),
                           //  InputDecoration(
                           //   labelText: ,
                           // ),
@@ -658,8 +659,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.45,
                           child: TextFormField(
-                            textCapitalization:
-                                      TextCapitalization.characters,
+                            textCapitalization: TextCapitalization.characters,
                             controller: sgstn,
                             decoration: CoustumInputDecorationWidget('GSTN')
                                 .decoration(),
@@ -668,9 +668,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               LengthLimitingTextInputFormatter(15),
                             ],
                             validator: (value) {
-                              if (value.isEmpty ||
-                                  value.length != 15 
-                                  ) {
+                              if (value.isEmpty || value.length != 15) {
                                 return 'enter GSTN';
                               }
                               return null;
@@ -748,6 +746,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                             valuee.data()['hsncode'];
                                         t[index].sellingrate.text =
                                             valuee.data()['sellingprice'];
+                                        t[index].taxrate.text =
+                                            valuee.data()['igst'];
                                       });
                                     });
                                   },
@@ -775,7 +775,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 child: TextFormField(
                                   enabled: false,
                                   controller: t[index].productName,
-                                  decoration: CoustumInputDecorationWidget('Product Name').decoration(),
+                                  decoration: CoustumInputDecorationWidget(
+                                          'Product Name')
+                                      .decoration(),
                                   // decoration: InputDecoration(
                                   //   labelText: 'Product Name',
                                   //   fillColor: Colors.white,
@@ -805,7 +807,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 child: TextFormField(
                                   controller: t[index].hsncode,
                                   enabled: false,
-                                  decoration:CoustumInputDecorationWidget("HSN Code").decoration(),
+                                  decoration:
+                                      CoustumInputDecorationWidget("HSN Code")
+                                          .decoration(),
                                   //  InputDecoration(
                                   //   labelText: ,
                                   //   fillColor: Colors.white,
@@ -829,27 +833,32 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
                                   controller: t[index].taxrate,
-                                  decoration: CoustumInputDecorationWidget("Tax Rate").decoration(),
-                                  onChanged: (value){
-                                     setState(() {                                      
+                                  decoration:
+                                      CoustumInputDecorationWidget("Tax Rate")
+                                          .decoration(),
+                                  onChanged: (value) {
+                                    setState(() {
                                       String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
+                                      // String result;
+                                      // result = taxRate.substring(
+                                      //     0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                          t[index].sellingrate.text;
+                                      var totalTaxam = (int.parse(quanitity) *
+                                              int.parse(sellingRate) *
+                                              int.parse(taxRate)) /
+                                          100;
+                                      var totalam = int.parse(quanitity) *
+                                              int.parse(sellingRate) +
+                                          totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].taxamount.text =
+                                          totalTaxam.toString();
                                       t[index].totalamount.text =
                                           totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-                                    
                                     });
                                   },
                                   // InputDecoration(
@@ -884,7 +893,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 child: TextFormField(
                                   controller: t[index].quantity,
 
-                                  decoration:CoustumInputDecorationWidget("Quantity").decoration(), 
+                                  decoration:
+                                      CoustumInputDecorationWidget("Quantity")
+                                          .decoration(),
                                   // InputDecoration(
                                   //   labelText: "Quantity",
                                   //   fillColor: Colors.white,
@@ -894,25 +905,28 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     print(value);
 
                                     changeQuantity2(index, value);
-                                     setState(() {                                      
+                                    setState(() {
                                       String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
+                                      // String result;
+                                      // result = taxRate.substring(
+                                      //     0, taxRate.length - 1);
                                       var quanitity = t[index].quantity.text;
                                       var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
+                                          t[index].sellingrate.text;
+                                      var totalTaxam = (int.parse(quanitity) *
+                                              int.parse(sellingRate) *
+                                              int.parse(taxRate)) /
+                                          100;
+                                      var totalam = int.parse(quanitity) *
+                                              int.parse(sellingRate) +
+                                          totalTaxam;
                                       // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
+                                      t[index].taxamount.text =
+                                          totalTaxam.toString();
                                       t[index].totalamount.text =
                                           totalam.toString();
                                       print(t[index].totalamount.text +
                                           "mohit tax amount");
-                                    
                                     });
                                   },
                                   // The validator receives the text that the user has entered.
@@ -941,7 +955,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   ),
                                   value: 'OTH-OTHERS',
                                   icon: Icon(Icons.arrow_downward),
-                                  decoration:CoustumInputDecorationWidget("Unit").decoration(),
+                                  decoration:
+                                      CoustumInputDecorationWidget("Unit")
+                                          .decoration(),
                                   // InputDecoration(
                                   //   labelText: "Unit",
                                   // ),
@@ -1007,81 +1023,79 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       SizedBox(
                         height: 10,
                       ),
-                       Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-              //height: 50,
-              width: MediaQuery.of(context).size.width * 0.45,
-              child: TextFormField(
-                
-            
-                controller:t[index].sellingrate,
-      
-                decoration: CoustumInputDecorationWidget('Selling Rate').decoration(),
-                onChanged: (value){
-                     setState(() {                                      
-                                      String taxRate = t[index].taxrate.text;
-                                      String result;
-                                      result = taxRate.substring(
-                                          0, taxRate.length - 1);
-                                      var quanitity = t[index].quantity.text;
-                                      var sellingRate =
-                                          t[index].sellingrate.text;                                                                          
-                                      var totalTaxam =
-                                          ( int.parse(quanitity) * int.parse(sellingRate)* int.parse(result)) / 100;
-                                      var totalam =
-                                          int.parse(quanitity) * int.parse(sellingRate)+totalTaxam;
-                                      // //mohit
-                                       t[index].taxamount.text = totalTaxam.toString();
-                                      t[index].totalamount.text =
-                                          totalam.toString();
-                                      print(t[index].totalamount.text +
-                                          "mohit tax amount");
-                                    
-                                    });
-
-                },
-                    validator:(value) {
-                        if (value.isEmpty) {
-                          return null;
-                        }
-                        return null;
-                      }
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Card(
-            elevation: 4,
-            child: Container(
-               //height: 50,
-              width: MediaQuery.of(context).size.width * 0.45,
-              child: TextFormField(
-                  controller:  t[index].taxamount,
-                  decoration: CoustumInputDecorationWidget(     "TAX Amount",
-                     ).decoration(),
-                  // The validator receives the text that the user has entered.
-                  validator: 
-                      (value) {
-                          if (value.isEmpty) {
-                            return null;
-                          }
-                          return null;
-                        }
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                //height: 50,
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                child: TextFormField(
+                                    controller: t[index].sellingrate,
+                                    decoration: CoustumInputDecorationWidget(
+                                            'Selling Rate')
+                                        .decoration(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        String taxRate = t[index].taxrate.text;
+                                        // String result;
+                                        // result = taxRate.substring(
+                                        //     0, taxRate.length - 1);
+                                        var quanitity = t[index].quantity.text;
+                                        var sellingRate =
+                                            t[index].sellingrate.text;
+                                        var totalTaxam = (int.parse(quanitity) *
+                                                int.parse(sellingRate) *
+                                                int.parse(taxRate)) /
+                                            100;
+                                        var totalam = int.parse(quanitity) *
+                                                int.parse(sellingRate) +
+                                            totalTaxam;
+                                        // //mohit
+                                        t[index].taxamount.text =
+                                            totalTaxam.toString();
+                                        t[index].totalamount.text =
+                                            totalam.toString();
+                                        print(t[index].totalamount.text +
+                                            "mohit tax amount");
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return null;
+                                      }
+                                      return null;
+                                    }),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                //height: 50,
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                child: TextFormField(
+                                    controller: t[index].taxamount,
+                                    decoration: CoustumInputDecorationWidget(
+                                      "TAX Amount",
+                                    ).decoration(),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return null;
+                                      }
+                                      return null;
+                                    }),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-            ),
-          ),
-        ),
-      ],
-    ),
-
 
                       // Eachrow(
                       //     t[index].sellingrate,
@@ -1108,7 +1122,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 height: 50,
                                 child: TextFormField(
                                   controller: t[index].totalamount,
-                                  decoration:CoustumInputDecorationWidget("Total Amount").decoration(),
+                                  decoration: CoustumInputDecorationWidget(
+                                          "Total Amount")
+                                      .decoration(),
                                   //  InputDecoration(
                                   //   labelText: "Total Amount",
                                   //   fillColor: Colors.white,
@@ -1132,7 +1148,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               child: DropdownButtonFormField<String>(
                                 value: 'None',
                                 icon: Icon(Icons.arrow_downward),
-                                decoration:CoustumInputDecorationWidget("Foc").decoration(),
+                                decoration: CoustumInputDecorationWidget("Foc")
+                                    .decoration(),
                                 //  InputDecoration(
                                 //   labelText: "foc",
                                 // ),
@@ -1222,9 +1239,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.0),
-                                        topRight: Radius.circular(15.0)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(15.0)),
                     ),
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Column(
@@ -1233,13 +1250,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           onTap: () {
                             showModalBottomSheet<void>(
                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
-                               
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
-                             
                               builder: (BuildContext context) {
                                 return Container(
                                   decoration: BoxDecoration(
@@ -1251,7 +1266,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                       ], // red to yellow
                                       // repeats the gradient over the canvas
                                     ),
-                                     borderRadius: BorderRadius.only(
+                                    borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(15.0),
                                         topRight: Radius.circular(15.0)),
                                   ),
@@ -1306,9 +1321,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                       .size
                                                       .width *
                                                   0.4,
-                                              child: TextFormField(                                                
-                                                  controller: chargename
-                                                  ),
+                                              child: TextFormField(
+                                                  controller: chargename),
                                             )
                                           ],
                                         ),
@@ -1341,8 +1355,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        othercharges.add(
-                                          OtherCharges(
+                                        othercharges.add(OtherCharges(
                                             chargename.text.toString(),
                                             double.parse(chargevalue.text)));
                                         chargevalue.text = '';
@@ -1376,8 +1389,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               },
                             );
                           },
-                          
-                          
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.45,
                             height: 30,
@@ -1410,19 +1421,16 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           height: 2,
                         ),
                         InkWell(
-                         
                           onTap: () {
-                         
                             showModalBottomSheet<void>(
-                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
-                                 
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
@@ -1432,9 +1440,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         ], // red to yellow
                                         // repeats the gradient over the canvas
                                       ),
-                                         borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15.0),
+                                          topRight: Radius.circular(15.0)),
                                     ),
                                     child: Column(children: [
                                       Padding(
@@ -1548,26 +1556,24 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             ),
                           ),
                         ),
-                        
                         SizedBox(
                           height: 2,
                         ),
                         InkWell(
                           onTap: () {
                             showModalBottomSheet<void>(
-                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
-                                     borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                   
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15.0),
+                                          topRight: Radius.circular(15.0)),
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1623,7 +1629,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                           if ( tcs.text.isNotEmpty)
+                                          if (tcs.text.isNotEmpty)
                                             Navigator.pop(context);
                                           else {
                                             Fluttertoast.showToast(
@@ -1696,18 +1702,17 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           onTap: () {
                             showModalBottomSheet<void>(
                               shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                  ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
+                              ),
                               context: context,
                               builder: (BuildContext context) {
                                 return Container(
                                     decoration: BoxDecoration(
-                                      borderRadius:BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                 
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15.0),
+                                          topRight: Radius.circular(15.0)),
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         colors: <Color>[
@@ -1759,7 +1764,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          if ( roundoffamount.text.isNotEmpty)
+                                          if (roundoffamount.text.isNotEmpty)
                                             Navigator.pop(context);
                                           else {
                                             Fluttertoast.showToast(
@@ -1768,7 +1773,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                 backgroundColor: Colors.black12,
                                                 textColor:
                                                     const Color(0xff3f3d56));
-                                          }},
+                                          }
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 80,
@@ -1866,7 +1872,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       Card(
                         child: Container(
                           decoration: BoxDecoration(
-                            
                             color: Colors.white,
                           ),
                           width: MediaQuery.of(context).size.width * 0.4,
@@ -2036,7 +2041,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                           ),
                           value: 'Road',
                           icon: Icon(Icons.arrow_downward),
-                          decoration:CoustumInputDecorationWidget("Mode").decoration(), 
+                          decoration:
+                              CoustumInputDecorationWidget("Mode").decoration(),
                           // InputDecoration(
                           //   labelText: "Mode",
                           // ),
@@ -2103,7 +2109,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         width: MediaQuery.of(context).size.width * 0.45,
                         child: TextFormField(
                           controller: from,
-                          decoration:CoustumInputDecorationWidget("Form").decoration(),
+                          decoration:
+                              CoustumInputDecorationWidget("Form").decoration(),
                           //  InputDecoration(
                           //   labelText: "from",
                           //   fillColor: Colors.white,
