@@ -163,9 +163,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
     return null;
   };
 
-  bool isvalueIdentified = false;
+  bool isvalueIdentified = true;
   String gstNo, response = '';
-  String key_secret = '7EvQzBkCZINgbme1YHPFKiuFk6d2';
+  final String key_secret = '7EvQzBkCZINgbme1YHPFKiuFk6d2';
+
+  bool invoiceGenrated = true;
 
   Future<Null> numberOfInvoices(String uid) async {
     QuerySnapshot productCollection = await FirebaseFirestore.instance
@@ -183,26 +185,20 @@ class _InvoiceMainState extends State<InvoiceMain> {
   }
 
   bool verifyGSTNumber(String gst) {
-    gstNo = gst;
+    // gstNo = "03ACDPM7062M1ZH";
+    setState(() {
+      gstNo = gst;
+    });
     GstVerification.verifyGST(gstNo, key_secret).then((result) {
       //package link here
       //https://pub.dev/packages/gst_verification/versions/1.0.1/example
       //json results
-      // String Result = result.toString();
-      // print(Result + "gstverification RESULT");
+      String Result = result.toString();
+      print(key_secret + " mohit key secret");
+      print(gstNo + " mohit gst no ");
+      print(Result + "mohit gstverification RESULT");
       String gstn = result["taxpayerInfo"]["gstin"];
-      String businessName = result["taxpayerInfo"]["tradeNam"];
       print("mohit gstn === " + gstn);
-      String pincode = result["taxpayerInfo"]["pradr"]["addr"]["pncd"];
-      String bnm = result["taxpayerInfo"]["pradr"]["addr"]["bnm"];
-      String streat = result["taxpayerInfo"]["pradr"]["addr"]["st"];
-      String loc = result["taxpayerInfo"]["pradr"]["addr"]["loc"];
-      String typeOfBusiness = result["taxpayerInfo"]["nba"][0];
-      String typeOfIndustry = result["taxpayerInfo"]["pradr"]["ntr"];
-      print(typeOfIndustry + "mohit");
-      var address = bnm + " ," + streat + " ," + loc + " ," + pincode;
-      // String industryType =result[]
-      print("mohit address ==>" + address.toString());
       setState(() {
         isvalueIdentified = true;
       });
@@ -211,7 +207,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
       //  setState(() {
       //   isvalueIdentified = false;
       // });
-      print(error + "error mohit ");
+      // print(error.toString() + "error mohit ");
       // Fluttertoast.showToast(msg: "Please enter Correct Values");
     });
     return isvalueIdentified;
@@ -377,26 +373,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
       final db = FirebaseFirestore.instance;
       //mohit genrate invoice
       print('genrate Invoice Triggred ');
-      //final db = FirebaseFirestore.instance;
-      /*    var newProduct =
-          new InvoiceProduct('', '', '', '', '', '', '', '', '', '');
-      t.forEach((element) {
-        newProduct.productCode = element.productCode.text;
-        newProduct.productName = element.productName.text;
-        newProduct.hsncode = element.hsncode.text;
-        newProduct.quantity = element.quantity.text;
-        newProduct.sellingrate = element.sellingrate.text;
-        newProduct.taxamount = element.taxamount.text;
-        newProduct.taxrate = element.taxrate.text;
-        newProduct.unit = element.unit.text;
-        newProduct.totalamount = element.totalamount.text;
-        newProduct.focornot = element.focornot;
-        l2.add(newProduct);
-      });
-      l2.forEach((element) {
-        listOfProducts.add(element);
-        print(element.productCode);
-      });*/
 
       addproducts(noofproducts);
 
@@ -433,24 +409,19 @@ class _InvoiceMainState extends State<InvoiceMain> {
       newInvoice.discount = discountrate.text;
 
       newInvoice.tcs = tcs.text;
-      newInvoice.roundoff = //double.parse(
-          roundoffamount.text;
-      //'g');
-      // Call the user's CollectionReference to add a new user
-      //mohit here invoice not genrating
-      // return db
-      //     .collection("userData")
-      //     .doc(widget.uid)
-      //     .collection("Invoice")
-      //     .doc(invoiceno.text)
-      //     .set(newInvoice.toJson());
+      newInvoice.roundoff = roundoffamount.text;
 
       return db
           .collection("userData")
           .doc(widget.uid)
           .collection("Invoice")
           .doc(invoiceno.text)
-          .set(newInvoice.toJson());
+          .set(
+            newInvoice.toJson(),
+          )
+          .then((value) => setState(() {
+                invoiceGenrated = true;
+              }));
     }
 
     Future<Null> _selectDate(BuildContext context, DateTime dateTime) async {
@@ -530,650 +501,87 @@ class _InvoiceMainState extends State<InvoiceMain> {
     final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _scaffoldkey,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Color.fromRGBO(47, 46, 65, 1),
-        title: Text(
-          'Generate Invoice',
-          style: TextStyle(
-            fontFamily: 'Bell MT',
-            fontSize: 24,
-            color: const Color(0xfff2f2f2),
-            fontWeight: FontWeight.w700,
+        key: _scaffoldkey,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(47, 46, 65, 1),
+          title: Text(
+            'Generate Invoice',
+            style: TextStyle(
+              fontFamily: 'Bell MT',
+              fontSize: 24,
+              color: const Color(0xfff2f2f2),
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.left,
           ),
-          textAlign: TextAlign.left,
         ),
-      ),
-      body: Form(
-        key: _keyForm,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Invoice Type",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: TextField(
-                                enabled: false,
-                                decoration: CoustumInputDecorationWidget(
-                                        "General Invoice")
-                                    .decoration(),
-                                // InputDecoration(
-                                //   labelText: 'General Invoice',
-                                //   fillColor: Colors.white,
-                                //   enabledBorder: OutlineInputBorder(
-                                //     borderRadius: BorderRadius.circular(2.0),
-                                //   ),
-                                // ),
-                                // The validator receives the text that the user has entered.
-                              ),
-                            ),
-                            Checkbox(
-                              activeColor: Color(0xff05A20A),
-                              value: generalInvoiceornot,
-                              onChanged: (bool newvalue) {
-                                setState(() {
-                                  generalInvoiceornot = newvalue;
-                                });
-                              },
-                            )
-                          ],
-                        ),
+        body: invoiceGenrated == true
+            ? Form(
+                key: _keyForm,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: CoustumInputDecorationWidget(
-                                        'Bill to Ship Invoice')
-                                    .decoration(),
-
-                                // The validator receives the text that the user has entered.
-                              ),
-                            ),
-                            Checkbox(
-                              activeColor: Color(0xff05A20A),
-                              value: !generalInvoiceornot,
-                              onChanged: (bool newvalue) {
-                                setState(() {
-                                  generalInvoiceornot = !newvalue;
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                          controller: invoiceno,
-                          decoration: CoustumInputDecorationWidget('Invoice No')
-                              .decoration(),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Enter value';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: DropdownButtonFormField<String>(
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          "Invoice Type",
                           style: TextStyle(
-                            color: Colors.black87,
                             fontFamily: 'Arial',
-                            fontSize: 12,
+                            fontSize: 14,
+                            color: const Color(0xff2f2e41),
+                            fontWeight: FontWeight.w700,
                           ),
-                          value: 'IGST',
-                          icon: Icon(Icons.arrow_downward),
-                          decoration: CoustumInputDecorationWidget("Tax Type")
-                              .decoration(),
-                          //  InputDecoration(
-                          //   labelText: "Tax Type",
-                          // ),
-                          items: taxtypes.map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              taxtype.text = newValue;
-                            });
-                          },
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Pease select taxtype';
-                            }
-                            return null;
-                          },
+                          textAlign: TextAlign.left,
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              generalInvoiceornot == false
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Consignee Details(Ship To)",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Eachrow(
-                            sname,
-                            "Name/Company Name",
-                            TextInputType.text,
-                            ifemptyvalidation,
-                            sphone,
-                            'Phone Number',
-                            TextInputType.number, (value) {
-                          if (value.isEmpty || value.length != 10) {
-                            return 'Please Enter ';
-                          }
-                          return null;
-                        }, 10),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () => _selectDate(context, sdate),
-                                child: Container(
-                                  //alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  height: 50,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 15, 1, 1),
-                                    child: Text("Date       " +
-                                        DateFormat('dd/MM/yyyy').format(sdate)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                //height: 60,
-                                child: TextFormField(
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  controller: sgstn,
-                                  //maxLength: 15,
-                                  inputFormatters: [
-                                    new LengthLimitingTextInputFormatter(15)
-                                  ],
-                                  decoration:
-                                      CoustumInputDecorationWidget("GSTN")
-                                          .decoration(),
-                                  onChanged: (value) {
-                                    if (value.length > 14) {
-                                      setState(() {
-                                        gstNo = sgstn.text;
-                                      });
-                                      verifyGSTNumber(sgstn.text);
-                                    }
-                                  },
-
-                                  validator: (value) {
-                                    if (value.isEmpty || value.length != 15) {
-                                      return 'Enter Correct Gstn ';
-                                    } else {
-                                      verifyGSTNumber(sgstn.text);
-                                      bool v = verifyGSTNumber(sgstn.text);
-                                      print(v.toString() + "mohit bool value");
-                                      if (v == true) {
-                                        return null;
-                                      } else {
-                                        return "something is wrong";
-                                      }
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scity, "City", TextInputType.text, null, sstate,
-                            'State', TextInputType.text, null, 40),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scountry, "Country", TextInputType.text, null,
-                            spin, 'Pin Code', TextInputType.number, ((value) {
-                          if (value.isEmpty && value.length != 6) {
-                            return 'Please Enter ' + 'Pincode';
-                          }
-                          return null;
-                        }), 6),
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Consignor Details(Bill To)",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(0.0),
-                              child: Card(
-                                elevation: 4,
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  child: TextFormField(
-                                      controller: bname,
-                                      decoration: CoustumInputDecorationWidget(
-                                              "Name/Company Name")
-                                          .decoration(),
-                                      // The validator receives the text that the user has entered.
-
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return null;
-                                        }
-                                        return null;
-                                      }),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(0.0),
-                              child: Card(
-                                elevation: 4,
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  child: TextFormField(
-                                      inputFormatters: [
-                                        new LengthLimitingTextInputFormatter(10)
-                                      ],
-                                      keyboardType: TextInputType.phone,
-                                      controller: bphone,
-                                      decoration: CoustumInputDecorationWidget(
-                                              'Phone No')
-                                          .decoration(),
-                                      // The validator receives the text that the user has entered.
-                                      validator: (value) {
-                                        if (value.isEmpty ||
-                                            value.length != 10) {
-                                          return 'Please Enter ';
-                                        }
-                                        return null;
-                                      }),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () => _selectDate1(context),
-                                child: Container(
-                                  // alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  height: 50,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        8.0, 15, 1, 2),
-                                    child: Text("Date    " +
-                                        DateFormat().add_yMd().format(bdate)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Card(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 height: 50,
-                                child: TextFormField(
-                                  controller: bgstn,
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  //inputFormatters: [],
-                                  maxLength: 15,
-                                  decoration: InputDecoration(
-                                      labelText: "GSTN", counterText: ''),
-                                  // The validator receives the text that the user has entered.
-                                  onChanged: (value) {
-                                    if (value.length > 14) {
-                                      setState(() {
-                                        gstNo = bgstn.text;
-                                        verifyGSTNumber(bgstn.text);
-                                      });
-                                    }
-                                  },
-                                  validator: (value) {
-                                    if (value.isEmpty || value.length != 15) {
-                                      return 'Enter Correct Gstn ';
-                                    } else {
-                                      verifyGSTNumber(bgstn.text);
-                                      bool v = verifyGSTNumber(bgstn.text);
-                                      print(v.toString() + "mohit bool value");
-                                      if (v == true) {
-                                        return null;
-                                      } else {
-                                        return "something is wrong";
-                                      }
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(bcity, "City", TextInputType.text, null, bstate,
-                            'State', TextInputType.text, null, 50),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(bcountry, "Country", TextInputType.text, null,
-                            bpin, 'Pin Code', TextInputType.number, (value) {
-                          if (value.isEmpty && value.length != 6) {
-                            return 'Pease enter Pincode';
-                          }
-                          return null;
-                        }, 6),
-                      ],
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            "Buyer's Details",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: const Color(0xff2f2e41),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Eachrow(
-                            sname,
-                            "Name/Company Name",
-                            TextInputType.text,
-                            null,
-                            sphone,
-                            'Phone Number',
-                            TextInputType.phone, (value) {
-                          if (value.isEmpty || value.length != 10) {
-                            return 'Please Enter ';
-                          }
-                          return null;
-                        }, 10),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () => _selectDate(context, sdate),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.44,
-                                    height: 50,
-                                    child: Text("Date    " +
-                                        DateFormat('dd/MM/yyyy').format(sdate)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                child: TextFormField(
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  controller: sgstn,
-                                  keyboardType: TextInputType.text,
-                                  // maxLength:15,
-                                  // maxLengthEnforced: true,
-                                  inputFormatters: [
-                                    new LengthLimitingTextInputFormatter(16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      child: TextField(
+                                        enabled: false,
+                                        decoration:
+                                            CoustumInputDecorationWidget(
+                                                    "General Invoice")
+                                                .decoration(),
+                                        // InputDecoration(
+                                        //   labelText: 'General Invoice',
+                                        //   fillColor: Colors.white,
+                                        //   enabledBorder: OutlineInputBorder(
+                                        //     borderRadius: BorderRadius.circular(2.0),
+                                        //   ),
+                                        // ),
+                                        // The validator receives the text that the user has entered.
+                                      ),
+                                    ),
+                                    Checkbox(
+                                      activeColor: Color(0xff05A20A),
+                                      value: generalInvoiceornot,
+                                      onChanged: (bool newvalue) {
+                                        setState(() {
+                                          generalInvoiceornot = newvalue;
+                                        });
+                                      },
+                                    )
                                   ],
-                                  decoration:
-                                      CoustumInputDecorationWidget("GSTN")
-                                          .decoration(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      gstNo = sgstn.text;
-                                      verifyGSTNumber(sgstn.text);
-                                    });
-                                  },
-
-                                  validator: (value) {
-                                    if (value.isEmpty || value.length != 15) {
-                                      return 'Enter Correct Gstn ';
-                                    } else {
-                                      bool v = verifyGSTNumber(sgstn.text);
-                                      print(v.toString() + "mohit bool value");
-                                      if (v == true) {
-                                        return null;
-                                      } else {
-                                        return "something is wrong";
-                                      }
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(
-                            scity,
-                            "City",
-                            TextInputType.text,
-                            (value) {
-                              if (value.isEmpty) {
-                                return null;
-                              }
-                              return null;
-                            },
-                            sstate,
-                            'State',
-                            TextInputType.text,
-                            (value) {
-                              if (value.isEmpty) {
-                                return null;
-                              }
-                              return null;
-                            },
-                            50),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Eachrow(scountry, "Country", TextInputType.text, null,
-                            spin, 'Pincoode', TextInputType.number, (value) {
-                          if (value.isEmpty && value.length != 6) {
-                            return 'Pease enter Pincode';
-                          }
-                          return null;
-                        }, 6),
-                      ],
-                    ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Product Details",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: noofproducts,
-                itemBuilder: (context, index) {
-                  t.add(new Customtexteditingcontroller());
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                //height: 60,
-                                child: TextFormField(
-                                  onChanged: (value) {
-                                    if (value.length > 3)
-                                      changeQuantity1(index, value);
-
-                                    FirebaseFirestore.instance
-                                        .collection("userData")
-                                        .doc(widget.uid)
-                                        .collection("Product")
-                                        .doc(value)
-                                        .get()
-                                        .then((valuee) {
-                                      setState(() {
-                                        t[index].productName.text =
-                                            valuee.data()['productName'];
-                                        t[index].hsncode.text =
-                                            valuee.data()['hsncode'];
-                                        t[index].sellingrate.text =
-                                            valuee.data()['sellingprice'];
-                                        t[index].taxrate.text =
-                                            valuee.data()['igst'];
-                                      });
-                                    });
-                                  },
-                                  controller: t[index].productCode,
-                                  decoration: CoustumInputDecorationWidget(
-                                          "Product Code")
-                                      .decoration(),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Enter productCode';
-                                    }
-                                    return null;
-                                  },
                                 ),
                               ),
                             ),
@@ -1184,18 +592,32 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                child: TextFormField(
-                                  enabled: false,
-                                  controller: t[index].productName,
-                                  decoration: CoustumInputDecorationWidget(
-                                          'Product Name')
-                                      .decoration(),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return null;
-                                    }
-                                    return null;
-                                  },
+                                height: 50,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      child: TextFormField(
+                                        enabled: false,
+                                        decoration:
+                                            CoustumInputDecorationWidget(
+                                                    'Bill to Ship Invoice')
+                                                .decoration(),
+
+                                        // The validator receives the text that the user has entered.
+                                      ),
+                                    ),
+                                    Checkbox(
+                                      activeColor: Color(0xff05A20A),
+                                      value: !generalInvoiceornot,
+                                      onChanged: (bool newvalue) {
+                                        setState(() {
+                                          generalInvoiceornot = !newvalue;
+                                        });
+                                      },
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
@@ -1206,21 +628,19 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.all(0.0),
+                            padding: const EdgeInsets.all(0),
                             child: Card(
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
-                                  controller: t[index].hsncode,
-                                  enabled: false,
+                                  controller: invoiceno,
                                   decoration:
-                                      CoustumInputDecorationWidget("HSN Code")
+                                      CoustumInputDecorationWidget('Invoice No')
                                           .decoration(),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Enter value';
                                     }
                                     return null;
                                   },
@@ -1229,133 +649,27 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(0.0),
+                            padding: const EdgeInsets.all(5.0),
                             child: Card(
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                //height: 60,
-                                child: TextFormField(
-                                  controller: t[index].taxrate,
-                                  decoration:
-                                      CoustumInputDecorationWidget("Tax Rate %")
-                                          .decoration(),
-                                  // The validator receives the text that the user has entered.
-                                  onChanged: (value) {
-                                    setState(() {
-                                      String taxRate = t[index].taxrate.text;
-                                      // String result;
-                                      // result = taxRate.substring(
-                                      //     0, taxRate.length - 1);
-                                      var quanitity = t[index].quantity.text;
-                                      var sellingRate =
-                                          t[index].sellingrate.text;
-                                      var totalTaxam = (int.parse(quanitity) *
-                                              int.parse(sellingRate) *
-                                              int.parse(taxRate)) /
-                                          100;
-                                      var totalam = int.parse(quanitity) *
-                                              int.parse(sellingRate) +
-                                          totalTaxam;
-                                      // //mohit
-                                      t[index].taxamount.text =
-                                          totalTaxam.toString();
-                                      t[index].totalamount.text =
-                                          totalam.toString();
-                                      print(t[index].totalamount.text +
-                                          "mohit tax amount");
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return null;
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                //height: 60,
-                                child: TextFormField(
-                                  controller: t[index].quantity,
-                                  decoration:
-                                      CoustumInputDecorationWidget("Quantity")
-                                          .decoration(),
-
-                                  onChanged: (value) {
-                                    changeQuantity2(index, value);
-                                    setState(() {
-                                      String taxRate = t[index].taxrate.text;
-                                      // String result;
-                                      // result = taxRate.substring(
-                                      //     0, taxRate.length - 1);
-                                      var quanitity = t[index].quantity.text;
-                                      var sellingRate =
-                                          t[index].sellingrate.text;
-                                      var totalTaxam = (int.parse(quanitity) *
-                                              int.parse(sellingRate) *
-                                              int.parse(taxRate)) /
-                                          100;
-                                      var totalam = int.parse(quanitity) *
-                                              int.parse(sellingRate) +
-                                          totalTaxam;
-                                      // //mohit
-                                      t[index].taxamount.text =
-                                          totalTaxam.toString();
-                                      t[index].totalamount.text =
-                                          totalam.toString();
-                                      print(t[index].totalamount.text +
-                                          "mohit tax amount");
-                                    });
-                                  },
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'enter Quantity';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Card(
-                              elevation: 4,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                // height: 60,
+                                height: 50,
                                 child: DropdownButtonFormField<String>(
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontFamily: 'Arial',
                                     fontSize: 12,
                                   ),
-                                  value: 'OTH-OTHERS',
+                                  value: 'IGST',
                                   icon: Icon(Icons.arrow_downward),
                                   decoration:
-                                      CoustumInputDecorationWidget("Unit ")
+                                      CoustumInputDecorationWidget("Tax Type")
                                           .decoration(),
                                   //  InputDecoration(
-                                  //   labelText: "Unit",
+                                  //   labelText: "Tax Type",
                                   // ),
-                                  items: units.map((String value) {
+                                  items: taxtypes.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
                                       child: new Text(value),
@@ -1363,18 +677,881 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   }).toList(),
                                   onChanged: (String newValue) {
                                     setState(() {
-                                      t[index].unit.text =
-                                          newValue.substring(0, 3);
+                                      taxtype.text = newValue;
                                     });
                                   },
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return 'Pease select unit';
+                                      return 'Pease select taxtype';
                                     }
                                     return null;
                                   },
                                 ),
-                                /*DropdownButtonFormField(
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      generalInvoiceornot == false
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "Consignee Details(Ship To)",
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 14,
+                                      color: const Color(0xff2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Eachrow(
+                                    sname,
+                                    "Name/Company Name",
+                                    TextInputType.text,
+                                    ifemptyvalidation,
+                                    sphone,
+                                    'Phone Number',
+                                    TextInputType.number, (value) {
+                                  if (value.isEmpty || value.length != 10) {
+                                    return 'Please Enter ';
+                                  }
+                                  return null;
+                                }, 10),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: 4,
+                                      child: InkWell(
+                                        onTap: () =>
+                                            _selectDate(context, sdate),
+                                        child: Container(
+                                          //alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          height: 50,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 15, 1, 1),
+                                            child: Text("Date       " +
+                                                DateFormat('dd/MM/yyyy')
+                                                    .format(sdate)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        //height: 60,
+                                        child: TextFormField(
+                                          textCapitalization:
+                                              TextCapitalization.characters,
+                                          controller: sgstn,
+                                          //maxLength: 15,
+                                          inputFormatters: [
+                                            new LengthLimitingTextInputFormatter(
+                                                15)
+                                          ],
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "GSTN")
+                                                  .decoration(),
+                                          onChanged: (value) {
+                                            if (value.length > 14) {
+                                              setState(() {
+                                                gstNo = sgstn.text;
+                                              });
+                                              verifyGSTNumber(sgstn.text);
+                                            }
+                                          },
+
+                                          validator: (value) {
+                                            if (value.isEmpty ||
+                                                value.length != 15) {
+                                              return 'Enter Correct Gstn ';
+                                            } else {
+                                              verifyGSTNumber(sgstn.text);
+                                              bool v =
+                                                  verifyGSTNumber(sgstn.text);
+                                              print(v.toString() +
+                                                  "mohit bool value");
+                                              if (v == true) {
+                                                return null;
+                                              } else {
+                                                return "something is wrong";
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    scity,
+                                    "City",
+                                    TextInputType.text,
+                                    null,
+                                    sstate,
+                                    'State',
+                                    TextInputType.text,
+                                    null,
+                                    40),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    scountry,
+                                    "Country",
+                                    TextInputType.text,
+                                    null,
+                                    spin,
+                                    'Pin Code',
+                                    TextInputType.number, ((value) {
+                                  if (value.isEmpty && value.length != 6) {
+                                    return 'Please Enter ' + 'Pincode';
+                                  }
+                                  return null;
+                                }), 6),
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "Consignor Details(Bill To)",
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 14,
+                                      color: const Color(0xff2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Card(
+                                        elevation: 4,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          child: TextFormField(
+                                              controller: bname,
+                                              decoration:
+                                                  CoustumInputDecorationWidget(
+                                                          "Name/Company Name")
+                                                      .decoration(),
+                                              // The validator receives the text that the user has entered.
+
+                                              validator: (value) {
+                                                if (value.isEmpty) {
+                                                  return null;
+                                                }
+                                                return null;
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Card(
+                                        elevation: 4,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          child: TextFormField(
+                                              inputFormatters: [
+                                                new LengthLimitingTextInputFormatter(
+                                                    10)
+                                              ],
+                                              keyboardType: TextInputType.phone,
+                                              controller: bphone,
+                                              decoration:
+                                                  CoustumInputDecorationWidget(
+                                                          'Phone No')
+                                                      .decoration(),
+                                              // The validator receives the text that the user has entered.
+                                              validator: (value) {
+                                                if (value.isEmpty ||
+                                                    value.length != 10) {
+                                                  return 'Please Enter ';
+                                                }
+                                                return null;
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: 4,
+                                      child: InkWell(
+                                        onTap: () => _selectDate1(context),
+                                        child: Container(
+                                          // alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          height: 50,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8.0, 15, 1, 2),
+                                            child: Text("Date    " +
+                                                DateFormat()
+                                                    .add_yMd()
+                                                    .format(bdate)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        height: 50,
+                                        child: TextFormField(
+                                          controller: bgstn,
+                                          textCapitalization:
+                                              TextCapitalization.characters,
+                                          //inputFormatters: [],
+                                          maxLength: 15,
+                                          decoration: InputDecoration(
+                                              labelText: "GSTN",
+                                              counterText: ''),
+                                          // The validator receives the text that the user has entered.
+                                          onChanged: (value) {
+                                            if (value.length > 14) {
+                                              setState(() {
+                                                gstNo = bgstn.text;
+                                                verifyGSTNumber(bgstn.text);
+                                              });
+                                            }
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty ||
+                                                value.length != 15) {
+                                              return 'Enter Correct Gstn ';
+                                            } else {
+                                              verifyGSTNumber(bgstn.text);
+                                              bool v =
+                                                  verifyGSTNumber(bgstn.text);
+                                              print(v.toString() +
+                                                  "mohit bool value");
+                                              if (v == true) {
+                                                return null;
+                                              } else {
+                                                return "something is wrong";
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    bcity,
+                                    "City",
+                                    TextInputType.text,
+                                    null,
+                                    bstate,
+                                    'State',
+                                    TextInputType.text,
+                                    null,
+                                    50),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    bcountry,
+                                    "Country",
+                                    TextInputType.text,
+                                    null,
+                                    bpin,
+                                    'Pin Code',
+                                    TextInputType.number, (value) {
+                                  if (value.isEmpty && value.length != 6) {
+                                    return 'Pease enter Pincode';
+                                  }
+                                  return null;
+                                }, 6),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "Buyer's Details",
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 14,
+                                      color: const Color(0xff2f2e41),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Card(
+                                        elevation: 4,
+                                        child: Container(
+                                          //height: 50,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          child: TextFormField(
+
+                                              // keyboardType: keyboardTypeC1,
+                                              controller: sname,
+                                              decoration:
+                                                  CoustumInputDecorationWidget(
+                                                          "Name/Company Name")
+                                                      .decoration(),
+                                              // The validator receives the text that the user has entered.
+                                              onChanged: (value) {
+                                                FirebaseFirestore.instance
+                                                    .collection("userData")
+                                                    .doc(widget.uid)
+                                                    .collection("Party")
+                                                    .doc(value)
+                                                    .get()
+                                                    .then((valuee) {
+                                                  setState(() {
+                                                    sphone.text =
+                                                        valuee.data()['phone'];
+                                                    sname.text = valuee
+                                                        .data()['partyName'];
+                                                    sgstn.text =
+                                                        valuee.data()['gstn'];
+                                                    scity.text =
+                                                        valuee.data()['city'];
+                                                    sstate.text =
+                                                        valuee.data()['state'];
+                                                    scountry.text = valuee
+                                                        .data()['country'];
+                                                    spin.text = valuee
+                                                        .data()['pincode'];
+                                                  });
+                                                });
+                                              },
+                                              validator: (value) {
+                                                if (value.isEmpty) {
+                                                  return 'Enter Party Name';
+                                                }
+                                                return null;
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Card(
+                                        elevation: 4,
+                                        child: Container(
+                                          //height: 50,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          child: TextFormField(
+                                              inputFormatters: [
+                                                new LengthLimitingTextInputFormatter(
+                                                    10)
+                                              ],
+                                              keyboardType: TextInputType.phone,
+                                              controller: sphone,
+                                              decoration:
+                                                  CoustumInputDecorationWidget(
+                                                          'Phone Number')
+                                                      .decoration(),
+                                              // The validator receives the text that the user has entered.
+                                              validator: (value) {
+                                                if (value.isEmpty ||
+                                                    value.length != 10) {
+                                                  return 'Please Enter ';
+                                                }
+                                                return null;
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // Eachrow(
+                                //     sname,
+                                //     "Name/Company Name",
+                                //     TextInputType.text,
+                                //     null,
+                                //     sphone,
+                                //     'Phone Number',
+                                //     TextInputType.phone, (value) {
+                                //   if (value.isEmpty || value.length != 10) {
+                                //     return 'Please Enter ';
+                                //   }
+                                //   return null;
+                                // }, 10),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: 4,
+                                      child: InkWell(
+                                        onTap: () =>
+                                            _selectDate(context, sdate),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 0, 0, 0),
+                                          child: Container(
+                                            alignment: Alignment.centerLeft,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.44,
+                                            height: 50,
+                                            child: Text("Date    " +
+                                                DateFormat('dd/MM/yyyy')
+                                                    .format(sdate)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        child: TextFormField(
+                                          textCapitalization:
+                                              TextCapitalization.characters,
+                                          controller: sgstn,
+                                          keyboardType: TextInputType.text,
+                                          inputFormatters: [
+                                            new LengthLimitingTextInputFormatter(
+                                                15),
+                                          ],
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "GSTN")
+                                                  .decoration(),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              //gstNo = sgstn.text;
+                                              verifyGSTNumber(sgstn.text);
+                                            });
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty ||
+                                                value.length != 15) {
+                                              return 'Enter Correct Gstn ';
+                                            } else {
+                                              bool v =
+                                                  verifyGSTNumber(sgstn.text);
+                                              print(v.toString() +
+                                                  "  mohit bool value");
+                                              if (v == true) {
+                                                return null;
+                                              } else {
+                                                return "something is wrong";
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    scity,
+                                    "City",
+                                    TextInputType.text,
+                                    (value) {
+                                      if (value.isEmpty) {
+                                        return null;
+                                      }
+                                      return null;
+                                    },
+                                    sstate,
+                                    'State',
+                                    TextInputType.text,
+                                    (value) {
+                                      if (value.isEmpty) {
+                                        return null;
+                                      }
+                                      return null;
+                                    },
+                                    50),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Eachrow(
+                                    scountry,
+                                    "Country",
+                                    TextInputType.text,
+                                    null,
+                                    spin,
+                                    'Pincoode',
+                                    TextInputType.number, (value) {
+                                  if (value.isEmpty && value.length != 6) {
+                                    return 'Pease enter Pincode';
+                                  }
+                                  return null;
+                                }, 6),
+                              ],
+                            ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          "Product Details",
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 14,
+                            color: const Color(0xff2f2e41),
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: noofproducts,
+                        itemBuilder: (context, index) {
+                          t.add(new Customtexteditingcontroller());
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        //height: 60,
+                                        child: TextFormField(
+                                          onChanged: (value) {
+                                            if (value.length > 3)
+                                              changeQuantity1(index, value);
+
+                                            FirebaseFirestore.instance
+                                                .collection("userData")
+                                                .doc(widget.uid)
+                                                .collection("Product")
+                                                .doc(value)
+                                                .get()
+                                                .then((valuee) {
+                                              setState(() {
+                                                t[index].productName.text =
+                                                    valuee
+                                                        .data()['productName'];
+                                                t[index].hsncode.text =
+                                                    valuee.data()['hsncode'];
+                                                t[index].sellingrate.text =
+                                                    valuee
+                                                        .data()['sellingprice'];
+                                                t[index].taxrate.text =
+                                                    valuee.data()['igst'];
+                                              });
+                                            });
+                                          },
+                                          controller: t[index].productCode,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "Product Code")
+                                                  .decoration(),
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'Enter productCode';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        child: TextFormField(
+                                          enabled: false,
+                                          controller: t[index].productName,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      'Product Name')
+                                                  .decoration(),
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return null;
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        child: TextFormField(
+                                          controller: t[index].hsncode,
+                                          enabled: false,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "HSN Code")
+                                                  .decoration(),
+                                          // The validator receives the text that the user has entered.
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return null;
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        //height: 60,
+                                        child: TextFormField(
+                                          controller: t[index].taxrate,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "Tax Rate %")
+                                                  .decoration(),
+                                          // The validator receives the text that the user has entered.
+                                          onChanged: (value) {
+                                            setState(() {
+                                              String taxRate =
+                                                  t[index].taxrate.text;
+                                              // String result;
+                                              // result = taxRate.substring(
+                                              //     0, taxRate.length - 1);
+                                              var quanitity =
+                                                  t[index].quantity.text;
+                                              var sellingRate =
+                                                  t[index].sellingrate.text;
+                                              var totalTaxam = (int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) *
+                                                      int.parse(taxRate)) /
+                                                  100;
+                                              var totalam = int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) +
+                                                  totalTaxam;
+                                              // //mohit
+                                              t[index].taxamount.text =
+                                                  totalTaxam.toString();
+                                              t[index].totalamount.text =
+                                                  totalam.toString();
+                                              print(t[index].totalamount.text +
+                                                  "mohit tax amount");
+                                            });
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return null;
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        //height: 60,
+                                        child: TextFormField(
+                                          controller: t[index].quantity,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "Quantity")
+                                                  .decoration(),
+
+                                          onChanged: (value) {
+                                            changeQuantity2(index, value);
+                                            setState(() {
+                                              String taxRate =
+                                                  t[index].taxrate.text;
+                                              // String result;
+                                              // result = taxRate.substring(
+                                              //     0, taxRate.length - 1);
+                                              var quanitity =
+                                                  t[index].quantity.text;
+                                              var sellingRate =
+                                                  t[index].sellingrate.text;
+                                              var totalTaxam = (int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) *
+                                                      int.parse(taxRate)) /
+                                                  100;
+                                              var totalam = int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) +
+                                                  totalTaxam;
+                                              // //mohit
+                                              t[index].taxamount.text =
+                                                  totalTaxam.toString();
+                                              t[index].totalamount.text =
+                                                  totalam.toString();
+                                              print(t[index].totalamount.text +
+                                                  "mohit tax amount");
+                                            });
+                                          },
+                                          // The validator receives the text that the user has entered.
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'enter Quantity';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        // height: 60,
+                                        child: DropdownButtonFormField<String>(
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontFamily: 'Arial',
+                                            fontSize: 12,
+                                          ),
+                                          value: 'OTH-OTHERS',
+                                          icon: Icon(Icons.arrow_downward),
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "Unit ")
+                                                  .decoration(),
+                                          //  InputDecoration(
+                                          //   labelText: "Unit",
+                                          // ),
+                                          items: units.map((String value) {
+                                            return new DropdownMenuItem<String>(
+                                              value: value,
+                                              child: new Text(value),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              t[index].unit.text =
+                                                  newValue.substring(0, 3);
+                                            });
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'Pease select unit';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        /*DropdownButtonFormField(
                           value: unit.text,
                           icon: Icon(Icons.arrow_downward),
                           decoration: InputDecoration(
@@ -1408,15 +1585,1061 @@ class _InvoiceMainState extends State<InvoiceMain> {
                             return null;
                           },
                         ),*/
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        child: TextFormField(
+                                          controller: t[index].sellingrate,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      'Selling Rate')
+                                                  .decoration(),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              String taxRate =
+                                                  t[index].taxrate.text;
+                                              // String result;
+                                              // result = taxRate.substring(
+                                              //     0, taxRate.length - 1);
+                                              var quanitity =
+                                                  t[index].quantity.text;
+                                              var sellingRate =
+                                                  t[index].sellingrate.text;
+                                              var totalTaxam = (int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) *
+                                                      int.parse(taxRate)) /
+                                                  100;
+                                              var totalam = int.parse(
+                                                          quanitity) *
+                                                      int.parse(sellingRate) +
+                                                  totalTaxam;
+                                              // //mohit
+                                              t[index].taxamount.text =
+                                                  totalTaxam.toString();
+                                              t[index].totalamount.text =
+                                                  totalam.toString();
+                                              print(t[index].totalamount.text +
+                                                  "mohit tax amount");
+                                            });
+                                          },
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return null;
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        child: TextFormField(
+                                          controller: t[index].taxamount,
+                                          enabled: false,
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      "TAX Amount")
+                                                  .decoration(),
+                                          // The validator receives the text that the user has entered.
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return null;
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // Eachrow(t[index].sellingrate, 'Selling Rate',
+                              //     TextInputType.text, (value) {
+                              //   if (value.isEmpty) {
+                              //     return 'Enter Correct SR';
+                              //   }
+                              //   return null;
+                              // }, t[index].taxamount, "TAX Amount", TextInputType.text,
+                              //     null, 20),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Card(
+                                      elevation: 4,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        // height: 60,
+                                        child: TextFormField(
+                                          controller: t[index].totalamount,
+
+                                          decoration:
+                                              CoustumInputDecorationWidget(
+                                                      'Total Amount')
+                                                  .decoration(),
+
+                                          // The validator receives the text that the user has entered.
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'Enter Amount';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 4,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      //height: 60,
+                                      child: DropdownButtonFormField<String>(
+                                        value: 'None',
+                                        icon: Icon(Icons.arrow_downward),
+                                        decoration:
+                                            CoustumInputDecorationWidget("Foc")
+                                                .decoration(),
+                                        items: foc.map((String value) {
+                                          return new DropdownMenuItem<String>(
+                                            value: value,
+                                            child: new Text(value),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String newValue) {
+                                          setState(() {
+                                            t[index].focornot = newValue;
+                                          });
+                                        },
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            return 'Pease select foc';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () => {
+                              setState(() {
+                                noofproducts = noofproducts + 1;
+                              })
+                            },
+                            child: Container(
+                              width: 60,
+                              height: 30,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: const Color(0xff3f3d56),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(9, 9),
+                                    blurRadius: 16,
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                'Add New',
+                                style: TextStyle(
+                                  fontFamily: 'Bell MT',
+                                  fontSize: 12,
+                                  color: const Color(0xfff1f3f6),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
                               ),
                             ),
                           ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            //   decoration: BoxDecoration( borderRadius: BorderRadius. only(topLeft: Radius. circular(25.0), topRight: Radius. circular(25.0)),
+                            //  ),
+
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: Column(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    showModalBottomSheet<void>(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0)),
+                                      ),
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(15.0),
+                                                topRight:
+                                                    Radius.circular(15.0)),
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              colors: <Color>[
+                                                Color(0xff573666),
+                                                Color(0xff1B1B2A)
+                                              ], // red to yellow
+                                              // repeats the gradient over the canvas
+                                            ),
+                                          ),
+                                          child: Column(children: [
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Add Other Charges',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 24,
+                                                      color: const Color(
+                                                          0xffffffff),
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100)),
+                                                    child: Icon(Icons.add,
+                                                        color: Colors.green)),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Charge Name',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Arial',
+                                                        fontSize: 12,
+                                                        color: const Color(
+                                                            0xffffffff),
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                    Container(
+                                                      color: Colors.white,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.4,
+                                                      height: 50,
+                                                      child: TextFormField(
+                                                          controller:
+                                                              chargename),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Charge Value',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Arial',
+                                                        fontSize: 12,
+                                                        color: const Color(
+                                                            0xffffffff),
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                    Container(
+                                                      color: Colors.white,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.45,
+                                                      height: 50,
+                                                      child: TextFormField(
+                                                          controller:
+                                                              chargevalue),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                othercharges.add(OtherCharges(
+                                                    chargename.text.toString(),
+                                                    double.parse(
+                                                        chargevalue.text)));
+                                                chargevalue.text = '';
+                                                chargename.text = '';
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                width: 80,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    'ADD',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 16,
+                                                      color: const Color(
+                                                          0xff3f3d56),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ]),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white,
+                                        boxShadow: []),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Other Charges',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 14,
+                                            color: const Color(0xff2f2e41),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        Icon(
+                                          Icons.add,
+                                          color: Colors.green,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0)),
+                                  ),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(15.0)),
+                                    onTap: () {
+                                      showModalBottomSheet<void>(
+                                        context: context,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15.0),
+                                              topRight: Radius.circular(15.0)),
+                                        ),
+                                        //                            shape: RoundedRectangleBorder(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(15.0),
+                                                    topRight:
+                                                        Radius.circular(15.0)),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  colors: <Color>[
+                                                    Color(0xff573666),
+                                                    Color(0xff1B1B2A)
+                                                  ], // red to yellow
+                                                  // repeats the gradient over the canvas
+                                                ),
+                                              ),
+                                              child: Column(children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    'Discount',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 24,
+                                                      color: const Color(
+                                                          0xffffffff),
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  'Discount Rate',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Arial',
+                                                    fontSize: 12,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      color: Colors.white,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.4,
+                                                      height: 50,
+                                                      child: TextFormField(
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          controller:
+                                                              discountrate),
+                                                    ),
+                                                    Container(
+                                                      color: Colors.white,
+                                                      height: 50,
+                                                      child: Text('%'),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (discountrate
+                                                        .text.isNotEmpty)
+                                                      Navigator.pop(context);
+                                                    else
+                                                      Fluttertoast.showToast(
+                                                        msg: 'Enter Value',
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        backgroundColor:
+                                                            const Color(
+                                                                0xff3f3d56),
+                                                      );
+                                                  },
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    width: 80,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Text(
+                                                        'ADD',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Arial',
+                                                          fontSize: 16,
+                                                          color: const Color(
+                                                              0xff3f3d56),
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ]));
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.white,
+                                          boxShadow: []),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Discount',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 14,
+                                              color: const Color(0xff2f2e41),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          Icon(
+                                            Icons.add,
+                                            color: Colors.green,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    showModalBottomSheet<void>(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0)),
+                                      ),
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft:
+                                                          const Radius.circular(
+                                                              15.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              15.0)),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                colors: <Color>[
+                                                  Color(0xff573666),
+                                                  Color(0xff1B1B2A)
+                                                ], // red to yellow
+                                                // repeats the gradient over the canvas
+                                              ),
+                                            ),
+                                            child: Column(children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'TCS (Tax Collected at Service)',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Arial',
+                                                    fontSize: 24,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ),
+                                              Text(
+                                                'TCS Rate',
+                                                style: TextStyle(
+                                                  fontFamily: 'Arial',
+                                                  fontSize: 12,
+                                                  color:
+                                                      const Color(0xffffffff),
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    color: Colors.white,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.4,
+                                                    height: 50,
+                                                    child: TextFormField(
+                                                        controller: tcs),
+                                                  ),
+                                                  Container(
+                                                    color: Colors.white,
+                                                    height: 50,
+                                                    child: Text('%'),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  if (tcs.text.isNotEmpty)
+                                                    Navigator.pop(context);
+                                                  else
+                                                    Fluttertoast.showToast(
+                                                        msg: 'Enter Value',
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        backgroundColor:
+                                                            Colors.black12,
+                                                        textColor: const Color(
+                                                            0xff3f3d56));
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: 80,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: Text(
+                                                      'ADD',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Arial',
+                                                        fontSize: 16,
+                                                        color: const Color(
+                                                            0xff3f3d56),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ]));
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white,
+                                        boxShadow: []),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'TCS',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 14,
+                                            color: const Color(0xff2f2e41),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        Icon(
+                                          Icons.add,
+                                          color: Colors.green,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                InkWell(
+                                  borderRadius: new BorderRadius.only(
+                                      topLeft: const Radius.circular(15.0),
+                                      topRight: const Radius.circular(15.0)),
+                                  onTap: () {
+                                    showModalBottomSheet<void>(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0)),
+                                      ),
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft:
+                                                          const Radius.circular(
+                                                              15.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              15.0)),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                colors: <Color>[
+                                                  Color(0xff573666),
+                                                  Color(0xff1B1B2A)
+                                                ], // red to yellow
+                                                // repeats the gradient over the canvas
+                                              ),
+                                            ),
+                                            child: Column(children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'Round Off',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Arial',
+                                                    fontSize: 24,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Amount',
+                                                style: TextStyle(
+                                                  fontFamily: 'Arial',
+                                                  fontSize: 12,
+                                                  color:
+                                                      const Color(0xffffffff),
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    color: Colors.white,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.4,
+                                                    height: 50,
+                                                    child: TextFormField(
+                                                        controller:
+                                                            roundoffamount),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  if (roundoffamount
+                                                      .text.isNotEmpty)
+                                                    Navigator.pop(context);
+                                                  else
+                                                    Fluttertoast.showToast(
+                                                        msg: 'Enter Value',
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        backgroundColor:
+                                                            Colors.black12,
+                                                        textColor: const Color(
+                                                            0xff3f3d56));
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: 80,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: Text(
+                                                      'ADD',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Arial',
+                                                        fontSize: 16,
+                                                        color: const Color(
+                                                            0xff3f3d56),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ]));
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 30,
+                                    //  color: Colors.transparent,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.transparent,
+                                        boxShadow: []),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Round Off',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 14,
+                                            color: const Color(0xff2f2e41),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        Icon(
+                                          Icons.add,
+                                          color: Colors.green,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: othercharges.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.4,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            othercharges[index]
+                                                    .otherchargename +
+                                                "                 " +
+                                                othercharges[index]
+                                                    .otherchargevalue
+                                                    .toString(),
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 12,
+                                              color: const Color(0xcc2f2e41),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Card(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Discount' +
+                                          "           " +
+                                          discountrate.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 12,
+                                        color: const Color(0xcc2f2e41),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'TCS' + "                   " + tcs.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 12,
+                                        color: const Color(0xcc2f2e41),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Round Off' +
+                                          "         " +
+                                          roundoffamount.text,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 12,
+                                        color: const Color(0xcc2f2e41),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          "Transport Details",
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 14,
+                            color: const Color(0xff2f2e41),
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      Eachrow(
+                          transporterid,
+                          "Transporter id",
+                          TextInputType.text,
+                          null,
+                          transportername,
+                          'Transporter Name',
+                          TextInputType.text,
+                          null,
+                          30),
                       SizedBox(
                         height: 10,
                       ),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -1427,38 +2650,107 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
-                                  controller: t[index].sellingrate,
-                                  decoration: CoustumInputDecorationWidget(
-                                          'Selling Rate')
-                                      .decoration(),
-                                  onChanged: (value) {
+                                    keyboardType: TextInputType.text,
+                                    controller: tracnsportdocno,
+                                    decoration: CoustumInputDecorationWidget(
+                                            "Transporter Doc/Bilty No")
+                                        .decoration(),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return null;
+                                      }
+                                      return null;
+                                    }),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: InkWell(
+                                onTap: () => _selectDate(context, tdate),
+                                child: Container(
+                                  // alignment: Alignment.center,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.45,
+                                  height: 50,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 15, 2, 1),
+                                    child: Text("Date    " +
+                                        DateFormat('dd/MM/yyyy').format(sdate)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Eachrow(
+                      //     tracnsportdocno,
+                      //     "Transporter Doc/Bilty No",
+                      //     TextInputType.text,
+                      //     null,
+                      //     tdate,
+                      //     'Date',
+                      //     TextInputType.datetime,
+                      //     null),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          "Vehicle Details",
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 14,
+                            color: const Color(0xff2f2e41),
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Card(
+                              elevation: 4,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                height: 50,
+                                child: DropdownButtonFormField<String>(
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontFamily: 'Arial',
+                                    fontSize: 12,
+                                  ),
+                                  value: 'Road',
+                                  icon: Icon(Icons.arrow_downward),
+                                  decoration:
+                                      CoustumInputDecorationWidget("Mode")
+                                          .decoration(),
+                                  // InputDecoration(
+                                  //   labelText: "Mode",
+                                  // ),
+                                  items: vehiclemodes.map((String value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value,
+                                      child: new Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String newValue) {
                                     setState(() {
-                                      String taxRate = t[index].taxrate.text;
-                                      // String result;
-                                      // result = taxRate.substring(
-                                      //     0, taxRate.length - 1);
-                                      var quanitity = t[index].quantity.text;
-                                      var sellingRate =
-                                          t[index].sellingrate.text;
-                                      var totalTaxam = (int.parse(quanitity) *
-                                              int.parse(sellingRate) *
-                                              int.parse(taxRate)) /
-                                          100;
-                                      var totalam = int.parse(quanitity) *
-                                              int.parse(sellingRate) +
-                                          totalTaxam;
-                                      // //mohit
-                                      t[index].taxamount.text =
-                                          totalTaxam.toString();
-                                      t[index].totalamount.text =
-                                          totalam.toString();
-                                      print(t[index].totalamount.text +
-                                          "mohit tax amount");
+                                      vehiclemode.text = newValue;
                                     });
                                   },
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Pease select vehicle mode';
                                     }
                                     return null;
                                   },
@@ -1473,15 +2765,21 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
-                                  controller: t[index].taxamount,
-                                  enabled: false,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  controller: vehicleno,
                                   decoration:
-                                      CoustumInputDecorationWidget("TAX Amount")
+                                      CoustumInputDecorationWidget('Vehicle no')
                                           .decoration(),
+                                  // InputDecoration(
+                                  //   labelText: 'Vehicle no',
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
-                                    if (value.isEmpty) {
-                                      return null;
+                                    if (value.isEmpty && value.length != 15) {
+                                      return 'Please Enter correct ' +
+                                          'Vehicle no';
                                     }
                                     return null;
                                   },
@@ -1491,20 +2789,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           ),
                         ],
                       ),
-
-                      // Eachrow(t[index].sellingrate, 'Selling Rate',
-                      //     TextInputType.text, (value) {
-                      //   if (value.isEmpty) {
-                      //     return 'Enter Correct SR';
-                      //   }
-                      //   return null;
-                      // }, t[index].taxamount, "TAX Amount", TextInputType.text,
-                      //     null, 20),
                       SizedBox(
                         height: 10,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(5.0),
@@ -1512,18 +2801,20 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               elevation: 4,
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
-                                // height: 60,
+                                height: 50,
                                 child: TextFormField(
-                                  controller: t[index].totalamount,
-
-                                  decoration: CoustumInputDecorationWidget(
-                                          'Total Amount')
-                                      .decoration(),
-
+                                  controller: from,
+                                  decoration:
+                                      CoustumInputDecorationWidget("From")
+                                          .decoration(),
+                                  //  InputDecoration(
+                                  //   labelText: "from",
+                                  //   fillColor: Colors.white,
+                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return 'Enter Amount';
+                                      return null;
                                     }
                                     return null;
                                   },
@@ -1531,1112 +2822,101 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               ),
                             ),
                           ),
-                          Card(
-                            elevation: 4,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              //height: 60,
-                              child: DropdownButtonFormField<String>(
-                                value: 'None',
-                                icon: Icon(Icons.arrow_downward),
-                                decoration: CoustumInputDecorationWidget("Foc")
-                                    .decoration(),
-                                items: foc.map((String value) {
-                                  return new DropdownMenuItem<String>(
-                                    value: value,
-                                    child: new Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    t[index].focornot = newValue;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Pease select foc';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    onTap: () => {
-                      setState(() {
-                        noofproducts = noofproducts + 1;
-                      })
-                    },
-                    child: Container(
-                      width: 60,
-                      height: 30,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.0),
-                        color: const Color(0xff3f3d56),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x29000000),
-                            offset: Offset(9, 9),
-                            blurRadius: 16,
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        'Add New',
-                        style: TextStyle(
-                          fontFamily: 'Bell MT',
-                          fontSize: 12,
-                          color: const Color(0xfff1f3f6),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    //   decoration: BoxDecoration( borderRadius: BorderRadius. only(topLeft: Radius. circular(25.0), topRight: Radius. circular(25.0)),
-                    //  ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: FlatButton(
+                          onPressed: () {
+                            if (_keyForm.currentState.validate()) {
+                              setState(() {
+                                invoiceGenrated = false;
+                              });
+                              // If the form is valid, display a Snackbar.
+                              generateInvoice();
 
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet<void>(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    topRight: Radius.circular(15.0)),
-                              ),
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15.0),
-                                        topRight: Radius.circular(15.0)),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      colors: <Color>[
-                                        Color(0xff573666),
-                                        Color(0xff1B1B2A)
-                                      ], // red to yellow
-                                      // repeats the gradient over the canvas
-                                    ),
-                                  ),
-                                  child: Column(children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'Add Other Charges',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 24,
-                                              color: const Color(0xffffffff),
-                                            ),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(100)),
-                                            child: Icon(Icons.add,
-                                                color: Colors.green)),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Charge Name',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 12,
-                                                color: const Color(0xffffffff),
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                            Container(
-                                              color: Colors.white,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.4,
-                                              height: 50,
-                                              child: TextFormField(
-                                                  controller: chargename),
-                                            )
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Charge Value',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 12,
-                                                color: const Color(0xffffffff),
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                            Container(
-                                              color: Colors.white,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.45,
-                                              height: 50,
-                                              child: TextFormField(
-                                                  controller: chargevalue),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        othercharges.add(OtherCharges(
-                                            chargename.text.toString(),
-                                            double.parse(chargevalue.text)));
-                                        chargevalue.text = '';
-                                        chargename.text = '';
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        width: 80,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'ADD',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 16,
-                                              color: const Color(0xff3f3d56),
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ]),
-                                );
-                              },
-                            );
+                              //mohit here have  to work
+                              invoiceStyleDetails(widget.uid);
+                              print(invoiceStyle +
+                                  '============================here');
+
+                              Future.delayed(new Duration(milliseconds: 10),
+                                  () {
+                                if (widget.i == null) {
+                                  FocusScope.of(context).unfocus();
+                                  _scaffoldkey.currentState.showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Please select invoice style')));
+                                }
+                                if (sign == null ||
+                                    stamp == null ||
+                                    logo == null) {
+                                  FocusScope.of(context).unfocus();
+                                  _scaffoldkey.currentState.showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Please upload sign/stamp/logo')));
+                                }
+
+                                // widget.i == true
+                                invoiceStyle == 'pdf2'
+                                    ? Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => PdfViewer2(
+                                                widget.uid,
+                                                generalInvoiceornot,
+                                                invoiceno.text,
+                                                sign,
+                                                stamp,
+                                                logo)))
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => PdfViewer(
+                                                widget.uid,
+                                                generalInvoiceornot,
+                                                invoiceno.text,
+                                                sign,
+                                                stamp,
+                                                logo)));
+                              });
+                            } else {
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text('Please fill all the fields')));
+                            }
                           },
                           child: Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                boxShadow: []),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Other Charges',
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 14,
-                                    color: const Color(0xff2f2e41),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  textAlign: TextAlign.left,
+                            color: const Color(0xfff3F3D56),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Generate Invoice',
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 16,
+                                  color: const Color(0xffffffff),
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                Icon(
-                                  Icons.add,
-                                  color: Colors.green,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15.0),
-                                topRight: Radius.circular(15.0)),
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(15.0)),
-                            onTap: () {
-                              showModalBottomSheet<void>(
-                                context: context,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(15.0),
-                                      topRight: Radius.circular(15.0)),
-                                ),
-                                //                            shape: RoundedRectangleBorder(
-                                builder: (BuildContext context) {
-                                  return Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0)),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          colors: <Color>[
-                                            Color(0xff573666),
-                                            Color(0xff1B1B2A)
-                                          ], // red to yellow
-                                          // repeats the gradient over the canvas
-                                        ),
-                                      ),
-                                      child: Column(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Discount',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 24,
-                                              color: const Color(0xffffffff),
-                                            ),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Discount Rate',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 12,
-                                            color: const Color(0xffffffff),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              color: Colors.white,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.4,
-                                              height: 50,
-                                              child: TextFormField(
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  controller: discountrate),
-                                            ),
-                                            Container(
-                                              color: Colors.white,
-                                              height: 50,
-                                              child: Text('%'),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            if (discountrate.text.isNotEmpty)
-                                              Navigator.pop(context);
-                                            else
-                                              Fluttertoast.showToast(
-                                                msg: 'Enter Value',
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                backgroundColor:
-                                                    const Color(0xff3f3d56),
-                                              );
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            width: 80,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'ADD',
-                                                style: TextStyle(
-                                                  fontFamily: 'Arial',
-                                                  fontSize: 16,
-                                                  color:
-                                                      const Color(0xff3f3d56),
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ]));
-                                },
-                              );
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white,
-                                  boxShadow: []),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Discount',
-                                    style: TextStyle(
-                                      fontFamily: 'Arial',
-                                      fontSize: 14,
-                                      color: const Color(0xff2f2e41),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.green,
-                                  )
-                                ],
+                                textAlign: TextAlign.left,
                               ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet<void>(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    topRight: Radius.circular(15.0)),
-                              ),
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(15.0),
-                                          topRight:
-                                              const Radius.circular(15.0)),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        colors: <Color>[
-                                          Color(0xff573666),
-                                          Color(0xff1B1B2A)
-                                        ], // red to yellow
-                                        // repeats the gradient over the canvas
-                                      ),
-                                    ),
-                                    child: Column(children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'TCS (Tax Collected at Service)',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 24,
-                                            color: const Color(0xffffffff),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                      Text(
-                                        'TCS Rate',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 12,
-                                          color: const Color(0xffffffff),
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            color: Colors.white,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            height: 50,
-                                            child:
-                                                TextFormField(controller: tcs),
-                                          ),
-                                          Container(
-                                            color: Colors.white,
-                                            height: 50,
-                                            child: Text('%'),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (tcs.text.isNotEmpty)
-                                            Navigator.pop(context);
-                                          else
-                                            Fluttertoast.showToast(
-                                                msg: 'Enter Value',
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                backgroundColor: Colors.black12,
-                                                textColor:
-                                                    const Color(0xff3f3d56));
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: 80,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              'ADD',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 16,
-                                                color: const Color(0xff3f3d56),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ]));
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                boxShadow: []),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'TCS',
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 14,
-                                    color: const Color(0xff2f2e41),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  color: Colors.green,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        InkWell(
-                          borderRadius: new BorderRadius.only(
-                              topLeft: const Radius.circular(15.0),
-                              topRight: const Radius.circular(15.0)),
-                          onTap: () {
-                            showModalBottomSheet<void>(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    topRight: Radius.circular(15.0)),
-                              ),
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(15.0),
-                                          topRight:
-                                              const Radius.circular(15.0)),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        colors: <Color>[
-                                          Color(0xff573666),
-                                          Color(0xff1B1B2A)
-                                        ], // red to yellow
-                                        // repeats the gradient over the canvas
-                                      ),
-                                    ),
-                                    child: Column(children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'Round Off',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 24,
-                                            color: const Color(0xffffffff),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Amount',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 12,
-                                          color: const Color(0xffffffff),
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            color: Colors.white,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            height: 50,
-                                            child: TextFormField(
-                                                controller: roundoffamount),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (roundoffamount.text.isNotEmpty)
-                                            Navigator.pop(context);
-                                          else
-                                            Fluttertoast.showToast(
-                                                msg: 'Enter Value',
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                backgroundColor: Colors.black12,
-                                                textColor:
-                                                    const Color(0xff3f3d56));
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: 80,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              'ADD',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 16,
-                                                color: const Color(0xff3f3d56),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ]));
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            height: 30,
-                            //  color: Colors.transparent,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.transparent,
-                                boxShadow: []),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Round Off',
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 14,
-                                    color: const Color(0xff2f2e41),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  color: Colors.green,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: othercharges.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
-                                width: MediaQuery.of(context).size.width * 0.4,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    othercharges[index].otherchargename +
-                                        "                 " +
-                                        othercharges[index]
-                                            .otherchargevalue
-                                            .toString(),
-                                    style: TextStyle(
-                                      fontFamily: 'Arial',
-                                      fontSize: 12,
-                                      color: const Color(0xcc2f2e41),
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Card(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Discount' + "           " + discountrate.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 12,
-                                color: const Color(0xcc2f2e41),
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'TCS' + "                   " + tcs.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 12,
-                                color: const Color(0xcc2f2e41),
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Round Off' + "         " + roundoffamount.text,
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 12,
-                                color: const Color(0xcc2f2e41),
-                              ),
-                              textAlign: TextAlign.left,
                             ),
                           ),
                         ),
                       )
                     ],
                   ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Transport Details",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Eachrow(
-                  transporterid,
-                  "Transporter id",
-                  TextInputType.text,
-                  null,
-                  transportername,
-                  'Transporter Name',
-                  TextInputType.text,
-                  null,
-                  30),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: tracnsportdocno,
-                            decoration: CoustumInputDecorationWidget(
-                                    "Transporter Doc/Bilty No")
-                                .decoration(),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return null;
-                              }
-                              return null;
-                            }),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: InkWell(
-                        onTap: () => _selectDate(context, tdate),
-                        child: Container(
-                          // alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width * 0.45,
-                          height: 50,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 15, 2, 1),
-                            child: Text("Date    " +
-                                DateFormat('dd/MM/yyyy').format(sdate)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              // Eachrow(
-              //     tracnsportdocno,
-              //     "Transporter Doc/Bilty No",
-              //     TextInputType.text,
-              //     null,
-              //     tdate,
-              //     'Date',
-              //     TextInputType.datetime,
-              //     null),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "Vehicle Details",
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 14,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: DropdownButtonFormField<String>(
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontFamily: 'Arial',
-                            fontSize: 12,
-                          ),
-                          value: 'Road',
-                          icon: Icon(Icons.arrow_downward),
-                          decoration:
-                              CoustumInputDecorationWidget("Mode").decoration(),
-                          // InputDecoration(
-                          //   labelText: "Mode",
-                          // ),
-                          items: vehiclemodes.map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              vehiclemode.text = newValue;
-                            });
-                          },
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Pease select vehicle mode';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                          textCapitalization: TextCapitalization.characters,
-                          controller: vehicleno,
-                          decoration: CoustumInputDecorationWidget('Vehicle no')
-                              .decoration(),
-                          // InputDecoration(
-                          //   labelText: 'Vehicle no',
-                          //   fillColor: Colors.white,
-                          // ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty && value.length != 15) {
-                              return 'Please Enter correct ' + 'Vehicle no';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: 50,
-                        child: TextFormField(
-                          controller: from,
-                          decoration:
-                              CoustumInputDecorationWidget("From").decoration(),
-                          //  InputDecoration(
-                          //   labelText: "from",
-                          //   fillColor: Colors.white,
-                          // ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return null;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: FlatButton(
-                  /*       if (_formKey.currentState.validate()) {
-                                          // If the form is valid, display a Snackbar.
-                                          addproduct(),
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Signupotp(
-                                                          _controller.text)));
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content:
-                                                      Text('')));
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text('Please fill all the fields'
-                                               )));
-                                        }
-                                      },*/
-                  onPressed: () {
-                    if (_keyForm.currentState.validate()) {
-                      // If the form is valid, display a Snackbar.
-                      generateInvoice();
-
-                      //mohit here have  to work
-                      invoiceStyleDetails(widget.uid);
-                      print(invoiceStyle + '============================here');
-
-                      Future.delayed(new Duration(milliseconds: 10), () {
-                        if (widget.i == null) {
-                          FocusScope.of(context).unfocus();
-                          _scaffoldkey.currentState.showSnackBar(SnackBar(
-                              content: Text('Please select invoice style')));
-                        }
-                        if (sign == null || stamp == null || logo == null) {
-                          FocusScope.of(context).unfocus();
-                          _scaffoldkey.currentState.showSnackBar(SnackBar(
-                              content: Text('Please upload sign/stamp/logo')));
-                        }
-
-                        // widget.i == true
-                        invoiceStyle == 'pdf2'
-                            ? Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PdfViewer2(
-                                        widget.uid,
-                                        generalInvoiceornot,
-                                        invoiceno.text,
-                                        sign,
-                                        stamp,
-                                        logo)))
-                            : Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PdfViewer(
-                                        widget.uid,
-                                        generalInvoiceornot,
-                                        invoiceno.text,
-                                        sign,
-                                        stamp,
-                                        logo)));
-                      });
-                    } else {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('Please fill all the fields')));
-                    }
-                  },
-                  child: Container(
-                    color: const Color(0xfff3F3D56),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Generate Invoice',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 16,
-                          color: const Color(0xffffffff),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                  ),
                 ),
               )
-            ],
-          ),
-        ),
-      ),
-    );
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text('Just a second ... ')
+                  ],
+                ),
+              ));
   }
 }

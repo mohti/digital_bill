@@ -28,9 +28,8 @@ class _PdfViewerState extends State<PdfViewer> {
   @override
   void initState() {
     print('##====================> pdfviewer.dart called');
-    // ignore: todo
-    // TODO: implement initState
-    _gettermsandcondition(widget.uid);
+   
+    getallData();
     super.initState();
   }
 
@@ -156,6 +155,12 @@ class _PdfViewerState extends State<PdfViewer> {
       null,
       null,
       null);
+  getallData() async {
+    // await _getBusinessDetails(widget.uid);
+    // await _invoicedetails(widget.uid);
+    await _gettermsandcondition(widget.uid);
+  }
+
   Future<Null> _getBusinessDetails(String uid) async {
     await db
         .collection("userData")
@@ -208,42 +213,7 @@ class _PdfViewerState extends State<PdfViewer> {
     });
   }
 
-  /*     'invoiceno': invoiceno,
-        'sname': sname,
-        'sphone': sphone,
-        'sgstn': sgstn,
-        'sdate': sdate,
-        'scity;': scity,
-        'sstate': sstate,
-        'scountry': scountry,
-        'spin': spin,
-        'bname': bname,
-        'bphone': bphone,
-        'bgstn': bgstn,
-        'bdate': bdate,
-        'bcity;': bcity,
-        'bstate': bstate,
-        'bcountry': bcountry,
-        'bpin': bpin,
-        'listOfProducts': listOfProducts
-            .map((listOfProduct) => listOfProduct.toJson())
-            .toList(),
-        'transporterid': transporterid,
-        'transportername': transportername,
-        'tracnsportdocno': tracnsportdocno,
-        'tdate': tdate,
-        'vehiclemode': vehiclemode,
-        'vehicleno': vehicleno,
-        'from': from
-   'productCode': productCode,
-        'productName': productName,
-        'hsncode': hsncode,
-        'taxrate': taxrate,
-        'quantity': quantity,
-        'unit': unit,
-        'sellingrate': sellingrate,
-        'taxamount': taxamount,
-        'totalamount': totalamount,*/
+  
   Map<String, dynamic> m;
   List<Map<String, dynamic>> l = [];
   List<Map<String, dynamic>> l2 = [];
@@ -327,10 +297,10 @@ class _PdfViewerState extends State<PdfViewer> {
   Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
     print(
         '=====================================Genrate Invoice funtion called ');
-    _getBusinessDetails(widget.uid);
+     await _getBusinessDetails(widget.uid);
     print(
         '=====================================BusinessDetails funtion called ');
-    _invoicedetails(widget.uid);
+    await _invoicedetails(widget.uid);
     print(
         '=====================================InvoiceDetails funtion called ');
 
@@ -1141,7 +1111,7 @@ class _PdfViewerState extends State<PdfViewer> {
             );
           },
           build: (context) => <pw.Widget>[
-                 //   pw.Table.fromTextArray(data: List<List<Widget>>.generate(l.length~/3+1, (int index) =>null )),
+                //   pw.Table.fromTextArray(data: List<List<Widget>>.generate(l.length~/3+1, (int index) =>null )),
                 pw.Container(
                   child: pw.Column(
                     children: [
@@ -1459,18 +1429,18 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
 
 //                                            mohit changed here
-                                            pw.Container(
-                                              alignment: pw.Alignment.center,
-                                              width: 50,
-                                              child: pw.Text(
-                                                totalquantity.toString(),
-                                                style: pw.TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: pw.FontWeight.bold,
-                                                ),
-                                                textAlign: pw.TextAlign.left,
-                                              ),
-                                            ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 50,
+                                child: pw.Text(
+                                  totalquantity.toString(),
+                                  style: pw.TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: pw.FontWeight.bold,
+                                  ),
+                                  textAlign: pw.TextAlign.left,
+                                ),
+                              ),
 
                               pw.Container(
                                 alignment: pw.Alignment.center,
@@ -1506,7 +1476,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
 
-                              //mohit from here
+                              //mohit from herehj
                               pw.Container(
                                 alignment: pw.Alignment.center,
                                 width: 50,
@@ -1531,7 +1501,7 @@ class _PdfViewerState extends State<PdfViewer> {
 
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
-                //  taxes.length,
+                  //  taxes.length,
                   1,
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
@@ -1641,26 +1611,26 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               //mohit see the change here
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 50,
-                                  child: pw.Text(
-                                    (double.parse(taxes.entries
-                                                .elementAt(index)
-                                                .key
-                                                .toString()) *
-                                            double.parse((taxes.entries
-                                                    .elementAt(index)
-                                                    .value)
-                                                .toString()) /
-                                            100.toInt())
-                                        .toString(),
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.right,
-                                  ),
+                              pw.Container(
+                                alignment: pw.Alignment.center,
+                                width: 50,
+                                child: pw.Text(
+                                  (double.parse(taxes.entries
+                                              .elementAt(index)
+                                              .key
+                                              .toString()) *
+                                          double.parse((taxes.entries
+                                                  .elementAt(index)
+                                                  .value)
+                                              .toString()) /
+                                          100.toInt())
+                                      .toString(),
+                                  style: pw.TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: pw.FontWeight.bold),
+                                  textAlign: pw.TextAlign.right,
                                 ),
+                              ),
                             ],
                           ),
                         ),
@@ -1671,7 +1641,6 @@ class _PdfViewerState extends State<PdfViewer> {
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
                   l2.length,
-                 
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
@@ -1898,19 +1867,19 @@ class _PdfViewerState extends State<PdfViewer> {
                                   ),
                                 ),
                                 //mohit changed here
-                                  pw.Container(
-                                    alignment: pw.Alignment.center,
-                                    width: 50,
-                                    child: pw.Text(
-                                      '-' +
-                                          (discount * totalamount / 100)
-                                              .toString(),
-                                      style: pw.TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: pw.FontWeight.bold),
-                                      textAlign: pw.TextAlign.right,
-                                    ),
+                                pw.Container(
+                                  alignment: pw.Alignment.center,
+                                  width: 50,
+                                  child: pw.Text(
+                                    '-' +
+                                        (discount * totalamount / 100)
+                                            .toString(),
+                                    style: pw.TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: pw.FontWeight.bold),
+                                    textAlign: pw.TextAlign.right,
                                   ),
+                                ),
                               ],
                             ),
                           ),

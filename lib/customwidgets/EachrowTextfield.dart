@@ -29,6 +29,8 @@ class Eachrow extends StatelessWidget {
                 controller: controller1,
                 decoration: CoustumInputDecorationWidget(s1).decoration(),
                 // The validator receives the text that the user has entered.
+                
+                
                 validator: validation1 == null?                    
                     (value) {
                         if (value.isEmpty) {

@@ -285,8 +285,8 @@ class _PurchasePdfState extends State<PurchasePdf> {
   }
 
    Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
-    _getBusinessDetails(widget.uid);
-    _invoicedetails(widget.uid);
+    await _getBusinessDetails(widget.uid);
+    await _invoicedetails(widget.uid);
 
     double totalquantity = 0, totalamount = 0, finalamount = 0;
     l.forEach((element) {
@@ -374,12 +374,12 @@ class _PurchasePdfState extends State<PurchasePdf> {
                             children: [
                               //mohit here  in this  row problems
                             
-                              // pw.SizedBox(
-                              //     width: 50.0,
-                              //     height: 50.0,
+                              // // pw.SizedBox(
+                              // //     width: 50.0,
+                              // //     height: 50.0,
                               //     child: pw.Image(pw.MemoryImage(widget.logo))
-                              //     //  child: null,
-                              //     ),
+                              // //     //  child: null,
+                              // //     ),
                             
                             
                             //above here 

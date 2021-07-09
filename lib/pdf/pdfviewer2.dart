@@ -29,11 +29,6 @@ class _PdfViewer2State extends State<PdfViewer2> {
   @override
   void initState() {
     print("pdf2 initiated ==========mohit");
-    // ignore: todo
-    // TODO: implement initState
-    _gettermsandcondition(widget.uid);
-    _invoicedetails(widget.uid);
-    _getBusinessDetails(widget.uid);
     super.initState();
   }
 
@@ -159,8 +154,11 @@ class _PdfViewer2State extends State<PdfViewer2> {
       null,
       null);
   List<Map<String, dynamic>> l2 = [];
-  getallData() {
-    _getBusinessDetails(widget.uid);
+  getallData() async {
+    await _gettermsandcondition(widget.uid);
+    await _invoicedetails(widget.uid);
+    await _getBusinessDetails(widget.uid);
+    await getUsersTripsStreamSnapshots(context);
   }
 
   Future<Null> _getBusinessDetails(String uid) async {
@@ -218,42 +216,6 @@ class _PdfViewer2State extends State<PdfViewer2> {
     });
   }
 
-  /*     'invoiceno': invoiceno,
-        'sname': sname,
-        'sphone': sphone,
-        'sgstn': sgstn,
-        'sdate': sdate,
-        'scity;': scity,
-        'sstate': sstate,
-        'scountry': scountry,
-        'spin': spin,
-        'bname': bname,
-        'bphone': bphone,
-        'bgstn': bgstn,
-        'bdate': bdate,
-        'bcity;': bcity,
-        'bstate': bstate,
-        'bcountry': bcountry,
-        'bpin': bpin,
-        'listOfProducts': listOfProducts
-            .map((listOfProduct) => listOfProduct.toJson())
-            .toList(),
-        'transporterid': transporterid,
-        'transportername': transportername,
-        'tracnsportdocno': tracnsportdocno,
-        'tdate': tdate,
-        'vehiclemode': vehiclemode,
-        'vehicleno': vehicleno,
-        'from': from
-   'productCode': productCode,
-        'productName': productName,
-        'hsncode': hsncode,
-        'taxrate': taxrate,
-        'quantity': quantity,
-        'unit': unit,
-        'sellingrate': sellingrate,
-        'taxamount': taxamount,
-        'totalamount': totalamount,*/
   Map<String, dynamic> m;
   List<Map<String, dynamic>> l = [];
   var taxes = new Map();
@@ -333,8 +295,8 @@ class _PdfViewer2State extends State<PdfViewer2> {
   }
 
   Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
-    _getBusinessDetails(widget.uid);
-    _invoicedetails(widget.uid);
+   await _getBusinessDetails(widget.uid);
+   await _invoicedetails(widget.uid);
 
     double totalquantity = 0, totalamount = 0, finalamount = 0;
     l.forEach((element) {
