@@ -1,5 +1,5 @@
 import 'package:digitalbillbook/models/partydetails.dart';
-import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -75,15 +75,16 @@ class Eachrow extends StatelessWidget {
   }
 }
 
-class AddParty extends StatefulWidget {
-  final String uid;
-  AddParty(this.uid);
+class UpdateParty extends StatefulWidget {
+   String uid = FirebaseAuth.instance.currentUser.uid;
+   final String partyName;
+  UpdateParty(this.partyName);
 
   @override
-  _AddPartyState createState() => _AddPartyState();
+  _UpdatePartyState createState() => _UpdatePartyState();
 }
 
-class _AddPartyState extends State<AddParty> {
+class _UpdatePartyState extends State<UpdateParty> {
   final partyNameController = TextEditingController();
   final phoneController = TextEditingController();
   final gstnController = TextEditingController();
@@ -101,12 +102,49 @@ class _AddPartyState extends State<AddParty> {
 
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
+  Future<void> getAllData(String value) {
+    return FirebaseFirestore.instance
+        .collection("userData")
+        .doc(widget.uid)
+        .collection("Party")
+        .doc(value)
+        .get()
+        .then((valuee) {
+      setState(() {
+        phoneController.text =
+            valuee.data()['phone'] == null ? ' ' : valuee.data()['phone'];
+        partyNameController.text = valuee
+            .data()['partyName']==null ? ' ':valuee
+            .data()['partyName'];
+         gstnController.text =
+            valuee.data()['gstn'] == null ? '' : valuee.data()['gstn'];
+        cityValue.text =
+            valuee.data()['city'] == null ? ' ' : valuee.data()['city'];
+        stateValue.text =
+            valuee.data()['state'] == null ? ' ' : valuee.data()['state'];
+        countryValue.text =
+            valuee.data()['country'] == null ? ' ' : valuee.data()['country'];
+        pincodeController.text =
+            valuee.data()['pincode'] == null ? ' ' : valuee.data()['pincode'];
+        addressController.text =    
+             valuee.data()['address'] == null ? ' ' : valuee.data()['address'];
+      
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getAllData(widget.partyName);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final db = FirebaseFirestore.instance;
 
     bool verifyGSTNumber(String gst) {
-  
       setState(() {
         gstNo = gst;
       });
@@ -115,17 +153,11 @@ class _AddPartyState extends State<AddParty> {
         //https://pub.dev/packages/gst_verification/versions/1.0.1/example
         //json results
         String Result = result.toString();
-        // print(key_secret + " mohit key secret");
-        // print(gstNo + " mohit gst no ");
-        // print(Result + "mohit gstverification RESULT");
-        // String gstn = result["taxpayerInfo"]["gstin"];
-        // print("mohit gstn === " + gstn);
         setState(() {
           isvalueIdentified = true;
         });
       }).catchError((error) {
-        //isvalueIdentified = false;
-         setState(() {
+        setState(() {
           isvalueIdentified = false;
         });
         // print(error.toString() + "error mohit ");
@@ -158,12 +190,13 @@ class _AddPartyState extends State<AddParty> {
     return Scaffold(
       key: _keyForm,
       appBar: AppBar(
-         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+           leading: IconButton(icon:Icon(Icons.arrow_back_ios),
           onPressed: ()=> Navigator.of(context).pop(),),
+       
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Add Party',
+          'Update Party',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -175,8 +208,6 @@ class _AddPartyState extends State<AddParty> {
       ),
       body: Form(
         key: _keyForm,
-        // autovalidateMode: AutovalidateMode.onUserInteraction,
-        // autovalidate:true,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -188,7 +219,7 @@ class _AddPartyState extends State<AddParty> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'Add Party',
+                  'Update Party',
                   style: TextStyle(
                     fontFamily: 'Arial',
                     fontSize: 14,
@@ -242,7 +273,6 @@ class _AddPartyState extends State<AddParty> {
                           decoration:
                               CoustumInputDecorationWidget('Phone Number')
                                   .decoration(),
-                          // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty || value.length != 10) {
                               return 'Please Enter correct ' + 'phone Number';
@@ -368,15 +398,6 @@ class _AddPartyState extends State<AddParty> {
                           controller: stateValue,
                           decoration: CoustumInputDecorationWidget("State")
                               .decoration(),
-
-                          // The validator receives the text that the user has entered
-                          // onTap: () {
-                          //   setState(() {
-                          //     hiderrors = true;
-                          //     autovalidateMode =
-                          //         AutovalidateMode.onUserInteraction;
-                          //   });
-                          // },
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please Enter ' + 'state';
@@ -432,8 +453,6 @@ class _AddPartyState extends State<AddParty> {
                           controller: pincodeController,
                           decoration: CoustumInputDecorationWidget("Pincode")
                               .decoration(),
-                          // The validator receives the text that the user has entered.
-
                           validator: (value) {
                             if (value.isEmpty || value.length != 6) {
                               return 'Please Enter ' + 'Pincode';
@@ -452,32 +471,12 @@ class _AddPartyState extends State<AddParty> {
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
-                    /* if (_formKey.currentState.validate()) {
-                                          // If the form is valid, display a Snackbar.
-                                          addParty(),Company name'
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>Company name'
-                                                      Signupotp(
-                                                          _controller.text)));
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content:Company name'
-                                                      Text('')));
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text('Please fill all the fields'
-                                               )));
-                                        }
-                                      },*/
                     onPressed: () {
                       setState(() {
                         autovalidateMode = AutovalidateMode.onUserInteraction;
                         print('updated autovalidateMode');
                       });
                       if (_keyForm.currentState.validate()) {
-                        // If the form is valid, display a Snackbar.
                         addParty();
                         Fluttertoast.showToast(
                             msg: "Added",
@@ -493,13 +492,14 @@ class _AddPartyState extends State<AddParty> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
+                          
                           color: const Color(0xfff3F3D56),
                           borderRadius: BorderRadius.circular(10)),
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 60.0, right: 60, top: 10, bottom: 10),
                         child: Text(
-                          'Add Party',
+                          'Save Party',
                           style: TextStyle(
                             fontFamily: 'Arial',
                             fontSize: 16,

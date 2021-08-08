@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:async';
 import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
@@ -43,6 +44,7 @@ class _SalesSummary extends State<SalesSummary> {
   Widget widgetTable;
 
   String selctbyFilter;
+  double fontSizeForMainColumn = 6;
   final listofSelect = [
     'Product Code',
     'Product name',
@@ -93,18 +95,23 @@ class _SalesSummary extends State<SalesSummary> {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
-      var sheet = excel['mySheet'];
+      var sheet = excel['saleSummary'];
       sheet.appendRow([
         'From ' +
             DateFormat('dd/MM/yyyy').format(initialdate).toString() +
             ' to ' +
             DateFormat('dd/MM/yyyy').format(finaldate).toString(),
       ]);
+      if (textfieldValues == null || textfieldValues == '') {
+      } else {
+        sheet.appendRow(['Filter:-   ' + askValues + ' = ' + textfieldValues]);
+      }
 
       FirebaseFirestore.instance
           .collection('userData')
           .doc(widget.uid)
           .collection('Invoice')
+          .where('sdate', isGreaterThanOrEqualTo: initialdate, isLessThanOrEqualTo: finaldate)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((product) {
@@ -112,9 +119,6 @@ class _SalesSummary extends State<SalesSummary> {
           final DateTime d = timestamp.toDate();
 
           if (textfieldValues == null || textfieldValues == '') {
-            if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-                d.day == initialdate.day ||
-                d.day == finaldate.day)
               sheet.appendRow([
                 product['invoiceno'],
                 DateFormat('dd/MM/yyyy').format(d),
@@ -123,25 +127,26 @@ class _SalesSummary extends State<SalesSummary> {
                 product['sname'] == null ? '' : product['sgstn'],
                 product['listOfProducts'][0]['hsncode'],
                 product['bname'],
-                product['sgstn'] == null ? '' : product['sgstn'],
+                
+                product['listOfProducts'][0]['quantity'],
+             
                 product['listOfProducts'][0]['taxrate'],
                 product['listOfProducts'][0]['totalamount'],
                 product['listOfProducts'][0]['taxamount'],
               ]);
-          }
-          else{
-             if((d.isBefore(finaldate) && d.isAfter(initialdate)) &&
-                  (textfieldValues == product['listOfProducts'][0][askValues]) ||
-              (d.day == initialdate.day || d.day == finaldate.day))
-            sheet.appendRow([
+          } else {
+            if ((textfieldValues ==
+                        product['listOfProducts'][0][askValues]))
+              sheet.appendRow([
                 product['invoiceno'],
                 DateFormat('dd/MM/yyyy').format(d),
                 product['listOfProducts'][0]['productCode'],
                 product['listOfProducts'][0]['productName'],
                 product['sname'] == null ? '' : product['sgstn'],
-                product['listOfProducts'][0]['hsncode'],
                 product['bname'],
-                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['hsncode'],
+             
+                product['listOfProducts'][0]['quantity'],
                 product['listOfProducts'][0]['taxrate'],
                 product['listOfProducts'][0]['totalamount'],
                 product['listOfProducts'][0]['taxamount'],
@@ -159,11 +164,14 @@ class _SalesSummary extends State<SalesSummary> {
         'Buyer Name',
         'HSN',
         'Quantity',
-        'TAX',
+        'Tax Rate',
+        'Total Amount',
+            'TAX',
       ]);
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
+      //+sheet.toString();
       print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
@@ -250,6 +258,10 @@ class _SalesSummary extends State<SalesSummary> {
         ),
       ),
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -269,7 +281,7 @@ class _SalesSummary extends State<SalesSummary> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 20, 50, 20),
               child: Text(
                 'Sale Summary',
                 style: TextStyle(
@@ -287,7 +299,7 @@ class _SalesSummary extends State<SalesSummary> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.20,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 6, 0),
                     child: Text(
                       'Date',
                       style: TextStyle(
@@ -307,7 +319,7 @@ class _SalesSummary extends State<SalesSummary> {
                     child: Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: Text("From " +
                           DateFormat('dd-MM-yyyy').format(initialdate)),
                     ),
@@ -320,9 +332,9 @@ class _SalesSummary extends State<SalesSummary> {
                     child: Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: Text(
-                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                          "To " + DateFormat('dd-MM-yyyy').format(finaldate)),
                     ),
                   ),
                 ),
@@ -335,7 +347,7 @@ class _SalesSummary extends State<SalesSummary> {
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -355,19 +367,20 @@ class _SalesSummary extends State<SalesSummary> {
                   Card(
                     elevation: 4,
                     child: InkWell(
-                      //todo
-                      //onTap: () => selectDate1(context),
                       child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 0.35,
-                        height: 50,
-                        child: TextField(
-                          onChanged: (text) {
-                            setState(() {
-                              textfieldValues = text;
-                            });
-                            print('First text field: $text');
-                          },
+                        height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            onChanged: (text) {
+                              setState(() {
+                                textfieldValues = text;
+                              });
+                              print('First text field: $text');
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -376,16 +389,19 @@ class _SalesSummary extends State<SalesSummary> {
                     elevation: 4,
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: DropdownButtonFormField<String>(
                         value: selectbyfilter,
-                        icon: Icon(Icons.arrow_downward),
+                        icon: Icon(Icons.keyboard_arrow_down_sharp),
                         decoration: CoustumInputDecorationWidget('select by')
                             .decoration(),
                         items: listofSelect.map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
-                            child: new Text(value),
+                            child: new Text(
+                              value,
+                              style: TextStyle(fontSize: 12),
+                            ),
                           );
                         }).toList(),
                         onChanged: (String newValue) {
@@ -433,8 +449,8 @@ class _SalesSummary extends State<SalesSummary> {
               height: 20,
             ),
             Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width * 0.42,
+              height: 40,
+              //  width: MediaQuery.of(context).size.width * 0.45,
               child: RaisedButton(
                   color: const Color(0xff2f2e41),
                   onPressed: () {
@@ -446,7 +462,7 @@ class _SalesSummary extends State<SalesSummary> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Text(
-                    'Get Stock Summury',
+                    'Get Stock Summary',
                     style: TextStyle(
                       fontFamily: 'Arial',
                       fontSize: 14,
@@ -455,26 +471,6 @@ class _SalesSummary extends State<SalesSummary> {
                     ),
                   )),
             ),
-
-            /*         Container(
-              decoration: BoxDecoration(
-                  color: const Color(0xfff3F3D56),
-                  borderRadius: BorderRadius.circular(2)),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 60.0, right: 60, top: 10, bottom: 10),
-                child: Text(
-                  'Product List',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 16,
-                    color: const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ),*/
             SizedBox(
               height: 20,
             ),
@@ -482,26 +478,15 @@ class _SalesSummary extends State<SalesSummary> {
                 ? Container(
                     decoration: BoxDecoration(color: const Color(0xff2F2E41)),
                     child: Row(
-                      /*  'Receipt No.',
-        'Date',
-        'Pro Code',
-        'Pro Name',
-        'GSTN',
-        'Buyer Name',
-        'HSN',
-        'Quantity',
-        'TAX',
-        'Invoice Value',
-        'TAX Value'*/
                       children: [
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.09,
                           child: Text(
                             'Receipt No.',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -509,13 +494,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.05,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.1,
                           child: Text(
                             'Date',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -523,13 +508,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.08,
                           child: Text(
                             'Pro Code',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -537,13 +522,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           width: w * 0.1,
                           child: Text(
                             'Pro Name',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -551,13 +536,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.16,
                           child: Text(
                             'GSTN',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -565,13 +550,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           width: w * 0.1,
                           child: Text(
                             'Buyer Name',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -579,13 +564,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.05,
                           child: Text(
                             'HSN',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -593,13 +578,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.08,
                           child: Text(
                             'Quantity',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -607,13 +592,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           width: w * 0.05,
                           child: Text(
                             'TAX',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -621,13 +606,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.08,
                           child: Text(
                             'Invoice Value',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -635,13 +620,13 @@ class _SalesSummary extends State<SalesSummary> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.09,
                           child: Text(
                             'TAX Value',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: fontSizeForMainColumn,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),

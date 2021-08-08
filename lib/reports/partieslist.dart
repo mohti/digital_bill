@@ -80,7 +80,7 @@ class _PartiesListState extends State<PartiesList> {
       });
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
+      String appDocPath = appDocDir.path+sheet.toString();
       print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
@@ -168,6 +168,8 @@ class _PartiesListState extends State<PartiesList> {
       ),
       
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(

@@ -30,11 +30,12 @@ class _SignupotpState extends State<Signupotp>
   //make  it empty after dubgs
   String uid;
   //= 'uBk4wRDOdBRdwjyAfZzORFs7kcU2';
-  
+  bool isDatabaseCreated = false;
 
   @override
   void initState() {
     super.initState();
+    print('signup_otp.dart is called mohit');
     _verifyPhone();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
@@ -168,8 +169,6 @@ class _SignupotpState extends State<Signupotp>
                                   submittedFieldDecoration: pinPutDecoration,
                                   selectedFieldDecoration: pinPutDecoration,
                                   followingFieldDecoration: pinPutDecoration,
-                                  //    eachFieldPadding: EdgeInsets.all(10),
-                                  //   eachFieldMargin: EdgeInsets.all(0),
                                   pinAnimationType: PinAnimationType.fade,
                                   // onSubmit: (pin)  async {
                                   //   Navigator.pushAndRemoveUntil(
@@ -190,25 +189,28 @@ class _SignupotpState extends State<Signupotp>
                                                       _verificationCode,
                                                   smsCode: pin))
                                           .then((value) async {
-                                        print(
-                                            value.additionalUserInfo.isNewUser);
+                                        print(value.additionalUserInfo.isNewUser
+                                                .toString() +
+                                            "mohit");
                                         if (value
                                                 .additionalUserInfo.isNewUser ==
                                             true) {
-                                          setState(() async {
-                                             
+                                          setState(() {
                                             uid = value.user.uid;
                                             // obtain shared preferences
-                                              final prefs = await SharedPreferences.getInstance();
+                                            // final prefs =
+                                            //     await SharedPreferences
+                                            //         .getInstance();
                                             // set value
-                                            prefs.setString('UID',uid);
-                                            
-                                            userCredantial user =
-                                                userCredantial();
-                                            user.setUserid = uid;
+                                            //  prefs.setString('UID', uid);
+
+                                            // userCredantial user =
+                                            //     userCredantial();
+
+                                            //user.setUserid = uid;
                                           });
-                                          print('newuser');
-                                          setUpdatabase();
+                                          print('newuser here mohit');
+                                          await setUpdatabase();
                                           Navigator.pushAndRemoveUntil(
                                               context,
                                               MaterialPageRoute(
@@ -216,7 +218,8 @@ class _SignupotpState extends State<Signupotp>
                                                       Home(value.user.uid)),
                                               (route) => false);
                                         } else if (value.user != null) {
-                                          print('value.user');
+                                          print(value.user.toString() +
+                                              "mohit  else if from pin submitted ");
                                           Navigator.pushAndRemoveUntil(
                                               context,
                                               MaterialPageRoute(
@@ -226,6 +229,7 @@ class _SignupotpState extends State<Signupotp>
                                         }
                                       });
                                     } catch (e) {
+                                      print(e.toString());
                                       FocusScope.of(context).unfocus();
                                       _scaffoldkey.currentState.showSnackBar(
                                           SnackBar(
@@ -270,41 +274,46 @@ class _SignupotpState extends State<Signupotp>
 
   Future<Null> setUpdatabase() async {
     final db = FirebaseFirestore.instance;
-    print('setupdatabase');
+    print('setupdatabase mohit');
 
-    print('document does esixts');
+    print('document does esixts mohit');
+    print(uid.toString() + 'mohit');
     final businessInfo = new BusinessProfile(
-        '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+        '', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ');
 
     final plandetails = new PlanDetails('Free Trial',
         DateTime.now().add(Duration(days: 31)), DateTime.now(), 100, 100);
 
-    db
+    await db
         .collection("userData")
         .doc(uid)
         .collection("planDetails")
         .doc('plan')
         .set(plandetails.toJson());
 
-    db
+    await db
         .collection("userData")
         .doc(uid)
         .collection("invoiceSettings")
         .doc('invoiceSettings')
         .set(settings.toJson());
     // Call the user's CollectionReference to add a new user
-    db
+    await db
         .collection("userData")
         .doc(uid)
         .collection("BusinessInfo")
         .doc('businessName')
         .set(businessInfo.toJson());
-    db
+    await db
         .collection("userData")
         .doc(uid)
         .collection("termsAndConditiononInvoice")
         .doc('termsAndConditiononInvoice')
         .set({'termsAndCondition': ''});
+
+    setState(() {
+      isDatabaseCreated = true;
+    });
   }
 
   _verifyPhone() async {
@@ -314,20 +323,21 @@ class _SignupotpState extends State<Signupotp>
           await FirebaseAuth.instance
               .signInWithCredential(credential)
               .then((value) async {
-            print(value.additionalUserInfo.isNewUser);
+            print(value.additionalUserInfo.isNewUser.toString() +
+                "user value mohit");
 
             if (value.additionalUserInfo.isNewUser == true) {
               setState(() {
                 uid = value.user.uid;
               });
-              print('newuser');
-              setUpdatabase();
+              print('newuser mohit');
+              await setUpdatabase();
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => Home(value.user.uid)),
                   (route) => false);
             } else if (value.user != null) {
-              print('value.user');
+              print('value.user' + "else part triggerd  mohit ");
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => Home(value.user.uid)),

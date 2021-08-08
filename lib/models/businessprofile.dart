@@ -12,6 +12,7 @@ class BusinessProfile {
   String ifscCode;
   String accountNumber;
   String branchName;
+  String pincode;
   BusinessProfile(
       this.businessName,
       this.phone,
@@ -24,7 +25,9 @@ class BusinessProfile {
       this.bankName,
       this.ifscCode,
       this.accountNumber,
-      this.branchName);
+      this.branchName,
+      this.pincode)
+      ;
   Map<String, dynamic> toJson() => {
         'businessName': businessName,
         'phone': phone,
@@ -37,6 +40,7 @@ class BusinessProfile {
         'bankName': bankName,
         'ifscCode': ifscCode,
         'accountNumber': accountNumber,
-        'branchName': branchName
+        'branchName': branchName,
+        'pincode': pincode
       };
 }

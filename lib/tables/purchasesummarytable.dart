@@ -12,159 +12,162 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
   print(d.day.toString() + "mohit d purches");
 
   if (textfieldValues == null || textfieldValues == '') {
-    return ((d.isBefore(fd) && d.isAfter(id)) ||
-            d.day == id.day ||
-            d.day == fd.day
-        // && textfieldValues == product[askValues]
-        )
-        ? Container(
+    return 
+        Container(
             child: Column(
               children: [
                 Container(
                   width: w,
-                  height: 30,
+                  height: 16,
                   decoration: BoxDecoration(
                       color: Colors.white, border: Border.all(width: 0.1)),
                   child: Row(
                     children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
-                        child: Text(
-                          product['invoiceno'],
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: const EdgeInsets.only(left:2.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.09,
+                          child: Text(
+                            product['invoiceno'],
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 6,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.05,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.09,
                         child: Text(
                           DateFormat('dd/MM/yyyy').format(d),
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['productCode'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.08,
                         child: Text(
                           product['listOfProducts'][0]['productName'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.05,
+                        alignment: Alignment.centerLeft,
+                        width: 56,
                         child: Text(
                           product['sgstn'] == null ? '' : product['sgstn'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
-                          product['sname'] == null ? '' : product['sgstn'],
+                          product['sname'] == null ? '' : product['sname'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: 22,
                         child: Text(
                           product['listOfProducts'][0]['hsncode'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.08,
                         child: Text(
-                          product['sgstn'] == null ? '' : product['sgstn'],
+                          product['listOfProducts'][0]['quantity'] == null
+                              ? ''
+                              : product['listOfProducts'][0]['quantity'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.05,
                         child: Text(
-                          product['listOfProducts'][0]['taxrate'],
+                          product['listOfProducts'][0]['taxrate'] == null
+                              ? ' '
+                              : product['listOfProducts'][0]['taxrate'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['totalamount'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['taxamount'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
@@ -176,160 +179,169 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
               ],
             ),
           )
-        : null;
+         ;
   } else {
-    return ((d.isBefore(fd) && d.isAfter(id))
-            //|| (textfieldValues == product[askValues])
-            &&
-            textfieldValues == product['listOfProducts'][0][askValues])
-        ? Container(
+    return 
+    (
+      // (d.isBefore(fd) && d.isAfter(id)) ||
+      //       (d.day == id.day ||
+      //       d.day == fd.day )&&
+                textfieldValues == product['listOfProducts'][0][askValues])
+        ?Container(
             child: Column(
               children: [
                 Container(
                   width: w,
-                  height: 30,
+                  height: 16,
                   decoration: BoxDecoration(
                       color: Colors.white, border: Border.all(width: 0.1)),
                   child: Row(
                     children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
-                        child: Text(
-                          product['invoiceno'],
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: const EdgeInsets.only(left:2.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          width: w * 0.09,
+                          child: Text(
+                            product['invoiceno'],
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 6,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.05,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.09,
                         child: Text(
                           DateFormat('dd/MM/yyyy').format(d),
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['productCode'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.08,
                         child: Text(
                           product['listOfProducts'][0]['productName'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.05,
+                        alignment: Alignment.centerLeft,
+                        width: 56,
                         child: Text(
                           product['sgstn'] == null ? '' : product['sgstn'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
-                          product['sname'] == null ? '' : product['sgstn'],
+                          product['sname'] == null ? '' : product['sname'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: 22,
                         child: Text(
                           product['listOfProducts'][0]['hsncode'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: w * 0.1,
+                        alignment: Alignment.centerLeft,
+                        width: w * 0.08,
                         child: Text(
-                          product['sgstn'] == null ? '' : product['sgstn'],
+                          product['listOfProducts'][0]['quantity'] == null
+                              ? ''
+                              : product['listOfProducts'][0]['quantity'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.05,
                         child: Text(
-                          product['listOfProducts'][0]['taxrate'],
+                          product['listOfProducts'][0]['taxrate'] == null
+                              ? ' '
+                              : product['listOfProducts'][0]['taxrate'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['totalamount'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         width: w * 0.1,
                         child: Text(
                           product['listOfProducts'][0]['taxamount'],
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
+                            fontSize: 6,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
@@ -361,6 +373,7 @@ class PurchaseSummarytable extends StatelessWidget {
           .collection('userData')
           .doc(uid)
           .collection('PurchaseInvoice')
+          .where('sdate', isGreaterThanOrEqualTo: id, isLessThanOrEqualTo: fd)
           .snapshots();
     }
 
@@ -382,29 +395,18 @@ class PurchaseSummarytable extends StatelessWidget {
         children: [
           Container(
             width: w,
-            height: 30,
+            height: 16,
             decoration: BoxDecoration(color: const Color(0xff2F2E41)),
             child: Row(
-              /*  'Receipt No.',
-        'Date',
-        'Pro Code',
-        'Pro Name',
-        'GSTN',
-        'Buyer Name',
-        'HSN',
-        'Quantity',
-        'TAX',
-        'Invoice Value',
-        'TAX Value'*/
               children: [
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.1,
                   child: Text(
                     'Receipt No.',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -412,13 +414,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
-                  width: w * 0.05,
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.09,
                   child: Text(
                     'Date',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -426,13 +428,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.1,
                   child: Text(
                     'Pro Code',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -440,13 +442,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
-                  width: w * 0.1,
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.08,
                   child: Text(
                     'Pro Name',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -454,13 +456,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
-                  width: w * 0.1,
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.13,
                   child: Text(
                     'GSTN',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -468,13 +470,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.1,
                   child: Text(
                     'Buyer Name',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -482,13 +484,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
-                  width: w * 0.1,
+                  alignment: Alignment.centerLeft,
+                  width: 22,
                   child: Text(
                     'HSN',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -496,13 +498,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.1,
                   child: Text(
                     'Quantity',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -510,13 +512,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.05,
                   child: Text(
                     'TAX',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -524,13 +526,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   width: w * 0.1,
                   child: Text(
                     'Invoice Value',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -538,13 +540,13 @@ class PurchaseSummarytable extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.center,
-                  width: w * 0.1,
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.08,
                   child: Text(
                     'TAX Value',
                     style: TextStyle(
                       fontFamily: 'Arial',
-                      fontSize: 10,
+                      fontSize: 6,
                       color: const Color(0xfff1f3f6),
                       fontWeight: FontWeight.w700,
                     ),
@@ -555,7 +557,7 @@ class PurchaseSummarytable extends StatelessWidget {
             ),
           ),
           Container(
-             height: 600,
+            height: 600,
             child: StreamBuilder(
                 stream: getUsersTripsStreamSnapshots(context),
                 builder: (context, snapshot) {

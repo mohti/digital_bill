@@ -4,27 +4,28 @@ import 'package:digitalbillbook/models/productdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class Addproduct extends StatefulWidget {
-  final String uid;
-  Addproduct(this.uid);
+class Updateproduct extends StatefulWidget {
+  //String uid;
+  String uid = FirebaseAuth.instance.currentUser.uid;
+  String productCode,
+      productName,
+      hsncode,
+      quantity,
+      lowstockreminderat,
+      purchaserate,
+      unit,
+      sellingPrice,
+      date,
+      totalAmount;
+  Updateproduct(this.productCode);
 
   @override
-  _AddproductState createState() => _AddproductState();
+  _UpdateproductState createState() => _UpdateproductState();
 }
 
-/*  String productCode;
-  String productName;
-  String hsncode;
-  int quantity;
-  String cgst;
-  String igst;
-  String purchaserate;
-  String sellingprice;
-  DateTime date;
-  int totalAmount;
-*/
-class _AddproductState extends State<Addproduct> {
+class _UpdateproductState extends State<Updateproduct> {
   final productCodeController = TextEditingController();
   final productNameController = TextEditingController();
   final hsncodeController = TextEditingController();
@@ -32,11 +33,11 @@ class _AddproductState extends State<Addproduct> {
   final lowstockreminderat = TextEditingController();
   final purchaserateController = TextEditingController();
   final unitController = TextEditingController();
-  final sellingpriceController = TextEditingController();
-
-  final igstController = TextEditingController();
   final cgstController = TextEditingController();
-  var date = DateTime.now();
+  final igstController = TextEditingController();
+  final sellingpriceController = TextEditingController();
+  var date;
+  // = DateTime.now();
   final totalAmount = TextEditingController();
 
   Function validation = (value) {
@@ -49,65 +50,107 @@ class _AddproductState extends State<Addproduct> {
   final newProduct = new AddProduct(
       null, null, null, null, null, null, null, null, null, null, null, null);
   final _keyForm = GlobalKey<FormState>();
+
+  List<String> listOfCgst = [
+    "14+14",
+    "9+9",
+    '6+6',
+    '4.5+4.5',
+    '2.5+2.5',
+    '1.5+1.5'
+  ];
+  final listofIGST = ["28 ", "18", '12', '9', '5', '3'];
+  final units = [
+    'BAG-BAGS',
+    'BAL-BALE',
+    'BDL-BUNDLES',
+    'BKL-BUCKLES',
+    'BOU-BILLIONS OF UNITS',
+    'BOX-BOX',
+    'BTL-BOTTLES',
+    'BUN-BUNCHES',
+    'CAN-CANS',
+    'CBM-CUBIC METER',
+    'CCM-CUBIC CENTIMETER',
+    'CMS-CENTIMETER',
+    'CTN-CARTONS',
+    'DOZ-DOZEN',
+    'DRM-DRUM',
+    'GGR-GREAT GROSS',
+    'GMS-GRAMS',
+    'GRS-GROSS',
+    'GYD-GROSS YARDS',
+    'KGS-KILOGRAMS',
+    'KLR-KILOLITER',
+    'KME-KILOMETRE',
+    'MLT-MILLILITRE',
+    'MTR-METERS',
+    'NOS-NUMBERS',
+    'PAC-PACKS',
+    'PCS-PIECES',
+    'PRS-PAIRS',
+    'QTL-QUINTAL',
+    'ROL-ROLLS',
+    'SET-SETS',
+    'SQF-SQUARE FEET',
+    'SQM-SQUARE METERS',
+    'SQY-SQUARE YARDS',
+    'TBS-TABLETS',
+    'TGM-TEN GROSS',
+    'THD-THOUSANDS',
+    'TON-TONNES',
+    'TUB-TUBES',
+    'UGS-US GALLONS',
+    'UNT-UNITS',
+    'YDS-YARDS',
+    'OTH-OTHERS'
+  ];
+  intilizer() {}
+
+  String igst = "28 ";
+  final db = FirebaseFirestore.instance;
+  Future<void> getProductData(String value) {
+    print('getProduct details mohit');
+    return FirebaseFirestore.instance
+        .collection("userData")
+        .doc(widget.uid)
+        .collection("Product")
+        .doc(value)
+        .get()
+        .then((valuee) {
+      setState(() {
+        productNameController.text = valuee.data()['productName'];
+        hsncodeController.text = valuee.data()['hsncode'];
+        sellingpriceController.text = valuee.data()['sellingprice'];
+        igst = valuee.data()['igst'];
+        date = valuee.data()['date'].toDate();
+        purchaserateController.text = valuee.data()['purchaserate'];
+        totalAmount.text = valuee.data()['totalAmount'].toString();
+        quantityController.text = valuee.data()['quantity'].toString();
+        lowstockreminderat.text =
+            valuee.data()['lowstockreminderat'].toString();
+      });
+    });
+  }
+
+  void initState() {
+    getProductData(widget.productCode);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> listOfCgst = [
-      "14+14",
-      "9+9",
-      '6+6',
-      '4.5+4.5',
-      '2.5+2.5',
-      '1.5+1.5'
-    ];
-    final listofIGST = ["28 ", "18", '12', '9', '5', '3'];
-    final units = [
-      'BAG-BAGS',
-      'BAL-BALE',
-      'BDL-BUNDLES',
-      'BKL-BUCKLES',
-      'BOU-BILLIONS OF UNITS',
-      'BOX-BOX',
-      'BTL-BOTTLES',
-      'BUN-BUNCHES',
-      'CAN-CANS',
-      'CBM-CUBIC METER',
-      'CCM-CUBIC CENTIMETER',
-      'CMS-CENTIMETER',
-      'CTN-CARTONS',
-      'DOZ-DOZEN',
-      'DRM-DRUM',
-      'GGR-GREAT GROSS',
-      'GMS-GRAMS',
-      'GRS-GROSS',
-      'GYD-GROSS YARDS',
-      'KGS-KILOGRAMS',
-      'KLR-KILOLITER',
-      'KME-KILOMETRE',
-      'MLT-MILLILITRE',
-      'MTR-METERS',
-      'NOS-NUMBERS',
-      'PAC-PACKS',
-      'PCS-PIECES',
-      'PRS-PAIRS',
-      'QTL-QUINTAL',
-      'ROL-ROLLS',
-      'SET-SETS',
-      'SQF-SQUARE FEET',
-      'SQM-SQUARE METERS',
-      'SQY-SQUARE YARDS',
-      'TBS-TABLETS',
-      'TGM-TEN GROSS',
-      'THD-THOUSANDS',
-      'TON-TONNES',
-      'TUB-TUBES',
-      'UGS-US GALLONS',
-      'UNT-UNITS',
-      'YDS-YARDS',
-      'OTH-OTHERS'
-    ];
+    setState(() {
+      productCodeController.text = widget.productCode;
+      // print(widget.productName + 'mohit productname');
+    });
     String cgst = listOfCgst[0];
-    String igst = "28 ";
-    final db = FirebaseFirestore.instance;
+
+    check() {
+      getProductData(widget.productCode);
+    }
+
+    @override
     Future<void> addproduct() {
       newProduct.productCode = productCodeController.text;
       newProduct.productName = productNameController.text;
@@ -144,14 +187,17 @@ class _AddproductState extends State<Addproduct> {
         });
     }
 
+    //getProductData(widget.productCode);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon:Icon(Icons.arrow_back_ios),
-          onPressed: ()=> Navigator.of(context).pop(),),
+         leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Add Product',
+          'Update Product',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -174,7 +220,7 @@ class _AddproductState extends State<Addproduct> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'Add Product',
+                  'Update Product',
                   style: TextStyle(
                     fontFamily: 'Arial',
                     fontSize: 14,
@@ -208,20 +254,11 @@ class _AddproductState extends State<Addproduct> {
                     child: Card(
                       elevation: 4,
                       child: Container(
-                        //height: 50,
                         width: MediaQuery.of(context).size.width * 0.45,
                         child: TextFormField(
                             controller: hsncodeController,
                             decoration: CoustumInputDecorationWidget("HSN code")
                                 .decoration(),
-                            // The validator receives the text that the user has entered.
-                            // validator:
-                            //     (value) {
-                            //         if (value.isEmpty) {
-                            //           return null;
-                            //         }
-                            //         return null;
-                            //       }
                             validator: (value) {
                               if (value.isEmpty) {
                                 return null;
@@ -278,7 +315,6 @@ class _AddproductState extends State<Addproduct> {
                   ),
                 ],
               ),
-
               SizedBox(
                 height: 30,
               ),
@@ -312,7 +348,6 @@ class _AddproductState extends State<Addproduct> {
                           setState(() {
                             cgst = newValue;
                             cgstController.text = newValue;
-                            print(cgst + 'MOHIT new value');
                           });
                         },
                         validator: (value) {
@@ -328,6 +363,7 @@ class _AddproductState extends State<Addproduct> {
                     elevation: 4,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.45,
+                      // height: 50,
                       child: DropdownButtonFormField<String>(
                         value: igst,
                         icon: Icon(Icons.keyboard_arrow_down_sharp),
@@ -346,7 +382,7 @@ class _AddproductState extends State<Addproduct> {
                         onChanged: (String newValue) {
                           setState(() {
                             igst = newValue;
-                            igstController.text = newValue ; 
+                            igstController.text = newValue;
                             String taxRate = igst;
                             // String result;
                             // result =
@@ -376,16 +412,6 @@ class _AddproductState extends State<Addproduct> {
               SizedBox(
                 height: 30,
               ),
-              // Eachrow(
-              //     purchaserateController,
-              //     "Purchase Rate",
-              //     TextInputType.numberWithOptions(),
-              //     validation,
-              //     sellingpriceController,
-              //     "Selling price",
-              //     TextInputType.numberWithOptions(),
-              //     validation,
-              //     10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -400,9 +426,6 @@ class _AddproductState extends State<Addproduct> {
                             onChanged: (value) {
                               setState(() {
                                 String taxRate = igst;
-                                // String result;
-                                // result =
-                                //     taxRate.substring(0, taxRate.length - 1);
                                 var taxammount =
                                     (int.parse(purchaserateController.text) *
                                             int.parse(quantityController.text) *
@@ -464,7 +487,8 @@ class _AddproductState extends State<Addproduct> {
                   Card(
                     elevation: 4,
                     child: InkWell(
-                      onTap: () => _selectDate(context),
+                      onTap: () => {},
+                      //_selectDate(context),
                       child: Container(
                         //  alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 0.45,
@@ -481,6 +505,7 @@ class _AddproductState extends State<Addproduct> {
                     elevation: 4,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.45,
+                      //  height: 50,
                       child: TextFormField(
                         controller: totalAmount,
                         decoration: CoustumInputDecorationWidget("Total Amount")
@@ -517,7 +542,10 @@ class _AddproductState extends State<Addproduct> {
                             fontSize: 12,
                           ),
                           value: 'OTH-OTHERS',
-                          icon: Icon(Icons.keyboard_arrow_down_sharp),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(right:5.0),
+                            child: Icon(Icons.keyboard_arrow_down_sharp),
+                          ),
                           decoration: InputDecoration(
                             labelText: "Unit",
                             contentPadding: const EdgeInsets.only(
@@ -526,7 +554,7 @@ class _AddproductState extends State<Addproduct> {
                           items: units.map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
-                              child: new Text(value),
+                              child: new Text(value,style: TextStyle(fontSize: 10,),)
                             );
                           }).toList(),
                           onChanged: (String newValue) {
@@ -575,28 +603,8 @@ class _AddproductState extends State<Addproduct> {
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
-                    /*       if (_formKey.currentState.validate()) {
-                                          // If the form is valid, display a Snackbar.
-                                          addproduct(),
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Signupotp(
-                                                          _controller.text)));
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content:
-                                                      Text('')));
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text('Please fill all the fields'
-                                               )));
-                                        }
-                                      },*/
                     onPressed: () {
                       if (_keyForm.currentState.validate()) {
-                        // If the form is valid, display a Snackbar.
                         addproduct();
                         Navigator.pop(context);
                         Scaffold.of(context)
@@ -608,13 +616,13 @@ class _AddproductState extends State<Addproduct> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
                       color: const Color(0xfff3F3D56),
+                      borderRadius: BorderRadius.circular(10)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Add Product',
+                          'Save Product',
                           style: TextStyle(
                             fontFamily: 'Arial',
                             fontSize: 16,

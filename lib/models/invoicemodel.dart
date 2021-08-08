@@ -9,6 +9,7 @@ class InvoiceProduct {
   String taxamount;
   String totalamount;
   String focornot;
+  String baseTotalAmount;
   InvoiceProduct(
     this.productCode,
     this.productName,
@@ -20,6 +21,7 @@ class InvoiceProduct {
     this.taxamount,
     this.totalamount,
     this.focornot,
+    this.baseTotalAmount
   );
   Map<String, dynamic> toJson() => {
         'productCode': productCode,
@@ -31,7 +33,8 @@ class InvoiceProduct {
         'sellingrate': sellingrate,
         'taxamount': taxamount,
         'totalamount': totalamount,
-        'focornot': focornot
+        'focornot': focornot,
+          'baseTotalAmount':baseTotalAmount
       };
 }
 
@@ -74,9 +77,9 @@ class InvoiceModel {
   // double tcs;
   // double roundoff;
   String discount;
-   String tcs;
+  String tcs;
   String roundoff;
-  
+
   String vehicleno;
   String from;
   List<OtherCharges> othercharges = [];

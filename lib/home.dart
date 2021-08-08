@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adobe_xd/adobe_xd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalbillbook/Invoicestyle.dart';
@@ -47,7 +49,7 @@ List<String> row2 = [
   'e-Way Bill',
   'Business Profile'
 ];
-List<String> row3 = ['Notification', 'Setting', 'Support', 'Logout'];
+List<String> row3 = ['Notification', 'Settings', 'Support', 'Logout'];
 
 class HomeIcons extends StatelessWidget {
   final List<Widgetfunction> l1, l2, l3;
@@ -121,11 +123,14 @@ class HomeIcons extends StatelessWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool allDataloaded = false;
+
   @override
   void initState() {
     // ignore: todo
     // TODO: implement initState
     print('mohit home.dart  intilized  uid == ' + widget.uid);
+
     if (widget.uid != null) {
       String uid = widget.uid;
       check();
@@ -181,17 +186,35 @@ class _HomeState extends State<Home> {
   }
 
   bool invoice0or1 = false;
-   check() async {
-      //db =  await FirebaseFirestore.instance;
-      await downloadURLExample(widget.uid);
-      await _getBusinessDetails(widget.uid);
-      await _getBusinessDetails2(widget.uid);
-      await _getBusinessDetails3(widget.uid);
-      await _getBusinessDetails4(widget.uid);
-      await _getBusinessDetails5(widget.uid);
-      await _getBusinessDetails6(widget.uid);
-    }
+  check() async {
+    //db =  await FirebaseFirestore.instance;
+    downloadURLExample(widget.uid);
+    _getBusinessDetails(widget.uid);
+    _getBusinessDetails2(widget.uid);
+    _getBusinessDetails3(widget.uid);
+    _getBusinessDetails4(widget.uid);
+    _getBusinessDetails5(widget.uid);
+    _getBusinessDetails6(widget.uid);
+    await _getBusinessSalesDetailsMonth(widget.uid);
+    setState(() {
+      allDataloaded = true;
+    });
+  }
 
+  FutureOr onGoBack(dynamic value) {
+    setState(() {
+       totalamount = 0;
+       totalproducts = 0;
+       totalquantity = 0;
+       totalAmountLastmonthsale = 0;
+       totalproductsLastmonthsale = 0;
+       totalquantityLastmonthsale = 0;
+    });
+    initState();
+    // refreshData();
+    // check();
+    // setState(() {});
+  }
 
   Future<void> downloadURLExample(String uid) async {
     String downloadURL = await firebase_storage.FirebaseStorage.instance
@@ -215,10 +238,18 @@ class _HomeState extends State<Home> {
         .get()
         .then((valuee) {
       setState(() {
-        subtitle21 = 'Invoice No. : ' + valuee.docs.first.data()['invoiceno'];
-        subtitle22 = 'Buyer Name : ' + valuee.docs.first.data()['sname'];
-        subtitle23 = 'Amount : ' +
-            valuee.docs.first.data()['listOfProducts'][0]['totalamount'];
+        subtitle21 = valuee.docs.first.data()['invoiceno'] == null
+            ? ' '
+            : 'Invoice No. : ' + valuee.docs.first.data()['invoiceno'];
+        subtitle22 = valuee.docs.first.data()['sname'] == null
+            ? ''
+            : 'Buyer Name : ' + valuee.docs.first.data()['sname'];
+        subtitle23 =
+            valuee.docs.first.data()['listOfProducts'][0]['totalamount'] == null
+                ? ''
+                : 'Amount : ' +
+                    valuee.docs.first.data()['listOfProducts'][0]
+                        ['totalamount'];
       });
     });
   }
@@ -240,6 +271,61 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<Null> _checkifDataexists(String uid) async {
+    await FirebaseFirestore.instance
+        .collection('userData')
+        .doc('Q2LgkWSZoYb4wTNTJNllkqTAWqm2')
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        print('Document data: ${documentSnapshot.data()}');
+      } else {
+        print('Document does not exist on the database');
+        print('Document data: ${documentSnapshot.data()}');
+      }
+    });
+  }
+
+  Future<Null> setUpdatabase(String uid) async {
+    final db = FirebaseFirestore.instance;
+    print('setupdatabase mohit');
+
+    print('document does esixts mohit');
+    print(uid.toString() + 'mohit');
+    final businessInfo = new BusinessProfile(
+        '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+    final plandetails = new PlanDetails('Free Trial',
+        DateTime.now().add(Duration(days: 31)), DateTime.now(), 100, 100);
+
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("planDetails")
+        .doc('plan')
+        .set(plandetails.toJson());
+
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("invoiceSettings")
+        .doc('invoiceSettings')
+        .set(settings.toJson());
+    // Call the user's CollectionReference to add a new user
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("BusinessInfo")
+        .doc('businessName')
+        .set(businessInfo.toJson());
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("termsAndConditiononInvoice")
+        .doc('termsAndConditiononInvoice')
+        .set({'termsAndCondition': ''});
+  }
+
   Future<Null> _getBusinessDetails4(String uid) async {
     await db
         .collection("userData")
@@ -257,9 +343,15 @@ class _HomeState extends State<Home> {
     });
   }
 
-  int totalamount = 0;
+  double totalamount = 0;
   int totalproducts = 0;
   int totalquantity = 0;
+  double totalAmountLastmonthsale = 0;
+  // String totalAmountLastmonthsales =
+  //     totalAmountLastmonthsale.toString().split('.');
+  int totalproductsLastmonthsale = 0;
+
+  int totalquantityLastmonthsale = 0;
 
   Future<Null> _getBusinessDetails5(String uid) async {
     await db
@@ -270,9 +362,34 @@ class _HomeState extends State<Home> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         setState(() {
-          totalamount = totalamount + doc['totalAmount'];
+          totalamount = totalamount + doc.get('totalAmount');
           totalproducts = totalproducts + 1;
           totalquantity = totalquantity + doc['quantity'];
+        });
+      });
+    });
+  }
+
+  var date = DateTime.now();
+  Future<Null> _getBusinessSalesDetailsMonth(String uid) async {
+    print('MOHIT sale statere');
+    await db
+        .collection("userData")
+        .doc(uid)
+        .collection("Invoice")
+        .where('sdate',
+            isGreaterThanOrEqualTo: new DateTime(date.year, date.month, 1))
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          print('MOHIT' + doc['listOfProducts'][0]['totalamount'].toString());
+          totalAmountLastmonthsale = totalAmountLastmonthsale +
+              double.parse(doc['listOfProducts'][0]['totalamount']);
+          totalproductsLastmonthsale = totalproductsLastmonthsale + 1;
+          totalquantityLastmonthsale = totalquantityLastmonthsale +
+              int.tryParse(doc['listOfProducts'][0]['quantity']);
+          print(totalamount.toString() + 'MOHIT');
         });
       });
     });
@@ -326,6 +443,7 @@ class _HomeState extends State<Home> {
         planName.text = valuee.data()['planName'];
         ewaybillno = valuee.data()['remainingewaybill'];
         invoice = valuee.data()['remaininginvoices'];
+        allDataloaded = true;
       });
     });
   }
@@ -429,11 +547,11 @@ class _HomeState extends State<Home> {
           ),
           duration.isAfter(DateTime.now())
               ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Invoicefirst(widget.uid, invoice0or1)),
-                  )
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Invoicefirst(widget.uid, invoice0or1)))
+                  .then((value) => onGoBack(value))
               : () {
                   _scaffoldkey.currentState.showSnackBar(SnackBar(
                       content: Text('Plan Expired. please upgrade your plan')));
@@ -590,406 +708,459 @@ class _HomeState extends State<Home> {
     final double w = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      key: _scaffoldkey,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Card(
-                  elevation: 6,
-                  child: Container(
-                      width: w * 0.95,
-                     // height: MediaQuery.of(context).size.height * 0.18,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(children: [
-                          Container(
-                            width: w * 0.35,
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 35,
-                                  alignment: Alignment.topLeft,
-                                  child: Text("Business Info"),
-                                  //color: Colors.black,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 10, 0),
-                                  child: Container(
-                                    height: 80,
-                                    width: w * 0.25,
-                                    // child: RaisedButton(
-                                    child: (_downloadURL == null)
-                                        ? InkWell(
-                                            // width: w * 0.24,
-                                            onTap: () => (downloadURLExample(
-                                                widget.uid)),
-                                            child: Text("Tab to Retry"),
-                                          )
-                                        : Image.network(
-                                            _downloadURL,
-                                          ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          // SizedBox(
-                          // width: 10,
-                          // ),
-                          Container(
-                            width: w * 0.558,
-                            child: Column(
-                              children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      businessNameController.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 22,
-                                        color: const Color(0xff2f2e41),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      businesAddressController.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 10,
-                                        color: const Color(0xe5707070),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      gstNumberController.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 10,
-                                        color: const Color(0xe5707070),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      phoneController.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 10,
-                                        color: const Color(0xe5707070),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      emailController.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 10,
-                                        color: const Color(0xe5707070),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Positioned(
-                              //   right: 2,
-                              //   bottom: 2,
-                              //   child:
-                                 Container(
-                                  alignment: Alignment.bottomRight,
-                                  padding: EdgeInsets.all(10),
-                                  child: InkWell(
-                                    onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            BusinessInfo(widget.uid),
-                                      ),
-                                    ),
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 20,
-                                      child: Text(
-                                        'View More',
-                                        style: TextStyle(
-                                          fontFamily: 'Bell MT',
-                                          fontSize: 10,
-                                          color: const Color(0xe5dde8f8),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(11.0),
-                                        color: const Color(0xd902020a),
-                                        border: Border.all(
-                                            width: 1.0,
-                                            color: const Color(0xd93f3d56)),
-                                      ),
-                                    ),
-                                 // ),
-                                ),
-                              )
-                            ]),
-                          ),
-                        ]),
+        key: _scaffoldkey,
+        body: allDataloaded
+            ? SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 20,
                       ),
-                      color: Color.fromRGBO(241, 243, 246, 1)),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    HomePageTiles(
-                      homescreentilesicon[0],
-                      'Low Stock',
-                      subtitle01,
-                      subtitle02,
-                      subtitle03,
-                      () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LowStock(widget.uid)))
-                          .then((value) {
-                        setState(() {});
-                      }),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[1],
-                      'Last Sale Details',
-                      subtitle11,
-                      subtitle12,
-                      subtitle13,
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SalesSummary(widget.uid))).then((value) {
-                        setState(() {});
-                      }),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[2],
-                      'Last Purchase Details',
-                      subtitle21,
-                      subtitle22,
-                      subtitle23,
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PurchaseSummary(widget.uid))).then((value) {
-                        setState(() {});
-                      }),
-                    ),
-                    HomePageTiles(
-                      homescreentilesicon[3],
-                      'Stock Value',
-                      'Total Product :' + totalproducts.toString(),
-                      'Quantity : ' + totalquantity.toString(),
-                      'Amount : ' + totalamount.toString(),
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  StockSummary(widget.uid))).then((value) {
-                        setState(() {});
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                alignment: Alignment.center,
-                width: w * 0.93,
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color(0xfff1D55C5).withOpacity(1),
-                      Color(0xfff2F508C).withOpacity(1)
-                    ],
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: w * 0.2,
-                      child: SvgPicture.string(
-                        '<svg viewBox="44.5 454.6 43.6 54.9" ><path transform="translate(40.0, 450.11)" d="M 43.52875518798828 4.5 L 9.038227081298828 4.5 C 6.531877517700195 4.5 4.5 7.061384201049805 4.5 10.22120666503906 L 4.5 53.70237731933594 C 4.5 56.86220169067383 6.531877517700195 59.423583984375 9.038227081298828 59.423583984375 L 43.52875518798828 59.423583984375 C 46.03522109985352 59.423583984375 48.06698226928711 56.86220169067383 48.06698226928711 53.70237731933594 L 48.06698226928711 10.22120666503906 C 48.06698226928711 7.061384201049805 46.03521728515625 4.5 43.52875518798828 4.5 Z M 31.7293643951416 47.98117065429688 L 13.57645511627197 47.98117065429688 L 13.57645511627197 41.11572265625 L 31.7293643951416 41.11572265625 L 31.7293643951416 47.98117065429688 Z M 38.99052810668945 35.39451599121094 L 13.57645511627197 35.39451599121094 L 13.57645511627197 28.52906799316406 L 38.99052810668945 28.52906799316406 L 38.99052810668945 35.39451599121094 Z M 38.99052810668945 22.807861328125 L 13.57645511627197 22.807861328125 L 13.57645511627197 15.94241333007812 L 38.99052810668945 15.94241333007812 L 38.99052810668945 22.807861328125 Z" fill="none" stroke="#f1f3f6" stroke-width="2" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                        allowDrawingOutsideViewBox: true,
-                      ),
-                    ),
-                    Container(
-                      width: w * 0.7,
-                      height: 160,
-                      child: Stack(children: [
-                        SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Your Plan - ' + planName.text,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 20,
-                                  color: const Color(0xfff2f2f2),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                '     Exp. Date:               ' +
-                                    DateFormat('dd/MM/yyyy')
-                                        .format(duration)
-                                        .toString(),
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 10,
-                                  color: const Color(0xe5ffffff),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                '     Remaining Plan :    ' +
-                                    invoice.toString() +
-                                    ' Invoice, ' +
-                                    ewaybillno.toString() +
-                                    'e-Way Bill',
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 10,
-                                  color: const Color(0xe5ffffff),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: SizedBox(
-                                    width: 71.0,
-                                    height: 21.0,
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Pinned.fromSize(
-                                          bounds: Rect.fromLTWH(
-                                              0.0, 0.0, 71.0, 21.0),
-                                          size: Size(71.0, 21.0),
-                                          pinLeft: true,
-                                          pinRight: true,
-                                          pinTop: true,
-                                          pinBottom: true,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(11.0),
-                                              color: const Color(0xfff1f3f6),
-                                              border: Border.all(
-                                                  width: 1.0,
-                                                  color:
-                                                      const Color(0xff3f3d56)),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Card(
+                          elevation: 6,
+                          child: Container(
+                              width: w * 0.95,
+                              height: MediaQuery.of(context).size.height * 0.19,
+                              child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(children: [
+                                    Row(children: [
+                                      Container(
+                                        width: w * 0.31,
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              height: 35,
+                                              alignment: Alignment.topLeft,
+                                              child: Text(
+                                                "Business Info",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              //color: Colors.black,
                                             ),
-                                          ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 8, 10, 0),
+                                              child: Container(
+                                                height: 80,
+                                                width: w * 0.25,
+                                                // child: RaisedButton(
+                                                child: (_downloadURL == null)
+                                                    ? InkWell(
+                                                        // width: w * 0.24,
+                                                        onTap: () =>
+                                                            (downloadURLExample(
+                                                                widget.uid)),
+                                                        child: Container(),
+                                                        // Text("Tab to Retry"),
+                                                      )
+                                                    : Image.network(
+                                                        _downloadURL,
+                                                      ),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        InkWell(
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Container(
+                                          width: w * 0.558,
+                                          child: Column(children: [
+                                            Column(
+                                              children: [
+                                                Container(
+                                                  width: 200,
+                                                  child: Text(
+                                                    businessNameController.text,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 22,
+                                                      color: const Color(
+                                                          0xff2f2e41),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 200,
+                                                  child: Text(
+                                                    businesAddressController
+                                                        .text,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 10,
+                                                      color: const Color(
+                                                          0xe5707070),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 200,
+                                                  child: Text(
+                                                    gstNumberController.text,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 10,
+                                                      color: const Color(
+                                                          0xe5707070),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 200,
+                                                  child: Text(
+                                                    phoneController.text,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 10,
+                                                      color: const Color(
+                                                          0xe5707070),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 200,
+                                                  child: Text(
+                                                    emailController.text,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Arial',
+                                                      fontSize: 10,
+                                                      color: const Color(
+                                                          0xe5707070),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            // Positioned(
+                                            //   right: 2,
+                                            //   bottom: 2,
+                                            //   child:
+                                          ]),
+                                        ),
+                                      ),
+                                    ]),
+                                    Positioned(
+                                      right: 2,
+                                      bottom: 2,
+                                      child: Container(
+                                        alignment: Alignment.bottomRight,
+                                        padding: EdgeInsets.all(1),
+                                        child: InkWell(
                                           onTap: () => Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  CurrentPlan(widget.uid),
+                                                  BusinessInfo(widget.uid),
                                             ),
-                                          ).then((value) {
-                                            setState(() {});
-                                          }),
+                                          ),
                                           child: Container(
                                             alignment: Alignment.center,
+                                            width: 60,
+                                            height: 20,
                                             child: Text(
                                               'View More',
                                               style: TextStyle(
                                                 fontFamily: 'Bell MT',
                                                 fontSize: 10,
-                                                color: const Color(0xe52f2e41),
+                                                color: const Color(0xe5dde8f8),
                                                 fontWeight: FontWeight.w700,
                                               ),
                                               textAlign: TextAlign.left,
                                             ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(11.0),
+                                              color: const Color(0xd902020a),
+                                              border: Border.all(
+                                                  width: 1.0,
+                                                  color:
+                                                      const Color(0xd93f3d56)),
+                                            ),
                                           ),
+                                          // ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                      ),
+                                    )
+                                  ])),
+                              color: Color.fromRGBO(241, 243, 246, 1)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            HomePageTiles(
+                              homescreentilesicon[0],
+                              'Low Stock',
+                              subtitle01,
+                              subtitle02,
+                              subtitle03,
+                              () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          LowStock(widget.uid))).then((value) {
+                                setState(() {});
+                              }),
+                            ),
+                            HomePageTiles(
+                              homescreentilesicon[1],
+                              'Last Sale Details',
+                              subtitle11,
+                              subtitle12,
+                              subtitle13,
+                              () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SalesSummary(widget.uid)))
+                                  .then((value) {
+                                setState(() {});
+                              }),
+                            ),
+                            HomePageTiles(
+                              homescreentilesicon[2],
+                              'Last Purchase Details',
+                              subtitle21,
+                              subtitle22,
+                              subtitle23,
+                              () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PurchaseSummary(widget.uid)))
+                                  .then((value) {
+                                setState(() {});
+                              }),
+                            ),
+                            HomePageTiles(
+                              homescreentilesicon[3],
+                              'Stock Value',
+                              'Total Product :' + totalproducts.toString(),
+                              'Quantity : ' + totalquantity.toString(),
+                              'Amount : ' + totalamount.toStringAsFixed(2),
+                              () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StockSummary(widget.uid)))
+                                  .then((value) {
+                                setState(() {});
+                              }),
+                            ),
+                            HomePageTiles(
+                              homescreentilesicon[4],
+                              'This Month\'s Sale',
+                              'Total Sales :' +
+                                  totalproductsLastmonthsale.toString(),
+                              'Quantity : ' +
+                                  totalquantityLastmonthsale.toString(),
+                              'Amount : ' +
+                                  totalAmountLastmonthsale.toStringAsFixed(2),
+                              () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SalesSummary(widget.uid)))
+                                  .then((value) {
+                                setState(() {});
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: w * 0.93,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xfff1D55C5).withOpacity(1),
+                              Color(0xfff2F508C).withOpacity(1)
                             ],
                           ),
                         ),
-                      ]),
-                    ),
-                  ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.2,
+                              child: SvgPicture.string(
+                                '<svg viewBox="44.5 454.6 43.6 54.9" ><path transform="translate(40.0, 450.11)" d="M 43.52875518798828 4.5 L 9.038227081298828 4.5 C 6.531877517700195 4.5 4.5 7.061384201049805 4.5 10.22120666503906 L 4.5 53.70237731933594 C 4.5 56.86220169067383 6.531877517700195 59.423583984375 9.038227081298828 59.423583984375 L 43.52875518798828 59.423583984375 C 46.03522109985352 59.423583984375 48.06698226928711 56.86220169067383 48.06698226928711 53.70237731933594 L 48.06698226928711 10.22120666503906 C 48.06698226928711 7.061384201049805 46.03521728515625 4.5 43.52875518798828 4.5 Z M 31.7293643951416 47.98117065429688 L 13.57645511627197 47.98117065429688 L 13.57645511627197 41.11572265625 L 31.7293643951416 41.11572265625 L 31.7293643951416 47.98117065429688 Z M 38.99052810668945 35.39451599121094 L 13.57645511627197 35.39451599121094 L 13.57645511627197 28.52906799316406 L 38.99052810668945 28.52906799316406 L 38.99052810668945 35.39451599121094 Z M 38.99052810668945 22.807861328125 L 13.57645511627197 22.807861328125 L 13.57645511627197 15.94241333007812 L 38.99052810668945 15.94241333007812 L 38.99052810668945 22.807861328125 Z" fill="none" stroke="#f1f3f6" stroke-width="2" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                                allowDrawingOutsideViewBox: true,
+                              ),
+                            ),
+                            Container(
+                              width: w * 0.7,
+                              height: 160,
+                              child: Stack(children: [
+                                SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Your Plan - ' + planName.text,
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 20,
+                                          color: const Color(0xfff2f2f2),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        '     Exp. Date:               ' +
+                                            DateFormat('dd/MM/yyyy')
+                                                .format(duration)
+                                                .toString(),
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 10,
+                                          color: const Color(0xe5ffffff),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        '     Remaining Plan :    ' +
+                                            invoice.toString() +
+                                            ' Invoice, ' +
+                                            ewaybillno.toString() +
+                                            'e-Way Bill',
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 10,
+                                          color: const Color(0xe5ffffff),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: SizedBox(
+                                            width: 71.0,
+                                            height: 21.0,
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Pinned.fromSize(
+                                                  bounds: Rect.fromLTWH(
+                                                      0.0, 0.0, 71.0, 21.0),
+                                                  size: Size(71.0, 21.0),
+                                                  pinLeft: true,
+                                                  pinRight: true,
+                                                  pinTop: true,
+                                                  pinBottom: true,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              11.0),
+                                                      color: const Color(
+                                                          0xfff1f3f6),
+                                                      border: Border.all(
+                                                          width: 1.0,
+                                                          color: const Color(
+                                                              0xff3f3d56)),
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CurrentPlan(
+                                                              widget.uid),
+                                                    ),
+                                                  ).then((value) {
+                                                    setState(() {});
+                                                  }),
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'View More',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Bell MT',
+                                                        fontSize: 10,
+                                                        color: const Color(
+                                                            0xe52f2e41),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      HomeIcons(l, l2, l3, row1, row2, row3)
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              HomeIcons(l, l2, l3, row1, row2, row3)
-            ],
-          ),
-        ),
-      ),
-    );
+              )
+            : Center(child: Text('loading')));
   }
 }

@@ -23,6 +23,7 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   var widgetTable;
   var initialdate = DateTime.now(), finaldate = DateTime.now();
+  double fontSizeForMainColumn = 6;
   Future<bool> _requestPermissions() async {
     var permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
@@ -105,14 +106,12 @@ class _ProductListState extends State<ProductList> {
           .collection('userData')
           .doc(widget.uid)
           .collection('Product')
+           .where('date', isGreaterThanOrEqualTo: initialdate, isLessThanOrEqualTo: finaldate)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
           final Timestamp timestamp = (doc['date']) as Timestamp;
           final DateTime d = timestamp.toDate();
-          if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-              d.day == initialdate.day ||
-              d.day == finaldate.day)
             sheet.appendRow([
               doc['productCode'],
               doc['productName'],
@@ -133,26 +132,39 @@ class _ProductListState extends State<ProductList> {
         'purchaserate',
         'sellingprice'
       ]);
+       Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path+sheet.toString();
+    print(appDocPath);
 
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
-      print(appDocPath.toString() + 'hello mohit');
-      final isPermissionStatusGranted = await _requestPermissions();
-      if (isPermissionStatusGranted) {
-        excel.encode().then((onValue) {
-          File(join('${appDocDir.path}/$excel.xlsx'))
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(onValue);
-          print('sucess writing exel document');
-          //"$appDocPath/excel.xlsx"
-            OpenFile.open("$appDocPath/excel.xlsx");
-        });
-      } else {
-        Fluttertoast.showToast(msg: 'user deciled permission');
-        // Toast('user deciled ').show;
-        // handle the scenario when user declines the permissions
-      }
-    
+    final isPermissionStatusGranted = await _requestPermissions();
+    if (isPermissionStatusGranted) {
+      excel.encode().then((onValue) {
+        File(join("$appDocPath/excel.xlsx"))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(onValue);
+      });
+    } else {
+      // handle the scenario when user declines the permissions
+    }
+    OpenFile.open("$appDocPath/excel.xlsx");
+
+      // Directory appDocDir = await getApplicationDocumentsDirectory();
+      // String appDocPath = appDocDir.path;
+      // print(appDocPath.toString() + 'hello mohit');
+      // final isPermissionStatusGranted = await _requestPermissions();
+      // if (isPermissionStatusGranted) {
+      //   excel.encode().then((onValue) {
+      //     File(join('${appDocDir.path}/$excel.xlsx'))
+      //       ..createSync(recursive: true)
+      //       ..writeAsBytesSync(onValue);
+      //     print('sucess writing exel document');
+      //     //"$appDocPath/excel.xlsx"
+       
+      //   });
+      // } else {
+      //   Fluttertoast.showToast(msg: 'user deciled permission');
+      //    }
+      //       OpenFile.open("$appDocPath/excel.xlsx");
     }
 
     return Scaffold(
@@ -189,8 +201,8 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
               Pinned.fromSize(
-                bounds: Rect.fromLTWH(20.6, 18.0, 25.7, 21.5),
-                size: Size(65.0, 65.0),
+                bounds: Rect.fromLTWH(20.6, 14.0, 25.7, 21.5),
+                size: Size(75.0, 75.0),
                 child:
                     // Adobe XD layer: 'Icon awesome-file-e…' (shape)
                     SvgPicture.string(
@@ -200,8 +212,8 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
               Pinned.fromSize(
-                bounds: Rect.fromLTWH(12.0, 45.0, 41.0, 8.0),
-                size: Size(65.0, 65.0),
+                bounds: Rect.fromLTWH(12.0, 45.0, 20.0, 10.0),
+                size: Size(75.0, 75.0),
                 fixedWidth: true,
                 fixedHeight: true,
                 child: Text(
@@ -227,6 +239,8 @@ class _ProductListState extends State<ProductList> {
         ),
       ),
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -276,11 +290,14 @@ class _ProductListState extends State<ProductList> {
                   child: InkWell(
                     onTap: () => selectDate1(context),
                     child: Container(
-                      alignment: Alignment.center,
+                      alignment:Alignment.centerLeft,
                       width: MediaQuery.of(context).size.width * 0.4,
-                      height: 50,
-                      child: Text("From " +
-                          DateFormat('dd-MM-yyyy').format(initialdate)),
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("From    " +
+                            DateFormat('dd-MM-yyyy').format(initialdate)),
+                      ),
                     ),
                   ),
                 ),
@@ -289,11 +306,14 @@ class _ProductListState extends State<ProductList> {
                   child: InkWell(
                     onTap: () => selectDate2(context),
                     child: Container(
-                      alignment: Alignment.center,
+                      alignment:Alignment.centerLeft,
                       width: MediaQuery.of(context).size.width * 0.4,
-                      height: 50,
-                      child: Text(
-                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                            "To        " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                      ),
                     ),
                   ),
                 ),
@@ -306,16 +326,15 @@ class _ProductListState extends State<ProductList> {
               height: 20,
             ),
             Container(
-              height: 50,
-          
+              height: 40,
               width: MediaQuery.of(context).size.width * 0.42,
               child: RaisedButton(
-                   color:const Color(0xff2f2e41), 
+                  color: const Color(0xff2f2e41),
                   onPressed: () => {
                         setState(() => {
-                          print(initialdate.toString()+"mohit"),
-                            print(finaldate.toString()+"mohit"),
-                              print(widget.uid.toString()+"mohit"),
+                              print(initialdate.toString() + "mohit"),
+                              print(finaldate.toString() + "mohit"),
+                              print(widget.uid.toString() + "mohit"),
                               widgetTable =
                                   Table1(widget.uid, initialdate, finaldate)
                             })
@@ -332,106 +351,94 @@ class _ProductListState extends State<ProductList> {
                     ),
                   )),
             ),
-            /*         Container(
-              decoration: BoxDecoration(
-                  color: const Color(0xfff3F3D56),
-                  borderRadius: BorderRadius.circular(2)),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 60.0, right: 60, top: 10, bottom: 10),
-                child: Text(
-                  'Product List',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 16,
-                    color: const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ),*/
             SizedBox(
               height: 20,
             ),
             widgetTable == null
-                ? Container(
-                    decoration: BoxDecoration(color: const Color(0xff2F2E41)),
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Product Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Product Name ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'HSN Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Purchase Rate ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Selling Rate ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ],
+                ? Padding(
+                  padding: const EdgeInsets.only(left:0.0),
+                  child: Container(
+                    height: 16,
+                      decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+                      child:Padding(
+              padding: const EdgeInsets.only(left:8.0),
+              child: Row(
+                children: [
+                  Container(
+                    alignment:Alignment.centerLeft,
+                    width: w * 0.2,
+                    child: Text(
+                      'Product Code ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: fontSizeForMainColumn,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                  )
+                  ),
+                  Container(
+                    alignment:Alignment.centerLeft,
+                    width: w * 0.2,
+                    child: Text(
+                      'Product Name ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: fontSizeForMainColumn,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Container(
+                    alignment:Alignment.centerLeft,
+                    width: w * 0.2,
+                    child: Text(
+                      'HSN Code ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: fontSizeForMainColumn,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Container(
+                    alignment:Alignment.centerLeft,
+                    width: w * 0.2,
+                    child: Text(
+                      'Purchase Rate ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: fontSizeForMainColumn,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Container(
+                    alignment:Alignment.centerLeft,
+                    width: w * 0.1,
+                    child: Text(
+                      'Selling Rate ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: fontSizeForMainColumn,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+                )
                 :
                 // Table1(widget.uid, initialdate, finaldate)
                 widgetTable

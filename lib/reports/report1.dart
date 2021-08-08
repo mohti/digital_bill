@@ -43,7 +43,10 @@ class Tab extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(Icons.arrow_forward_ios)
+              Padding(
+                padding: const EdgeInsets.only(right:15.0),
+                child: Icon(Icons.arrow_forward_ios),
+              )
             ],
           ),
         ),
@@ -61,10 +64,12 @@ class Report1 extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Settings',
+          'Reports',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -79,19 +84,20 @@ class Report1 extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Reports',
-                style: TextStyle(
-                  fontFamily: 'Bell MT',
-                  fontSize: 18,
-                  color: const Color(0xff2f2e41),
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(20.0),
+            //   child: Text(
+            //     'Reports',
+            //     style: TextStyle(
+            //       fontFamily: 'Bell MT',
+            //       fontSize: 18,
+            //       color: const Color(0xff2f2e41),
+            //       fontWeight: FontWeight.w700,
+            //     ),
+            //     textAlign: TextAlign.left,
+            //   ),
+            // ),
+            SizedBox(height: 40,),
             Tab(
                 null,
                 ' Stocks Summary',

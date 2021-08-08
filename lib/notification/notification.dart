@@ -202,6 +202,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -218,15 +220,15 @@ class _NotificationPageState extends State<NotificationPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            gstr1
+                ?Container(
               width: w * 1,
-              height: 100,
+              height: gstr1 ? 100 : 0,
               decoration: BoxDecoration(color: Colors.white),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  gstr1
-                      ? Row(
+               Row(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(5.0),
@@ -299,10 +301,10 @@ class _NotificationPageState extends State<NotificationPage> {
                                 : Container()
                           ],
                         )
-                      : Container()
                 ],
               ),
-            ),
+            ) 
+                : Container(),
             gstr3b
                 ? Container(
                     width: w * 1,

@@ -25,7 +25,7 @@ class Tab extends StatelessWidget {
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: ic,
                   ),
                   Text(
@@ -40,7 +40,10 @@ class Tab extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(Icons.arrow_forward_ios)
+              Padding(
+                padding: const EdgeInsets.only(right:10.0),
+                child: Icon(Icons.arrow_forward_ios),
+              )
             ],
           ),
         ),
@@ -58,6 +61,8 @@ class Parties1 extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -76,6 +81,7 @@ class Parties1 extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 50,),
             Tab(
                 null,
                 ' Add New Party',

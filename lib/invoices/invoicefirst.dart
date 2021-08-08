@@ -4,6 +4,8 @@ import 'package:digitalbillbook/invoices/invoicemain.dart';
 import 'package:digitalbillbook/purchase/purchaseinvoice.dart';
 import 'package:flutter/material.dart';
 
+import '../home.dart';
+
 class Tab extends StatelessWidget {
   final String title;
   final Function f;
@@ -59,6 +61,16 @@ class Invoicefirst extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=>
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home(uid),
+          ),
+        ),
+           //Navigator.of(context).pop(),
+           ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -77,6 +89,7 @@ class Invoicefirst extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 50,),
             Tab(
                 SizedBox(
                   width: 10,

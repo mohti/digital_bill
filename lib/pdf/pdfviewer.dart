@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'dart:math' as math;
 
 class PdfViewer extends StatefulWidget {
   final String uid;
@@ -28,7 +29,7 @@ class _PdfViewerState extends State<PdfViewer> {
   @override
   void initState() {
     print('##====================> pdfviewer.dart called');
-   
+
     getallData();
     super.initState();
   }
@@ -123,7 +124,7 @@ class _PdfViewerState extends State<PdfViewer> {
   double totaltax = 0;
   double totaltaxStr = 0;
   final businessInfo = new BusinessProfile(
-      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '');
   final invoicedetails = new InvoiceModel(
       '',
       '',
@@ -190,9 +191,9 @@ class _PdfViewerState extends State<PdfViewer> {
             ? ''
             : valuee.data()['gstNumber'];
         emailController.text =
-            valuee.data()['email'] == null ? '' : valuee.data()['email'];
+            valuee.data()['email'] == null ? ' ' : valuee.data()['email'];
         phoneController.text =
-            valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+            valuee.data()['phone'] == null ? ' ' : valuee.data()['phone'];
       });
     });
   }
@@ -207,16 +208,15 @@ class _PdfViewerState extends State<PdfViewer> {
         .then((valuee) {
       setState(() {
         termsandcondition.text = valuee.data()['termsAndCondition'] == null
-            ? ''
+            ? ' '
             : valuee.data()['termsAndCondition'];
       });
     });
   }
 
-  
   Map<String, dynamic> m;
-  List<Map<String, dynamic>> l = [];
-  List<Map<String, dynamic>> l2 = [];
+  List<Map<String, dynamic>> listOfProducts = [];
+  List<Map<String, dynamic>> listOfOtherCharges = [];
   var taxes = new Map();
 
   Future<Null> _invoicedetails(String uid) async {
@@ -278,9 +278,9 @@ class _PdfViewerState extends State<PdfViewer> {
           discount = double.tryParse(discountStr);
         }
 
-        l = List.castFrom(valuee.data()['listOfProducts']);
-        l2 = List.castFrom(valuee.data()['othercharges']);
-        print(l.toString() + 'list of product');
+        listOfProducts = List.castFrom(valuee.data()['listOfProducts']);
+        listOfOtherCharges = List.castFrom(valuee.data()['othercharges']);
+        print(listOfProducts.toString() + 'list of product');
       });
     });
   }
@@ -297,7 +297,7 @@ class _PdfViewerState extends State<PdfViewer> {
   Future<Uint8List> generateInvoice(PdfPageFormat pageFormat) async {
     print(
         '=====================================Genrate Invoice funtion called ');
-     await _getBusinessDetails(widget.uid);
+    await _getBusinessDetails(widget.uid);
     print(
         '=====================================BusinessDetails funtion called ');
     await _invoicedetails(widget.uid);
@@ -305,22 +305,23 @@ class _PdfViewerState extends State<PdfViewer> {
         '=====================================InvoiceDetails funtion called ');
 
     double totalquantity = 0, totalamount = 0, finalamount = 0;
-    l.forEach((element) {
+    listOfProducts.forEach((element) {
       setState(() {
         taxes[element['taxrate']] = 0.00;
         totalquantity =
             totalquantity + double.parse(element['quantity'].toString());
-        totalamount =
-            totalamount + double.parse(element['totalamount'].toString());
+        totalamount = totalamount +
+            double.parse(element['quantity']) *
+                double.parse(element['sellingrate']);
       });
     });
     setState(() {
       finalamount = totalamount;
     });
-    l.forEach((element) {
+    listOfProducts.forEach((element) {
       setState(() {
-        taxes[element['taxrate']] =
-            taxes[element['taxrate']] + double.parse(element['totalamount']);
+        taxes[element['taxrate']] = taxes[element['taxrate']] +
+            double.parse(element['baseTotalAmount']);
         print(taxes[element['taxrate']]);
       });
     });
@@ -333,7 +334,7 @@ class _PdfViewerState extends State<PdfViewer> {
                 .toDouble();
       });
     });
-    l2.forEach((element) {
+    listOfOtherCharges.forEach((element) {
       setState(() {
         finalamount = finalamount + (element['otherchargevalue']);
       });
@@ -342,7 +343,7 @@ class _PdfViewerState extends State<PdfViewer> {
     setState(() {
       print(discount.toString() + 'discount');
       print(totalamount.toString() + 'total amount');
-      finalamount = finalamount - ((discount) * (totalamount / 100)) + roundoff;
+      finalamount = finalamount - ((discount) * (totalamount / 100))+(tcs * totalamount / 100) + roundoff;
     });
     final pdf = pw.Document();
     Future<void> uploadtostorage() async {
@@ -387,18 +388,36 @@ class _PdfViewerState extends State<PdfViewer> {
                               pw.SizedBox(
                                   width: 50.0,
                                   height: 50.0,
-                                  child: pw.Image(pw.MemoryImage(widget.logo))
+                                  child: widget.logo == null
+                                      ? pw.Container()
+                                      : pw.Image(pw.MemoryImage(widget.logo))
                                   //  child: null,
                                   ),
                               pw.Column(children: [
-                                pw.Text(
-                                  businessNameController.text,
-                                  style: pw.TextStyle(
-                                    fontSize: 25,
-                                    color: PdfColor.fromInt(0xff2f2e41),
-                                    fontWeight: pw.FontWeight.bold,
+                                pw.Container(
+                                  width: 520,
+                                  //height: 200,
+                                  child: pw.Padding(
+                                    padding: pw.EdgeInsets.only(right: 10),
+                                    //width: 100,
+                                    child: pw.Paragraph(
+                                      style: pw.TextStyle(
+                                        fontSize: 25,
+                                        color: PdfColor.fromInt(0xff2f2e41),
+                                        fontWeight: pw.FontWeight.bold,
+                                      ),
+                                      text: businessNameController.text,
+                                    ),
                                   ),
                                 ),
+                                // pw.Text(
+                                //   businessNameController.text,
+                                //   style: pw.TextStyle(
+                                //     fontSize: 25,
+                                //     color: PdfColor.fromInt(0xff2f2e41),
+                                //     fontWeight: pw.FontWeight.bold,
+                                //   ),
+                                // ),
                                 pw.SizedBox(
                                   width: 242.0,
                                   child: pw.Text(
@@ -711,14 +730,30 @@ class _PdfViewerState extends State<PdfViewer> {
                               //  child: null,
                               ),
                           pw.Column(children: [
-                            pw.Text(
-                              businessNameController.text,
-                              style: pw.TextStyle(
-                                fontSize: 25,
-                                color: PdfColor.fromInt(0xff2f2e41),
-                                fontWeight: pw.FontWeight.bold,
+                            pw.Container(
+                              width: 520,
+                              //height: 200,
+                              child: pw.Padding(
+                                padding: pw.EdgeInsets.only(right: 10),
+                                //width: 100,
+                                child: pw.Paragraph(
+                                  style: pw.TextStyle(
+                                    fontSize: 25,
+                                    color: PdfColor.fromInt(0xff2f2e41),
+                                    fontWeight: pw.FontWeight.bold,
+                                  ),
+                                  text: businessNameController.text,
+                                ),
                               ),
                             ),
+                            // pw.Text(
+                            //   businessNameController.text,
+                            //   style: pw.TextStyle(
+                            //     fontSize: 25,
+                            //     color: PdfColor.fromInt(0xff2f2e41),
+                            //     fontWeight: pw.FontWeight.bold,
+                            //   ),
+                            // ),
                             pw.SizedBox(
                               width: 242.0,
                               child: pw.Text(
@@ -1034,14 +1069,26 @@ class _PdfViewerState extends State<PdfViewer> {
                                   ),
                                   textAlign: pw.TextAlign.left,
                                 ),
-                                pw.Text(
-                                  termsandcondition.text,
-                                  style: pw.TextStyle(
-                                    fontSize: 14,
-                                    color: PdfColor.fromInt(0xff2f2e41),
-                                  ),
-                                  textAlign: pw.TextAlign.left,
+                                pw.Paragraph(
+                                  //String terms =termsandcondition.text,
+                                  text: termsandcondition.text,
+                                  // termsandcondition.text,
+                                  // textAlign: pw.TextAlign.justify,
+                                  // style: const pw.TextStyle(
+                                  //   fontSize: 12,
+                                  //   lineSpacing: 2,
+                                  //   color: PdfColor.fromInt(0xff2f2e41),
+                                  // ),
                                 ),
+                                // pw.Text(
+                                //   pw.LoremText().paragraph(40),
+                                //   //termsandcondition.text,
+                                //   style: pw.TextStyle(
+                                //     fontSize: 12,
+                                //     color: PdfColor.fromInt(0xff2f2e41),
+                                //   ),
+                                //   //  textAlign: pw.TextAlign.left,
+                                // ),
                               ]),
                         ),
                         decoration: pw.BoxDecoration(
@@ -1147,7 +1194,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 100,
                               child: pw.Text(
                                 'Product Name ',
@@ -1160,7 +1207,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 50,
                               child: pw.Text(
                                 'HSN',
@@ -1173,7 +1220,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 50,
                               child: pw.Text(
                                 'Quantity ',
@@ -1186,7 +1233,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 50,
                               child: pw.Text(
                                 'Unit ',
@@ -1199,7 +1246,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 30,
                               child: pw.Text(
                                 'Rate ',
@@ -1212,7 +1259,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 70,
                               child: pw.Text(
                                 'Tax Rate',
@@ -1225,7 +1272,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                             ),
                             pw.Container(
-                              alignment: pw.Alignment.center,
+                              alignment: pw.Alignment.centerLeft,
                               width: 50,
                               child: pw.Text(
                                 'Amount',
@@ -1246,7 +1293,7 @@ class _PdfViewerState extends State<PdfViewer> {
 
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
-                  l.length,
+                  listOfProducts.length,
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
@@ -1273,10 +1320,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
-                                  l[index]['productCode'],
+                                  listOfProducts[index]['productCode'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1284,10 +1331,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
-                                  l[index]['productName'],
+                                  listOfProducts[index]['productName'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1295,10 +1342,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
-                                  l[index]['hsncode'],
+                                  listOfProducts[index]['hsncode'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1306,10 +1353,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
-                                  l[index]['quantity'],
+                                  listOfProducts[index]['quantity'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1317,10 +1364,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
-                                  l[index]['unit'],
+                                  listOfProducts[index]['unit'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1328,10 +1375,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
-                                  l[index]['sellingrate'],
+                                  listOfProducts[index]['sellingrate'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1339,10 +1386,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
-                                  l[index]['taxrate'],
+                                  listOfProducts[index]['taxrate'],
                                   style: pw.TextStyle(
                                     fontSize: 13,
                                   ),
@@ -1350,10 +1397,14 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
-                                  l[index]['totalamount'],
+                                  (int.tryParse(listOfProducts[index]
+                                              ['sellingrate']) *
+                                          int.tryParse(listOfProducts[index]
+                                              ['quantity']))
+                                      .toString(),
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.normal),
@@ -1383,7 +1434,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           child: pw.Row(
                             children: [
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1394,7 +1445,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   '',
@@ -1405,7 +1456,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   'Total',
@@ -1417,7 +1468,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   '',
@@ -1430,7 +1481,7 @@ class _PdfViewerState extends State<PdfViewer> {
 
 //                                            mohit changed here
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   totalquantity.toString(),
@@ -1443,7 +1494,7 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
 
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   '',
@@ -1454,7 +1505,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1465,7 +1516,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
                                   '',
@@ -1478,7 +1529,7 @@ class _PdfViewerState extends State<PdfViewer> {
 
                               //mohit from herehj
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   totalamount.toString(),
@@ -1501,8 +1552,8 @@ class _PdfViewerState extends State<PdfViewer> {
 
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
-                  //  taxes.length,
-                  1,
+                  taxes.length,
+                  //1,
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
@@ -1518,7 +1569,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           child: pw.Row(
                             children: [
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1529,7 +1580,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   '',
@@ -1540,18 +1591,18 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   'Tax Amount',
                                   style: pw.TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
                                       fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.left,
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1562,7 +1613,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 20,
                                 child: pw.Text(
                                   '',
@@ -1573,7 +1624,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 80,
                                 child: pw.Text(
                                   taxes.entries
@@ -1589,8 +1640,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
-                                width: 30,
+                                alignment: pw.Alignment.centerLeft,
+                                width: 40,
                                 child: pw.Text(
                                   '',
                                   style: pw.TextStyle(
@@ -1600,8 +1651,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
-                                width: 90,
+                                alignment: pw.Alignment.centerLeft,
+                                width: 80,
                                 child: pw.Text(
                                   '',
                                   style: pw.TextStyle(
@@ -1612,9 +1663,10 @@ class _PdfViewerState extends State<PdfViewer> {
                               ),
                               //mohit see the change here
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
+                                  //   'hello',
                                   (double.parse(taxes.entries
                                               .elementAt(index)
                                               .key
@@ -1624,7 +1676,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                                   .value)
                                               .toString()) /
                                           100.toInt())
-                                      .toString(),
+                                      .toStringAsFixed(2),
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.bold),
@@ -1640,7 +1692,7 @@ class _PdfViewerState extends State<PdfViewer> {
                 )),
                 pw.Wrap(
                     children: List<pw.Widget>.generate(
-                  l2.length,
+                  listOfOtherCharges.length,
                   (index) => pw.Container(
                     alignment: pw.Alignment.centerLeft,
                     child: pw.Wrap(
@@ -1656,7 +1708,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           child: pw.Row(
                             children: [
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1667,7 +1719,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   '',
@@ -1678,7 +1730,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   'Other Charges',
@@ -1689,7 +1741,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1700,7 +1752,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 20,
                                 child: pw.Text(
                                   '',
@@ -1711,10 +1763,10 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 80,
                                 child: pw.Text(
-                                  l2[index]['otherchargename'],
+                                  listOfOtherCharges[index]['otherchargename'],
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.bold),
@@ -1722,7 +1774,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -1733,7 +1785,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 90,
                                 child: pw.Text(
                                   '',
@@ -1744,10 +1796,11 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
-                                  l2[index]['otherchargevalue'].toString(),
+                                  listOfOtherCharges[index]['otherchargevalue']
+                                      .toString(),
                                   style: pw.TextStyle(
                                       fontSize: 13,
                                       fontWeight: pw.FontWeight.bold),
@@ -1762,378 +1815,382 @@ class _PdfViewerState extends State<PdfViewer> {
                   ),
                 )),
 
-                if (discount != 0.0)
-                  pw.Wrap(children: [
-                    pw.Container(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Wrap(
-                        children: [
-                          pw.Container(
-                            width: 600,
-                            height: 30,
-                            decoration: pw.BoxDecoration(
-                                color: PdfColors.white,
-                                border: pw.Border.all(
-                                    width: 0.000000001,
-                                    color: PdfColor.fromInt(0xff707070))),
-                            child: pw.Row(
-                              children: [
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                discount != 0.0
+                    ? pw.Wrap(children: [
+                        pw.Container(
+                          alignment: pw.Alignment.centerLeft,
+                          child: pw.Wrap(
+                            children: [
+                              pw.Container(
+                                width: 600,
+                                height: 30,
+                                decoration: pw.BoxDecoration(
+                                    color: PdfColors.white,
+                                    border: pw.Border.all(
+                                        width: 0.000000001,
+                                        color: PdfColor.fromInt(0xff707070))),
+                                child: pw.Row(
+                                  children: [
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    'Discount',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        'Discount',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 20,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 80,
-                                  child: pw.Text(
-                                    discount.toString() + '%',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 20,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 90,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 80,
+                                      child: pw.Text(
+                                        discount.toString() + '%',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 90,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    //mohit changed here
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 50,
+                                      child: pw.Text(
+                                        '-' +
+                                            (discount * totalamount / 100)
+                                                .toString(),
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                //mohit changed here
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 50,
-                                  child: pw.Text(
-                                    '-' +
-                                        (discount * totalamount / 100)
-                                            .toString(),
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.right,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ]),
-                if (tcs != 0.0)
-                  pw.Wrap(children: [
-                    pw.Container(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Wrap(
-                        children: [
-                          pw.Container(
-                            width: 600,
-                            height: 30,
-                            decoration: pw.BoxDecoration(
-                                color: PdfColors.white,
-                                border: pw.Border.all(
-                                    width: 0.000000001,
-                                    color: PdfColor.fromInt(0xff707070))),
-                            child: pw.Row(
-                              children: [
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    'TCS',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 20,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 80,
-                                  child: pw.Text(
-                                    tcs.toString() + '%',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 90,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                //mohit look hre
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 50,
-                                  child: pw.Text(
-                                    (tcs * totalamount / 100).toString(),
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.right,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ]),
+                        ),
+                      ])
+                    : pw.Container(),
 
-                if (roundoff != 0.0)
-                  pw.Wrap(children: [
-                    pw.Container(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Wrap(
-                        children: [
-                          pw.Container(
-                            width: 600,
-                            height: 30,
-                            decoration: pw.BoxDecoration(
-                                color: PdfColors.white,
-                                border: pw.Border.all(
-                                    width: 0.000000001,
-                                    color: PdfColor.fromInt(0xff707070))),
-                            child: pw.Row(
-                              children: [
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                tcs != 0.0
+                    ? pw.Wrap(children: [
+                        pw.Container(
+                          alignment: pw.Alignment.centerLeft,
+                          child: pw.Wrap(
+                            children: [
+                              pw.Container(
+                                width: 600,
+                                height: 30,
+                                decoration: pw.BoxDecoration(
+                                    color: PdfColors.white,
+                                    border: pw.Border.all(
+                                        width: 0.000000001,
+                                        color: PdfColor.fromInt(0xff707070))),
+                                child: pw.Row(
+                                  children: [
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 100,
-                                  child: pw.Text(
-                                    'Round Off',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        'TCS',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 20,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 80,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 30,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 20,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
-                                ),
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 90,
-                                  child: pw.Text(
-                                    '',
-                                    style: pw.TextStyle(
-                                      fontSize: 13,
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 80,
+                                      child: pw.Text(
+                                        tcs.toString() + '%',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
                                     ),
-                                    textAlign: pw.TextAlign.left,
-                                  ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 90,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    //mohit look hre
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 50,
+                                      child: pw.Text(
+                                        (tcs * totalamount / 100).toString(),
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                //mohit here
-                                pw.Container(
-                                  alignment: pw.Alignment.center,
-                                  width: 50,
-                                  child: pw.Text(
-                                    roundoff.toString(),
-                                    style: pw.TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: pw.FontWeight.bold),
-                                    textAlign: pw.TextAlign.right,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ]),
+                        ),
+                      ])
+                    : pw.Container(),
+
+                roundoff != 0.0
+                    ? pw.Wrap(children: [
+                        pw.Container(
+                          alignment: pw.Alignment.centerLeft,
+                          child: pw.Wrap(
+                            children: [
+                              pw.Container(
+                                width: 600,
+                                height: 30,
+                                decoration: pw.BoxDecoration(
+                                    color: PdfColors.white,
+                                    border: pw.Border.all(
+                                        width: 0.000000001,
+                                        color: PdfColor.fromInt(0xff707070))),
+                                child: pw.Row(
+                                  children: [
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 100,
+                                      child: pw.Text(
+                                        'Round Off',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 20,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 80,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 30,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 90,
+                                      child: pw.Text(
+                                        '',
+                                        style: pw.TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                        textAlign: pw.TextAlign.left,
+                                      ),
+                                    ),
+                                    //mohit here
+                                    pw.Container(
+                                      alignment: pw.Alignment.centerLeft,
+                                      width: 50,
+                                      child: pw.Text(
+                                        roundoff.toString(),
+                                        style: pw.TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: pw.FontWeight.bold),
+                                        textAlign: pw.TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ])
+                    : pw.Container(),
 
                 pw.Wrap(children: [
                   pw.Container(
@@ -2151,7 +2208,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           child: pw.Row(
                             children: [
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -2162,7 +2219,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   '',
@@ -2173,7 +2230,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 100,
                                 child: pw.Text(
                                   'Grand Total',
@@ -2185,7 +2242,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   '',
@@ -2196,7 +2253,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
                                   '',
@@ -2208,7 +2265,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -2219,7 +2276,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -2230,7 +2287,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
                                   '',
@@ -2240,11 +2297,8 @@ class _PdfViewerState extends State<PdfViewer> {
                                   textAlign: pw.TextAlign.left,
                                 ),
                               ),
-
-                              //mohit changed  here
-                              //
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   (finalamount).toStringAsFixed(2).toString(),
@@ -2311,7 +2365,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                     ]),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 10,
                                 child: pw.Text(
                                   '',
@@ -2322,7 +2376,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 10,
                                 child: pw.Text(
                                   '',
@@ -2334,7 +2388,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   '',
@@ -2345,7 +2399,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
                                   '',
@@ -2357,7 +2411,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -2368,7 +2422,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 30,
                                 child: pw.Text(
                                   '',
@@ -2379,7 +2433,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 70,
                                 child: pw.Text(
                                   '',
@@ -2390,7 +2444,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                 ),
                               ),
                               pw.Container(
-                                alignment: pw.Alignment.center,
+                                alignment: pw.Alignment.centerLeft,
                                 width: 50,
                                 child: pw.Text(
                                   '',

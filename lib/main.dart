@@ -7,6 +7,7 @@ import 'package:digitalbillbook/settings/acceptableusepolicy.dart';
 import 'package:digitalbillbook/settings/privacypolicy.dart';
 
 import 'package:digitalbillbook/settings/termsofservice.dart';
+import 'package:digitalbillbook/startingScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'support.dart';
@@ -31,13 +32,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (BuildContext context) =>
-      //  AddParty('GSC0FjjtHfUZX9ierrk8l3Kj3832'),      
-       // Home('uBk4wRDOdBRdwjyAfZzORFs7kcU2'),
-        // BusinessInfo('GSC0FjjtHfUZX9ierrk8l3Kj3832'), 
         FirebaseAuth.instance.currentUser != null
             ? Home(FirebaseAuth.instance.currentUser.uid)
-            : MyHomePage(),
+            :StartingScreeen(),
+          //   : MyHomePage(),
+         
         //'/signupotp': (BuildContext context) => Signupotp(),
+        './myhomePage':(BuildContext context) => MyHomePage(),
         './AboutUs': (BuildContext context) => AboutUs(),
         './termsofservice':(BuildContext context) => TermsOfService(),
         './privacypolicy': (BuildContext context) => PrivacyPolicy(),

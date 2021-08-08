@@ -1,11 +1,9 @@
 //import 'dart:html';
 
 import 'package:adobe_xd/pinned.dart';
-import 'package:digitalbillbook/support/commonQueries.dart';
-import 'package:digitalbillbook/support/invoiceSupport.dart';
-import 'package:digitalbillbook/support/partySupoort.dart';
-import 'package:digitalbillbook/support/productSupport.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Item {
   Item({
@@ -35,134 +33,136 @@ class _SupportState extends State<Support> {
     //assert(_debugLifecycleState == _StateLifecycle.created);
     setState(() {
       selectedListitem = _data;
-    //  widgetofquestions = _buildPanel(_data);
+      //  widgetofquestions = _buildPanel(_data);
     });
   }
 
-
+  String suppourCard =
+      "Have a question to ask ? mail it to support jhatpatbill@gmail.com  we will get back to you";
   Widget widgetofquestions;
-  List<Item> selectedListitem ; 
+  List<Item> selectedListitem;
   List<Item> _data = [
-    Item(
-        headerValue: 'How can I get sales summary ?',
+   Item(
+        headerValue: 'How to get a sales summary ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home then tap on the reports section tap on Sales Summary and select the fields you want in summary report. \n Home > Reports > Sales Summary'),
     Item(
-        headerValue: 'How to change invoice format ?',
+        headerValue: ' How to change invoice format ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            ' Go to Home tap on invoice style and select available invoice styles or go to settings tap on invoice setting then invoice style.\n  Home > Invoice Style or Home > Setting > Invoice Setting > Invoice Style'),
     Item(
-        headerValue: 'How can I edit invoice ?',
+        headerValue: 'How to generate eWaybill ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to the Home tap on eWaybill and enter the invoice number you want to generate eWaybill. \n Home > eWaybill > invoice number '),
     Item(
-        headerValue: 'How can I add stock alert ?',
+        headerValue: 'How to add stock alert notification ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on products, add new products or edit products in the form set low stock reminder and go to setting, select reminder setting and  turn on low stock reminder setting.'),
     Item(
-        headerValue: 'How can I get product list ?',
+        headerValue: 'How to edit Invoice ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on invoice go to all invoice and select invoice you want to edit open and check edit button in bottom.\n Home > Invoice > All Invoices (Select Invoice)>  check In bottom edit icon'),
+  
   ];
 
   List<Item> commonQueryData = [
     Item(
-        headerValue: 'How can I get sales summary ?',
+        headerValue: 'How to get a sales summary ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home then tap on the reports section tap on Sales Summary and select the fields you want in summary report. \n Home > Reports > Sales Summary'),
     Item(
-        headerValue: 'How to change invoice format ?',
+        headerValue: ' How to change invoice format ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            ' Go to Home tap on invoice style and select available invoice styles or go to settings tap on invoice setting then invoice style.\n  Home > Invoice Style or Home > Setting > Invoice Setting > Invoice Style'),
     Item(
-        headerValue: 'How can I edit invoice ?',
+        headerValue: 'How to generate eWaybill ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to the Home tap on eWaybill and enter the invoice number you want to generate eWaybill. \n Home > eWaybill > invoice number '),
     Item(
-        headerValue: 'How can I add stock alert ?',
+        headerValue: 'How to add stock alert notification ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on products, add new products or edit products in the form set low stock reminder and go to setting, select reminder setting and  turn on low stock reminder setting.'),
     Item(
-        headerValue: 'How can I get product list ?',
+        headerValue: 'How to edit Invoice ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on invoice go to all invoice and select invoice you want to edit open and check edit button in bottom.\n Home > Invoice > All Invoices (Select Invoice)>  check In bottom edit icon'),
   ];
 
   List<Item> partyQueryData = [
     Item(
-        headerValue: 'How can I get sales summary ?',
+        headerValue: 'How to create a new party ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home, tap on parties and go to add a new party, enter all valid details.\nHome > Parties > Add new Party '),
     Item(
-        headerValue: 'How to change invoice format ?',
+        headerValue: ' How to edit party details ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
-    Item(
-        headerValue: 'How can I edit invoice ?',
-        expandedValue:
-            'Go to profile tap on change password and change new password.'),
-    Item(
-        headerValue: 'How can I add stock alert ?',
-        expandedValue:
-            'Go to profile tap on change password and change new password.'),
-    Item(
-        headerValue: 'How can I get product list ?',
-        expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home, tap on the parties list and click on edit party.\nHome > Parties > Parties list > Edit > Edit Party Details'),
+    
   ];
 
   List<Item> productQueryData = [
     Item(
-        headerValue: 'How can I get sales summary ?',
+        headerValue: 'How to add stock alert notification ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on products, add new products or edit products in the form set low stock reminder and go to setting, select reminder setting and  turn on low stock reminder setting.'),
     Item(
-        headerValue: 'How to change invoice format ?',
+        headerValue: 'How to create new products ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            ' Go to home, tap on products and go to add new product, enter all valid details.\nHome > Products > Add new Product '),
     Item(
-        headerValue: 'How can I edit invoice ?',
+        headerValue: 'How to edit product details ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home, tap on the products list and click on edit product.\nHome > Products > Product List > Edit > Edit Product details'),
     Item(
-        headerValue: 'How can I add stock alert ?',
+        headerValue: ' How to check stock details ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
-    Item(
-        headerValue: 'How can I get product list ?',
-        expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to home, tap on the reports, select stock summary.\nHome > Reports > Stock Summary'),
+    // Item(
+    //     headerValue: 'How can I get product list ?',
+    //     expandedValue:
+    //         'Go to profile tap on change password and change new password.'),
   ];
 
   List<Item> invoiceQueryData = [
     Item(
-        headerValue: 'How can I get sales Invoice summary ?',
+        headerValue: ' How to change invoice format ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on invoice style and select available invoice styles or go to settings tap on invoice setting then invoice style.\nHome > Invoice Style or Home > Setting > Invoice Setting > Invoice Style'),
     Item(
-        headerValue: 'How to change invoice format ?',
+        headerValue: 'How to edit Invoice ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            ' Go to Home tap on invoice go to all invoice and select invoice you want to edit open and check edit button in bottom.\nHome > Invoice > All Invoices (Select Invoice)>  check In bottom edit icon'),
     Item(
-        headerValue: 'How can I edit invoice ?',
+        headerValue: 'How to generate a Bill to Ship to invoice ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on invoice go to generate invoice and select invoice type as Bill to Ship to.\nHome > Invoice > Generate Invoice >  Select Invoice Type as Bill to ship to'),
     Item(
-        headerValue: 'How can I add stock alert ?',
+        headerValue: 'Where do I check all my invoices  ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'Go to Home tap on invoice go to all invoices you will find all your invoices or if you want to download all invoice details go to reports select sale summary and export report in excel format.\nHome > Invoice > All Invoices \nFor Sales reports Home > Reports > Sales summary > Export'),
     Item(
-        headerValue: 'Hello it changed ?',
+        headerValue: ' What is FOC/Gift in the product section ?',
         expandedValue:
-            'Go to profile tap on change password and change new password.'),
+            'FOC or Gift products are products  that are free or partially free from the seller side and only sold for Sample or in Offer Discount.'),
   ];
 
+  Future<void> _makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  int _selected = 1;
   @override
   Widget build(BuildContext context) {
     String isSelected = "commonQuery";
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -182,7 +182,7 @@ class _SupportState extends State<Support> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 30,
+              height: 22,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -190,7 +190,7 @@ class _SupportState extends State<Support> {
                 'FAQ',
                 style: TextStyle(
                   fontFamily: 'Arial',
-                  fontSize: 10,
+                  fontSize: 16,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
@@ -219,79 +219,85 @@ class _SupportState extends State<Support> {
                             isSelected = "commonQuery";
                             widgetofquestions = _buildPanel(commonQueryData);
                             selectedListitem = commonQueryData;
+                            _selected = 1;
                           });
                         },
                         child: Text(
                           'Common Query',
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
-                            color: const Color(0xff2f2e41),
-                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: _selected == 1
+                                ? Color(0xff2F2E41)
+                                :  Colors.grey[800],
+                            fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.left,
                         )),
                     InkWell(
                         onTap: () {
                           print('ontap pressed');
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => partySupport()),
-                          // );
+
                           setState(() {
                             widgetofquestions = _buildPanel(partyQueryData);
                             selectedListitem = partyQueryData;
+                            _selected = 2;
                           });
                         },
-                        child:Ink(child: Text(
-                          'Party',
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 10,
-                            color: const Color(0xff2f2e41),
-                            fontWeight: FontWeight.w700,
+                        child: Ink(
+                          child: Text(
+                            'Party',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 14,
+                              color: _selected == 2
+                                  ? Color(0xff2F2E41)
+                                  : Colors.grey[800],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          textAlign: TextAlign.left,
-                        ) ,)),
+                        )),
                     InkWell(
                         onTap: () {
                           print('ontap pressed');
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => productSupport()),
-                          // );
 
                           setState(() {
                             widgetofquestions = _buildPanel(productQueryData);
                             selectedListitem = productQueryData;
+                            _selected = 3;
                           });
                         },
                         child: Text(
                           'Product',
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
-                            color: const Color(0xff2f2e41),
-                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: _selected == 3
+                                ? Color(0xff2F2E41)
+                                : Colors.grey[800],
+                            fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.left,
                         )),
                     InkWell(
-                      splashColor: Colors.green,
+                        splashColor: Colors.green,
                         onTap: () {
-                         
                           setState(() {
                             selectedListitem = invoiceQueryData;
+                            _selected = 4;
                           });
                         },
                         child: Text(
                           'Invoice',
                           style: TextStyle(
                             fontFamily: 'Arial',
-                            fontSize: 10,
-                            color: const Color(0xff2f2e41),
+                            fontSize: 14,
+                            color: _selected == 4
+                                ? Color(0xff2f2e41)
+                                : Colors.grey[800],
+
+                            //    const Color(0xff2f2e41),
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.left,
@@ -303,21 +309,133 @@ class _SupportState extends State<Support> {
             SizedBox(
               height: 30,
             ),
-            // Container(
-            //   child: _buildPanel(_data),
-            // ),
-            // switch (isSelected) {
-            //   case isSelected=="commonQuery":
-            //     _buildPanel(commonQueryData);
-            //     break;
-            //   default:
-            // _buildPanel(invoiceQueryData),
-            // },
-            selectedListitem==null?
-             _buildPanel(_data)
-            :
-             _buildPanel(selectedListitem),
-            
+            selectedListitem == null
+                ? _buildPanel(_data)
+                : _buildPanel(selectedListitem),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 30, 0, 10),
+              child: Text(
+                "24/7 Support",
+                style: TextStyle(fontSize: 22),
+              ),
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 4,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 3.89,
+                      width: MediaQuery.of(context).size.width / 2.3,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Icon(
+                            Icons.email_outlined,
+                            size: 34,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Send us an email",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(suppourCard,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 10)),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom:20.0),
+                            child: RaisedButton(
+                              elevation: 0,
+                              onPressed: () =>
+                                  {_makePhoneCall('mailto:jhatpatbill@gmail.com')},
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                  side: BorderSide(color: Colors.black)),
+                              child: Text("Contact  us"),
+                            ),
+                          ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 4,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 3.89,
+                      width: MediaQuery.of(context).size.width / 2.3,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Icon(
+                            Icons.call,
+                            size: 34,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Call Us",
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text("1800-210-210-996",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 10)),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text("Mon-Fri 9:00 AM to 8:PM",
+                              style: TextStyle(fontSize: 8)),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom:20.0),
+                            child: RaisedButton(
+                              elevation: 0,
+                              onPressed: () =>
+                                  {_makePhoneCall('tel:07742330144 ')},
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                  side: BorderSide(color: Colors.black)),
+                              child: Text("Call us"),
+                            ),
+                          ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -326,11 +444,30 @@ class _SupportState extends State<Support> {
 
   Widget _buildPanel(List<Item> listItem) {
     return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
+      expansionCallback: (int index, bool expanded) {
+        if (expanded == false) {
+          for (final subop in listItem) {
+            if (listItem[index] == subop) {
+              setState(() {
+                listItem[index].isExpanded = true;
+              });
+            }
+            setState(() {
+              subop.isExpanded = false;
+            });
+          }
+        }
+
         setState(() {
-          listItem[index].isExpanded = !isExpanded;
+          listItem[index].isExpanded = !expanded;
         });
       },
+
+      // (int index, bool isExpanded) {
+      //   setState(() {
+      //     listItem[index].isExpanded = !isExpanded;
+      //   });
+      // },
       children: listItem.map<ExpansionPanel>((Item item) {
         return ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {

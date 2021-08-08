@@ -86,7 +86,7 @@ class BusinessInfo extends StatefulWidget {
 class _BusinessInfoState extends State<BusinessInfo> {
   bool clicked = false;
   List<String> listOfStr = List();
-  bool isvalueIdentified ;
+  bool isvalueIdentified;
   bool isLoading = false;
   @override
   void initState() {
@@ -179,16 +179,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
     downloadURLExamplestamp();
   }
 
-  bool verifyGSTNumber(String gstno){
-   
+  bool verifyGSTNumber(String gstno) {
     gstNo = gstno;
-      GstVerification.verifyGST(gstNo, key_secret).then((result) {
+    GstVerification.verifyGST(gstNo, key_secret).then((result) {
       //package link here
       //https://pub.dev/packages/gst_verification/versions/1.0.1/example
       //json results
       // String Result = result.toString();
       // print(Result + "gstverification RESULT");
-     
 
       String gstn = result["taxpayerInfo"]["gstin"];
       String businessName = result["taxpayerInfo"]["tradeNam"];
@@ -201,13 +199,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
       String typeOfIndustry = result["taxpayerInfo"]["pradr"]["ntr"];
       print(typeOfIndustry + "mohit");
       var address = bnm + " ," + streat + " ," + loc + " ," + pincode;
-     
+
       print("mohit address ==>" + address.toString());
       valueOp = 0;
       setState(() {
         businessNameController.text = businessName;
         gstNumberController.text = gstn;
         businesAddressController.text = address;
+        businesspincode = pincode;
         businessTypeController.text = typeOfBusiness;
         industryTypeController.text = typeOfIndustry;
         isvalueIdentified = true;
@@ -220,7 +219,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
         isvalueIdentified = false;
       });
     });
-    
+
     return isvalueIdentified;
   }
 
@@ -279,8 +278,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
   final ifscCodeController = TextEditingController();
   final accountNumberController = TextEditingController();
   final branchNameController = TextEditingController();
+  String businesspincode = '';
   final businessInfo = new BusinessProfile(
-      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
   final db = FirebaseFirestore.instance;
 
   Future<void> addInfo() {
@@ -296,6 +296,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
     businessInfo.ifscCode = ifscCodeController.text;
     businessInfo.accountNumber = accountNumberController.text;
     businessInfo.branchName = branchNameController.text;
+    businessInfo.pincode = businesspincode;
     // Call the user's CollectionReference to add a new user
     return db
         .collection("userData")
@@ -417,6 +418,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
     return Scaffold(
         key: _keyForm1,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           centerTitle: true,
           backgroundColor: Color.fromRGBO(47, 46, 65, 1),
           title: Text(
@@ -454,9 +459,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
                         Row(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(30, 8, 0, 8),
+                              padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                               child: Container(
-                                width: w * 0.6,
+                                width: w * 0.67,
+                                height: 41,
                                 decoration: BoxDecoration(color: Colors.white),
                                 child: _edit
                                     ? TextFormField(
@@ -481,7 +487,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                             _edit
                                 ? Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 8, 10, 0),
+                                        const EdgeInsets.fromLTRB(10, 8, 10, 0),
                                     child: Container(
                                       height: 100,
                                       width: w * 0.25,
@@ -553,8 +559,11 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14, right: 30),
+                                      top: 14.0, bottom: 14, left: 30),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'signature',
@@ -570,7 +579,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                         'Image Only in PNG',
                                         style: TextStyle(
                                           fontFamily: 'Arial',
-                                          fontSize: 4,
+                                          fontSize: 5,
                                           color: const Color(0x992f2e41),
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -640,10 +649,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                 width: w * 0.4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                    top: 14.0,
-                                    bottom: 14,
-                                  ),
+                                      top: 14.0, bottom: 14, left: 30),
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Business Stamp',
@@ -659,7 +668,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                         'Image Only in PNG',
                                         style: TextStyle(
                                           fontFamily: 'Arial',
-                                          fontSize: 4,
+                                          fontSize: 5,
                                           color: const Color(0x992f2e41),
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -858,6 +867,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                         controller: gstNumberController,
                                         textCapitalization:
                                             TextCapitalization.characters,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'[A-Z,0-9]')),
+                                        ],
                                         onChanged: (text) {
                                           setState(() {
                                             gstNo = text;
@@ -876,10 +889,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                           if (value.isEmpty ||
                                               value.length != 15) {
                                             return null;
-                                          } else{
-                                           
-                                             bool v; 
-                                             v=  verifyGSTNumber(
+                                          } else {
+                                            bool v;
+                                            v = verifyGSTNumber(
                                                 gstNumberController.text);
                                             print(v.toString() +
                                                 "mohit bool value");
@@ -962,9 +974,11 @@ class _BusinessInfoState extends State<BusinessInfo> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Container(
+                              decoration: BoxDecoration(
+                                  color: const Color(0xfff3F3D56),
+                                  borderRadius: BorderRadius.circular(10)),
                               alignment: Alignment.center,
                               width: 200,
-                              color: const Color(0xfff3F3D56),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
@@ -1546,7 +1560,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                         child: Container(
                                           alignment: Alignment.center,
                                           width: 200,
-                                          color: const Color(0xfff3F3D56),
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xfff3F3D56),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(

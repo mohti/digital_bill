@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
 import 'checkout.dart';
 
@@ -16,7 +17,37 @@ class CurrentPlan extends StatefulWidget {
 }
 
 class _CurrentPlanState extends State<CurrentPlan> {
+  int invoice;
+  DateTime duration;
+  final planName = TextEditingController();
+  int ewaybillno;
   int index = 0;
+
+  Future<Null> _getBusinessDetails6(String uid)  {
+     FirebaseFirestore.instance
+        .collection("userData")
+        .doc(widget.uid)
+        .collection("planDetails")
+        .doc('plan')
+        .get()
+        .then((valuee) {
+      setState(() {
+        final Timestamp timestamp = (valuee.data()['duration']) as Timestamp;
+        duration = timestamp.toDate();
+        planName.text = valuee.data()['planName'];
+        ewaybillno = valuee.data()['remainingewaybill'];
+        invoice = valuee.data()['remaininginvoices'];
+        // allDataloaded = true;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    _getBusinessDetails6(widget.uid);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //  final double w = MediaQuery.of(context).size.width;
@@ -53,8 +84,13 @@ class _CurrentPlanState extends State<CurrentPlan> {
         });
       }
     });
+
+     final double w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -76,7 +112,101 @@ class _CurrentPlanState extends State<CurrentPlan> {
             SizedBox(
               height: 50,
             ),
-            if (index == 0) Text('No Plan'),
+            if (index == 0)
+            
+              Container(
+                 alignment: Alignment.center,
+                        width: w * 0.93,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xfff1D55C5).withOpacity(1),
+                              Color(0xfff2F508C).withOpacity(1)
+                            ],
+                          ),
+                        ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: w * 0.2,
+                      child: SvgPicture.string(
+                        '<svg viewBox="44.5 454.6 43.6 54.9" ><path transform="translate(40.0, 450.11)" d="M 43.52875518798828 4.5 L 9.038227081298828 4.5 C 6.531877517700195 4.5 4.5 7.061384201049805 4.5 10.22120666503906 L 4.5 53.70237731933594 C 4.5 56.86220169067383 6.531877517700195 59.423583984375 9.038227081298828 59.423583984375 L 43.52875518798828 59.423583984375 C 46.03522109985352 59.423583984375 48.06698226928711 56.86220169067383 48.06698226928711 53.70237731933594 L 48.06698226928711 10.22120666503906 C 48.06698226928711 7.061384201049805 46.03521728515625 4.5 43.52875518798828 4.5 Z M 31.7293643951416 47.98117065429688 L 13.57645511627197 47.98117065429688 L 13.57645511627197 41.11572265625 L 31.7293643951416 41.11572265625 L 31.7293643951416 47.98117065429688 Z M 38.99052810668945 35.39451599121094 L 13.57645511627197 35.39451599121094 L 13.57645511627197 28.52906799316406 L 38.99052810668945 28.52906799316406 L 38.99052810668945 35.39451599121094 Z M 38.99052810668945 22.807861328125 L 13.57645511627197 22.807861328125 L 13.57645511627197 15.94241333007812 L 38.99052810668945 15.94241333007812 L 38.99052810668945 22.807861328125 Z" fill="none" stroke="#f1f3f6" stroke-width="2" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                        allowDrawingOutsideViewBox: true,
+                      ),
+                    ),
+                    Container(
+                      width: w * 0.7,
+                      height: 160,
+                      child: Stack(children: [
+                        SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Your Plan - ' + planName.text,
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 20,
+                                  color: const Color(0xfff2f2f2),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                '     Exp. Date:               ' +
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(duration)
+                                        .toString(),
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 10,
+                                  color: const Color(0xe5ffffff),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                '     Remaining Plan :    ' +
+                                    invoice.toString() +
+                                    ' Invoice, ' +
+                                    ewaybillno.toString() +
+                                    'e-Way Bill',
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 10,
+                                  color: const Color(0xe5ffffff),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            
+                            ],
+                          ),
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Text('No Plan'),
+
             if (index == 1)
               Align(
                 alignment: Alignment.center,

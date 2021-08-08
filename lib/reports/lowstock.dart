@@ -40,7 +40,7 @@ class _LowStockState extends State<LowStock> {
     var excel = Excel.createExcel();
     // or
     //var excel = Excel.decodeBytes(bytes);
-    var sheet = excel['mySheet'];
+    var sheet = excel['lowStocks'];
     sheet.appendRow([
       'From ' +
           DateFormat('dd/MM/yyyy').format(initialdate).toString() +
@@ -52,15 +52,15 @@ class _LowStockState extends State<LowStock> {
         .collection('userData')
         .doc(widget.uid)
         .collection('Product')
+         .where('date', isGreaterThanOrEqualTo: initialdate, isLessThanOrEqualTo: finaldate)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         final Timestamp timestamp = (doc['date']) as Timestamp;
         final DateTime d = timestamp.toDate();
-        if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-            d.day == initialdate.day ||
-            d.day == finaldate.day &&
-                doc['quantity'] <= doc['lowstockreminderat'])
+        if (
+                 (int.parse(doc['quantity'].toString()) < 
+                 int.parse(doc['lowstockreminderat'].toString())))
           sheet.appendRow([
             doc['productCode'],
             doc['productName'],
@@ -80,7 +80,7 @@ class _LowStockState extends State<LowStock> {
     ]);
 
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
+    String appDocPath = appDocDir.path+sheet.toString();
     print(appDocPath);
 
     final isPermissionStatusGranted = await _requestPermissions();
@@ -197,6 +197,8 @@ class _LowStockState extends State<LowStock> {
         ),
       ),
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -246,7 +248,7 @@ class _LowStockState extends State<LowStock> {
                   child: Container(
                     alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width * 0.4,
-                    height: 50,
+                    height: 40,
                     child: InkWell(
                       onTap: () => selectDate1(context),
                       child: Text("From " +
@@ -259,11 +261,11 @@ class _LowStockState extends State<LowStock> {
                   child: Container(
                     alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width * 0.4,
-                    height: 50,
+                    height: 40,
                     child: InkWell(
                       onTap: () => selectDate2(context),
                       child: Text(
-                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                          "To " + DateFormat('dd-MM-yyyy').format(finaldate)),
                     ),
                   ),
                 ),
@@ -276,7 +278,7 @@ class _LowStockState extends State<LowStock> {
               height: 20,
             ),
             Container(
-              height: 50,
+              height: 40,
             
               width: MediaQuery.of(context).size.width * 0.42,
               child: RaisedButton(
@@ -323,83 +325,87 @@ class _LowStockState extends State<LowStock> {
             ),
             widgetTable == null
                 ? Container(
-                  height: 30,
-                 decoration: BoxDecoration(color: const Color(0xff2F2E41)),
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Product Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Product Name ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'HSN Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Quantity ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Status ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ],
+            width: w,
+            height: 16,
+            decoration: BoxDecoration(color: const Color(0xff2F2E41)),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    width: w * 0.2,
+                    child: Text(
+                      'Product Code ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 6,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                  )
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.2,
+                  child: Text(
+                    'Product Name ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.2,
+                  child: Text(
+                    'HSN Code ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.2,
+                  child: Text(
+                    'Quantity ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Status ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ],
+            ),
+          )
                 : widgetTable
           ],
         ),

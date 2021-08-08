@@ -13,19 +13,40 @@ class TestViewEwayBill extends StatefulWidget {
 
 class _TestViewEwayBillState extends State<TestViewEwayBill> {
   PDFDocument document;
-
+  bool loader = false;
   Future<Null> loaddoc() async {
-    document = await PDFDocument.fromURL(widget.invoiceno);
+    print(widget.invoiceno + '  ==================================mohit');
+    setState(() {
+      loader = true;
+    });
+    // setState(()async {
+    document = await PDFDocument.fromURL('http://' + widget.invoiceno);
+    setState(() {
+      loader = false;
+      //  });
+    });
+  }
+
+  void initState() {
+    loaddoc();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    loaddoc();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Example'),
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text('Eway-bill preview'),
       ),
-      body: Center(child: PDFViewer(document: document)),
+      body: loader == true
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(child: PDFViewer(document: document)),
     );
   }
 }

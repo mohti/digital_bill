@@ -105,6 +105,7 @@ class _StockSummaryState extends State<StockSummary> {
           .collection('userData')
           .doc(widget.uid)
           .collection('Product')
+          .where('date', isGreaterThanOrEqualTo: initialdate, isLessThanOrEqualTo: finaldate)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
@@ -113,10 +114,7 @@ class _StockSummaryState extends State<StockSummary> {
           print(textfieldValues);
           print(askValues);
           if (textfieldValues == null || textfieldValues == '') {
-            if ((d.isBefore(finaldate) && d.isAfter(initialdate))
-                //&& (textfieldValues == doc[askValues]) ||
-                ||
-                (d.day == initialdate.day || d.day == finaldate.day))
+              
               sheet.appendRow([
                 doc['productCode'],
                 doc['productName'],
@@ -129,9 +127,8 @@ class _StockSummaryState extends State<StockSummary> {
                 doc['totalAmount']
               ]);
           } else {
-            if ((d.isBefore(finaldate) && d.isAfter(initialdate)) &&
-                    (textfieldValues == doc[askValues]) ||
-                (d.day == initialdate.day || d.day == finaldate.day))
+            if 
+            (textfieldValues == doc[askValues])
               sheet.appendRow([
                 doc['productCode'],
                 doc['productName'],
@@ -170,7 +167,7 @@ class _StockSummaryState extends State<StockSummary> {
       ]);
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
+      String appDocPath = appDocDir.path+sheet.toString();
       print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
@@ -260,6 +257,8 @@ class _StockSummaryState extends State<StockSummary> {
         ),
       ),
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -276,7 +275,7 @@ class _StockSummaryState extends State<StockSummary> {
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,   
           children: [
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -314,8 +313,8 @@ class _StockSummaryState extends State<StockSummary> {
                     child: Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
-                      child: Text("From " +
+                      height: 40,
+                      child: Text("From   " +
                           DateFormat('dd-MM-yyyy').format(initialdate)),
                     ),
                   ),
@@ -325,11 +324,14 @@ class _StockSummaryState extends State<StockSummary> {
                   child: InkWell(
                     onTap: () => selectDate2(context),
                     child: Container(
-                      alignment: Alignment.center,
+                      alignment: Alignment.centerLeft,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
-                      child: Text(
-                          "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                            "To     " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                      ),
                     ),
                   ),
                 ),
@@ -363,16 +365,19 @@ class _StockSummaryState extends State<StockSummary> {
                     //todo
                     //onTap: () => selectDate1(context),
                     child: Container(
-                      alignment: Alignment.center,
+                      alignment: Alignment.centerLeft,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
-                      child: TextField(
-                        onChanged: (text) {
-                          setState(() {
-                            textfieldValues = text;
-                          });
-                          print('First text field: $text');
-                        },
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left:4.0),
+                        child: TextField(
+                          onChanged: (text) {
+                            setState(() {
+                              textfieldValues = text;
+                            });
+                            print('First text field: $text');
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -381,16 +386,20 @@ class _StockSummaryState extends State<StockSummary> {
                   elevation: 4,
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.35,
-                    height: 50,
+                    height: 40,
                     child: DropdownButtonFormField<String>(
+                      itemHeight: 50,
                       value: selectbyfilter,
-                      icon: Icon(Icons.arrow_downward),
+                      icon: Padding(
+                        padding: const EdgeInsets.only(right:6.0),
+                        child: Icon(Icons.keyboard_arrow_down_sharp),
+                      ),
                       decoration: CoustumInputDecorationWidget('select by')
                           .decoration(),
                       items: listofSelect.map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,
-                          child: new Text(value),
+                          child:new Text(value,style: TextStyle(fontSize: 12),),
                         );
                       }).toList(),
                       onChanged: (String newValue) {
@@ -433,13 +442,13 @@ class _StockSummaryState extends State<StockSummary> {
               height: 20,
             ),
             Container(
-              height: 50,
+              height: 40,
               decoration: BoxDecoration(
                 //color:
                 // const Color(0xff2f2e41),
                 borderRadius: BorderRadius.circular(10),
               ),
-              width: MediaQuery.of(context).size.width * 0.42,
+             // width: MediaQuery.of(context).size.width * 0.42,
               child: RaisedButton(
                   color: const Color(0xff2f2e41),
                   onPressed: () => {
@@ -456,7 +465,7 @@ class _StockSummaryState extends State<StockSummary> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Text(
-                    'Get Stock Summury',
+                    'Get Stock Summary',
                     style: TextStyle(
                       fontFamily: 'Arial',
                       fontSize: 14,
@@ -491,137 +500,142 @@ class _StockSummaryState extends State<StockSummary> {
             ),
             widgetTable == null
                 ? Container(
+                   height: 16,
                     decoration: BoxDecoration(color: const Color(0xff2F2E41)),
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Product Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.2,
-                          child: Text(
-                            'Product Name ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Date',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'HSN Code ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Quantity',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Applied Tax',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Purchase Rate ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Selling Rate ',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: w * 0.1,
-                          child: Text(
-                            'Total Amount',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 10,
-                              color: const Color(0xfff1f3f6),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ],
-                    ))
+                    child:Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 2),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    width: w * 0.13,
+                    child: Text(
+                      'Product Code ',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 6,
+                        color: const Color(0xfff1f3f6),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.13,
+                  child: Text(
+                    'Product Name ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Date',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'HSN Code ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Quantity',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Applied Tax',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Purchase Rate ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Selling Rate ',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: w * 0.1,
+                  child: Text(
+                    'Total Amount',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 6,
+                      color: const Color(0xfff1f3f6),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ],
+            ),)
+          
                 : widgetTable,
           ],
         ),

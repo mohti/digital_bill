@@ -5,6 +5,7 @@ import 'package:digitalbillbook/customwidgets/EachrowTextfield.dart';
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:digitalbillbook/pdf/pdfviewer2.dart';
 import 'package:digitalbillbook/purchase/purchasepdf.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -232,6 +233,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     '',
     '',
     '',
+    ''
   );
 
   final newInvoice = new InvoiceModel(
@@ -341,9 +343,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     super.initState();
     // ignore: todo
     // TODO: implement initState
-    // downloadURLExample();
-    // downloadURLExamplesign();
-    //downloadURLExamplestamp();
+    downloadURLExample();
+    downloadURLExamplesign();
+    downloadURLExamplestamp();
   }
 
   @override
@@ -353,11 +355,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     List<InvoiceProduct> listOfProducts = [];
     void addproducts(int j) {
       var newProduct =
-          new InvoiceProduct('', '', '', '', '', '', '', '', '', '');
+          new InvoiceProduct('', '', '', '', '', '', '', '', '', '','');
       for (var i = 0; i < j; i++) {
         setState(() {
           newProduct =
-              new InvoiceProduct('', '', '', '', '', '', '', '', '', '');
+              new InvoiceProduct('', '', '', '', '', '', '', '', '', '','');
           print(t[i].productCode.text);
           newProduct.productCode = t[i].productCode.text;
           newProduct.productName = t[i].productName.text;
@@ -369,6 +371,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
           newProduct.unit = t[i].unit.text;
           newProduct.totalamount = t[i].totalamount.text;
           newProduct.focornot = t[i].focornot;
+          newProduct.baseTotalAmount = (double.tryParse( t[i].sellingrate.text)*double.tryParse( t[i].quantity.text)).toString();
           listOfProducts.insert(i, newProduct);
         });
 
@@ -382,22 +385,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     List<InvoiceProduct> l2 = List<InvoiceProduct>();
 
     Future<void> generateInvoice() {
-      /* t.forEach((element) {
-        newProduct.productCode = element.productCode.text;
-        newProduct.productName = element.productName.text;
-        newProduct.hsncode = element.hsncode.text;
-        newProduct.quantity = element.quantity.text;
-        newProduct.sellingrate = element.sellingrate.text;
-        newProduct.taxamount = element.taxamount.text;
-        newProduct.taxrate = element.taxrate.text;
-        newProduct.unit = element.unit.text;
-        newProduct.totalamount = element.totalamount.text;
-        l2.add(newProduct);
-      });
-      l2.forEach((element) {
-        listOfProducts.add(element);
-        print(element.productCode);
-      });*/
+   
       addproducts(noofproducts);
       newInvoice.invoiceno = invoiceno.text;
       newInvoice.bname = bname.text;
@@ -506,6 +494,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
     final vehiclemodes = ['Road', 'Train', 'Ship', 'Air'];
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -525,6 +515,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              SizedBox(
+                height: 10,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -534,10 +527,32 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                          controller: invoiceno,
+                          decoration:
+                              CoustumInputDecorationWidget('Receipt No.')
+                                  .decoration(),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Enter invoiceno';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
                         height: 50,
                         child: DropdownButtonFormField<String>(
                           value: 'IGST',
-                          icon: Icon(Icons.arrow_downward),
+                          icon: Icon(Icons.keyboard_arrow_down_sharp),
                           decoration: CoustumInputDecorationWidget("Tax Type")
                               .decoration(),
                           //  InputDecoration(
@@ -567,35 +582,35 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                 ],
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                          controller: invoiceno,
-                          decoration:
-                              CoustumInputDecorationWidget('Receipt No.')
-                                  .decoration(),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Enter invoiceno';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: <Widget>[
+              //     Padding(
+              //       padding: const EdgeInsets.all(5.0),
+              //       child: Card(
+              //         elevation: 4,
+              //         child: Container(
+              //           width: MediaQuery.of(context).size.width * 0.45,
+              //           child: TextFormField(
+              //             controller: invoiceno,
+              //             decoration:
+              //                 CoustumInputDecorationWidget('Receipt No.')
+              //                     .decoration(),
+              //             // The validator receives the text that the user has entered.
+              //             validator: (value) {
+              //               if (value.isEmpty) {
+              //                 return 'Enter invoiceno';
+              //               }
+              //               return null;
+              //             },
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -613,26 +628,117 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  Eachrow(
-                      sname,
-                      "Name/Company Name",
-                      TextInputType.text,
-                      (value) {
-                        if (value.isEmpty) {
-                          return 'enter please';
-                        }
-                        return null;
-                      },
-                      sphone,
-                      'Phone Number',
-                      TextInputType.number,
-                      (value) {
-                        if (value.isEmpty || value.length != 10) {
-                          return 'Please Enter ';
-                        }
-                        return null;
-                      },
-                      10),
+                  // Eachrow(
+                  //     sname,
+                  //     "Name/Company Name",
+                  //     TextInputType.text,
+                  //     (value) {
+                  //       if (value.isEmpty) {
+                  //         return 'enter please';
+                  //       }
+                  //       return null;
+                  //     },
+                  //     sphone,
+                  //     'Phone Number',
+                  //     TextInputType.number,
+                  //     (value) {
+                  //       if (value.isEmpty || value.length != 10) {
+                  //         return 'Please Enter ';
+                  //       }
+                  //       return null;
+                  //     },
+                  //    10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Card(
+                          elevation: 4,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: TextFormField(
+                                controller: sname,
+                                decoration: CoustumInputDecorationWidget(
+                                        "Name/Company Name")
+                                    .decoration(),
+                                onChanged: (value) {
+                                  // setState(() {
+                                  //   sphone.text = '';
+                                  // });
+                                  FirebaseFirestore.instance
+                                      .collection("userData")
+                                      .doc(widget.uid)
+                                      .collection("Party")
+                                      .doc(value)
+                                      .get()
+                                      .then((valuee) {
+                                    setState(() {
+                                      sphone.text =
+                                          valuee.data()['phone'] == null
+                                              ? ' '
+                                              : valuee.data()['phone'];
+                                      sname.text =
+                                          valuee.data()['partyName'] == null
+                                              ? ' '
+                                              : valuee.data()['partyName'];
+                                      sgstn.text = valuee.data()['gstn'] == null
+                                          ? ''
+                                          : valuee.data()['gstn'];
+                                      scity.text = valuee.data()['city'] == null
+                                          ? ' '
+                                          : valuee.data()['city'];
+                                      sstate.text =
+                                          valuee.data()['state'] == null
+                                              ? ' '
+                                              : valuee.data()['state'];
+                                      scountry.text =
+                                          valuee.data()['country'] == null
+                                              ? ' '
+                                              : valuee.data()['country'];
+                                      spin.text =
+                                          valuee.data()['pincode'] == null
+                                              ? ' '
+                                              : valuee.data()['pincode'];
+                                    });
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Enter Party Name';
+                                  }
+                                  return null;
+                                }),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Card(
+                          elevation: 4,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: TextFormField(
+                                controller: sphone,
+                                decoration:
+                                    CoustumInputDecorationWidget('Phone Number')
+                                        .decoration(),
+                                inputFormatters: [
+                                  new LengthLimitingTextInputFormatter(10)
+                                ],
+                                keyboardType: TextInputType.phone,
+                                validator: (value) {
+                                  if (value.isEmpty || value.length != 10) {
+                                    return 'Please Enter ';
+                                  }
+                                  return null;
+                                }),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
                   // Eachrow(sname, "Name/Company Name", (value) {}, sphone,
                   //     'Phone Number', null),
                   // SizedBox(
@@ -645,12 +751,18 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         elevation: 4,
                         child: InkWell(
                           onTap: () => _selectDate(context, date),
-                          child: Container(
-                            height: 50,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            child: Text(
-                                "Date " + DateFormat().add_yMd().format(date)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left:0.0),
+                            child: Container(
+                              height: 50,
+                              alignment: Alignment.centerLeft,
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    "Date " + DateFormat().add_yMd().format(date)),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -659,17 +771,17 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.45,
                           child: TextFormField(
-                            textCapitalization: TextCapitalization.characters,
                             controller: sgstn,
                             decoration: CoustumInputDecorationWidget('GSTN')
                                 .decoration(),
-                            // The validator receives the text that the user has entered.
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(15),
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[A-Z,0-9]')),
                             ],
+                            textCapitalization: TextCapitalization.characters,
                             validator: (value) {
-                              if (value.isEmpty || value.length != 15) {
-                                return 'enter GSTN';
+                              if (value.isEmpty) {
+                                return null;
                               }
                               return null;
                             },
@@ -731,6 +843,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
                                   onChanged: (value) {
+                                    print('mohit on changed worked');
                                     changeQuantity1(index, value);
                                     FirebaseFirestore.instance
                                         .collection("userData")
@@ -741,13 +854,22 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         .then((valuee) {
                                       setState(() {
                                         t[index].productName.text =
-                                            valuee.data()['productName'];
+                                            valuee.data()['productName'] == null
+                                                ? ''
+                                                : valuee.data()['productName'];
                                         t[index].hsncode.text =
-                                            valuee.data()['hsncode'];
+                                            valuee.data()['hsncode'] == null
+                                                ? ''
+                                                : valuee.data()['hsncode'];
                                         t[index].sellingrate.text =
-                                            valuee.data()['sellingprice'];
+                                            valuee.data()['sellingprice'] ==
+                                                    null
+                                                ? ''
+                                                : valuee.data()['sellingprice'];
                                         t[index].taxrate.text =
-                                            valuee.data()['igst'];
+                                            valuee.data()['igst'] == null
+                                                ? ''
+                                                : valuee.data()['igst'];
                                       });
                                     });
                                   },
@@ -755,10 +877,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   decoration: CoustumInputDecorationWidget(
                                           'Product Code')
                                       .decoration(),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Enter product code';
                                     }
                                     return null;
                                   },
@@ -778,11 +899,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   decoration: CoustumInputDecorationWidget(
                                           'Product Name')
                                       .decoration(),
-                                  // decoration: InputDecoration(
-                                  //   labelText: 'Product Name',
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
@@ -810,16 +926,21 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   decoration:
                                       CoustumInputDecorationWidget("HSN Code")
                                           .decoration(),
-                                  //  InputDecoration(
-                                  //   labelText: ,
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
+                                    } else {
+                                      return null;
                                     }
-                                    return null;
+                                    // if(value.length==3||value.length==4||value.length==6){
+                                    //   return null;
+                                    //      }
+                                    //   else
+                                    //   {
+                                    //     return 'enter correct value';
+                                    //   }
+
+                                    ;
                                   },
                                 ),
                               ),
@@ -861,10 +982,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                           "mohit tax amount");
                                     });
                                   },
-                                  // InputDecoration(
-                                  //   labelText: 'tax Rate',
-                                  //   fillColor: Colors.white,
-                                  // ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -896,11 +1013,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   decoration:
                                       CoustumInputDecorationWidget("Quantity")
                                           .decoration(),
-                                  // InputDecoration(
-                                  //   labelText: "Quantity",
-                                  //   fillColor: Colors.white,
-                                  // ),
-
+                            
                                   onChanged: (value) {
                                     print(value);
 
@@ -932,7 +1045,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return null;
+                                      return 'Enter value';
                                     }
                                     return null;
                                   },
@@ -954,7 +1067,9 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                     fontSize: 12,
                                   ),
                                   value: 'OTH-OTHERS',
-                                  icon: Icon(Icons.arrow_downward),
+                                  icon: Padding(
+                                    padding:const EdgeInsets.only(right:5.0),
+                                    child:Icon(Icons.keyboard_arrow_down_sharp)),
                                   decoration:
                                       CoustumInputDecorationWidget("Unit")
                                           .decoration(),
@@ -964,7 +1079,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   items: units.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
-                                      child: new Text(value),
+                                      child: new Text(value,style: TextStyle(fontSize: 10),),
                                     );
                                   }).toList(),
                                   onChanged: (String newValue) {
@@ -1077,14 +1192,12 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             child: Card(
                               elevation: 4,
                               child: Container(
-                                //height: 50,
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 child: TextFormField(
                                     controller: t[index].taxamount,
                                     decoration: CoustumInputDecorationWidget(
                                       "TAX Amount",
                                     ).decoration(),
-                                    // The validator receives the text that the user has entered.
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return null;
@@ -1097,16 +1210,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                         ],
                       ),
 
-                      // Eachrow(
-                      //     t[index].sellingrate,
-                      //     'Selling Rate',
-                      //     TextInputType.text,
-                      //     null,
-                      //     t[index].taxamount,
-                      //     "TAX Amount",
-                      //     TextInputType.text,
-                      //     null,
-                      //     10),
                       SizedBox(
                         height: 10,
                       ),
@@ -1125,11 +1228,6 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                   decoration: CoustumInputDecorationWidget(
                                           "Total Amount")
                                       .decoration(),
-                                  //  InputDecoration(
-                                  //   labelText: "Total Amount",
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
@@ -1147,12 +1245,12 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               height: 50,
                               child: DropdownButtonFormField<String>(
                                 value: 'None',
-                                icon: Icon(Icons.arrow_downward),
+                                icon: Padding(
+                                  padding: const EdgeInsets.only(right:5.0),
+                                  child: Icon(Icons.keyboard_arrow_down_sharp),
+                                ),
                                 decoration: CoustumInputDecorationWidget("Foc")
                                     .decoration(),
-                                //  InputDecoration(
-                                //   labelText: "foc",
-                                // ),
                                 items: foc.map((String value) {
                                   return new DropdownMenuItem<String>(
                                     value: value,
@@ -1321,8 +1419,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                       .size
                                                       .width *
                                                   0.4,
-                                              child: TextFormField(
-                                                  controller: chargename),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left:4.0),
+                                                child: TextFormField(
+                                                    controller: chargename),
+                                              ),
                                             )
                                           ],
                                         ),
@@ -1343,8 +1444,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                                       .size
                                                       .width *
                                                   0.45,
-                                              child: TextFormField(
-                                                  controller: chargevalue),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left:4.0),
+                                                child: TextFormField(
+                                                    controller: chargevalue),
+                                              ),
                                             )
                                           ],
                                         )
@@ -1358,6 +1462,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         othercharges.add(OtherCharges(
                                             chargename.text.toString(),
                                             double.parse(chargevalue.text)));
+                                         Navigator.pop(context);
                                         chargevalue.text = '';
                                         chargename.text = '';
                                       },
@@ -1471,16 +1576,20 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Container(
+                                            height: 50,
                                             color: Colors.white,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 0.4,
-                                            child: TextFormField(
-                                                controller: discountrate),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                  controller: discountrate),
+                                            ),
                                           ),
                                           Container(
-                                            color: Colors.white,
+                                            height: 50,                                           color: Colors.white,
                                             child: Text('%'),
                                           ),
                                         ],
@@ -1610,15 +1719,20 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Container(
+                                            height: 50,
                                             color: Colors.white,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 0.4,
                                             child:
-                                                TextFormField(controller: tcs),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: TextFormField(controller: tcs),
+                                                ),
                                           ),
                                           Container(
+                                            height: 50,
                                             color: Colors.white,
                                             child: Text('%'),
                                           ),
@@ -1749,13 +1863,16 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Container(
-                                            color: Colors.white,
+                                            height: 50,                                           color: Colors.white,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 0.4,
-                                            child: TextFormField(
-                                                controller: roundoffamount),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                  controller: roundoffamount),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1835,11 +1952,14 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                   ),
                   Column(
                     children: [
-                      SizedBox(
+                        othercharges.length > 0 ?
+                       SizedBox(
+                         height: 50,
                         width: MediaQuery.of(context).size.width * 0.4,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          //physics: NeverScrollableScrollPhysics(),
+                          physics:ScrollPhysics(),
                           itemCount: othercharges.length,
                           itemBuilder: (context, index) {
                             return Card(
@@ -1849,7 +1969,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                 ),
                                 width: MediaQuery.of(context).size.width * 0.4,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(2.0),
                                   child: Text(
                                     othercharges[index].otherchargename +
                                         "                 " +
@@ -1867,6 +1987,25 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                               ),
                             );
                           },
+                        ),
+                      ):Card(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                          ),
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Other Charges' + "           " ,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 12,
+                                color: const Color(0xcc2f2e41),
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
                         ),
                       ),
                       Card(
@@ -2040,7 +2179,10 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                             fontSize: 13,
                           ),
                           value: 'Road',
-                          icon: Icon(Icons.arrow_downward),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(right:5.0),
+                            child: Icon(Icons.keyboard_arrow_down_sharp),
+                          ),
                           decoration:
                               CoustumInputDecorationWidget("Mode").decoration(),
                           // InputDecoration(
@@ -2073,22 +2215,21 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                       elevation: 4,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.45,
-                        //height: 60,
                         child: TextFormField(
                           controller: vehicleno,
                           decoration: CoustumInputDecorationWidget('Vehicle no')
                               .decoration(),
-                          //  InputDecoration(
-                          //   labelText: 'Vehicle no',
-                          //   fillColor: Colors.white,
-                          // ),
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value.isEmpty && value.length != 15) {
-                              return 'Please Enter correct ' + 'Vehicle no';
-                            }
-                            return null;
-                          },
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[A-Z,0-9]')),
+                          ],
+                          textCapitalization: TextCapitalization.characters,
+                          //  validator: (value) {
+                          //   if (value.isEmpty) {
+                          //     return 'Please Enter correct ' + 'Vehicle no';
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ),
                     ),
@@ -2102,7 +2243,7 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.only(left:10.0),
                     child: Card(
                       elevation: 4,
                       child: Container(
@@ -2131,29 +2272,11 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
-                  /*       if (_formKey.currentState.validate()) {
-                                          // If the form is valid, display a Snackbar.
-                                          addproduct(),
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Signupotp(
-                                                          _controller.text)));
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content:
-                                                      Text('')));
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text('Please fill all the fields'
-                                               )));
-                                        }
-                                      },*/
+                  
                   onPressed: () {
                     if (_keyForm.currentState.validate()) {
-                      // If the form is valid, display a Snackbar.
                       generateInvoice();
+                     //    if(stamp!=null)
                       Future.delayed(new Duration(milliseconds: 100), () {
                         Navigator.push(
                             context,
@@ -2165,12 +2288,26 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                                         invoiceno.text, sign, stamp, logo)));
                       });
                     } else {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('Please fill all the fields')));
+                      Flushbar(
+                        backgroundColor:  Color.fromRGBO(47, 46, 65, 1),
+                        message: 'please fill all the fields',
+                        icon: Icon(
+                          Icons.cancel_outlined,
+                          size: 28,
+                          color: Colors.green.shade300,
+                        ),
+                        leftBarIndicatorColor: Colors.blue.shade300,
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+
                     }
                   },
                   child: Container(
-                    color: const Color(0xfff3F3D56),
+                  // width: 18\50,
+                    decoration: BoxDecoration(
+                        color: const Color(0xfff3F3D56),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -2186,7 +2323,8 @@ class _PurchaseInvoiceState extends State<PurchaseInvoice> {
                     ),
                   ),
                 ),
-              )
+              ),
+              SizedBox(height: 30,)
             ],
           ),
         ),

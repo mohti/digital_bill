@@ -132,6 +132,8 @@ class _InvoiceStyleState extends State<InvoiceStyle> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -145,83 +147,91 @@ class _InvoiceStyleState extends State<InvoiceStyle> {
           textAlign: TextAlign.left,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(children: <Widget>[
-              InkWell(
-                  // onTap: () => Navigator.pop(context, false),
-                  onTap: () async {
-                    invoiceStyle = {'invoiceStyle': 'pdf1'};
-                    await addInvoiceStyle();
-                    Fluttertoast.showToast(msg: 'Updated',
-                    toastLength: Toast.LENGTH_SHORT);
+      body: Center(
+        child: SingleChildScrollView(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+           //   crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+             // SizedBox(height: 50,),
+              Stack(children: <Widget>[
+                InkWell(
+                    // onTap: () => Navigator.pop(context, false),
+                    onTap: () async {
+                      invoiceStyle = {'invoiceStyle': 'pdf1'};
+                      await addInvoiceStyle();
+                      Fluttertoast.showToast(msg: 'Updated',
+                      toastLength: Toast.LENGTH_SHORT);
 
-                    setState(() {
-                      iselected = true;
-                      issecondelected = false;
-                    });
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Image(
-                      image: AssetImage('assets/Component7.jpg'),
-                      height: 300,
-                    ),
-                  )),
-              iselected
-                  ? 
-                  Positioned(
-                    left: MediaQuery.of(context).size.width/4.5 ,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.check_box,
-                        color: Colors.red,
+                      setState(() {
+                        iselected = true;
+                        issecondelected = false;
+                      });
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.5,
+                      //alignment: Alignment.center,
+                      child: Image(
+                        image: AssetImage('assets/invoice1.jpeg'),
+                        height: 300,
                       ),
-                      onPressed: null))
-                  
-                  : Container(),
-            ]),
-            SizedBox(
-              height: 10,
-            ),
-            Stack(children: <Widget>[
-              InkWell(
-                //onTap: () => Navigator.pop(context, true),
-                onTap: () async {
-                  invoiceStyle = {'invoiceStyle': 'pdf2'};
-                  await addInvoiceStyle();
-                    Fluttertoast.showToast(msg: 'Updated',
-                    toastLength: Toast.LENGTH_SHORT);
-                    setState(() {
-                    issecondelected = true;
-                    iselected = false;
-                    });
-                },
-
-                child: Container(
-                    alignment: Alignment.center,
-                    child: Image(
-                      image: AssetImage('assets/Component12.jpg'),
-                      height: 300,
                     )),
+                iselected
+                    ? 
+                    Positioned(
+                      top:15,
+                      //right: MediaQuery.of(context).size.width/1.5 ,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.check_box,
+                          color: Colors.red,
+                        ),
+                        onPressed: null))
+                    
+                    : Container(),
+              ]),
+              SizedBox(
+                height: 10,
               ),
-              issecondelected
-                  ? 
-                  Positioned(
-                    left: MediaQuery.of(context).size.width/4 ,                                        
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.check_box,
-                        color: Colors.red,
-                      ),
-                      onPressed: null))
-                 
-                  : Container(),
-            ])
-          ],
+              Stack(children: <Widget>[
+                InkWell(
+                  //onTap: () => Navigator.pop(context, true),
+                  onTap: () async {
+                    invoiceStyle = {'invoiceStyle': 'pdf2'};
+                    await addInvoiceStyle();
+                      Fluttertoast.showToast(msg: 'Updated',
+                      toastLength: Toast.LENGTH_SHORT);
+                      setState(() {
+                      issecondelected = true;
+                      iselected = false;
+                      });
+                  },
+
+                  child: Container(
+
+                      width: MediaQuery.of(context).size.width/2.5,
+                      alignment: Alignment.center,
+                      child: Image(
+                        image: AssetImage('assets/invoice2.jpeg'),
+                        height: 300,
+                      )),
+                ),
+                issecondelected
+                    ? 
+                    Positioned(
+                      top:15,
+                    //right: MediaQuery.of(context).size.width/2.7 ,                                        
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.check_box,
+                          color: Colors.red,
+                        ),
+                        onPressed: null))
+                   
+                    : Container(),
+              ])
+            ],
+          ),
         ),
       ),
     );

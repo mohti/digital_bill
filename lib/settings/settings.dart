@@ -60,6 +60,8 @@ class Settings1 extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -97,6 +99,10 @@ class Settings1 extends StatelessWidget {
                   allowDrawingOutsideViewBox: true,
                 ),
                 ' Invoice Settings',
+
+ 
+              
+
                 () => Navigator.push(
                       context,
                       MaterialPageRoute(

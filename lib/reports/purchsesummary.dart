@@ -89,34 +89,41 @@ class _PurchaseSummary extends State<PurchaseSummary> {
       var excel = Excel.createExcel();
       // or
       //var excel = Excel.decodeBytes(bytes);
-      var sheet = excel['mySheet'];
+      var sheet = excel['purchaseSummary'];
       sheet.appendRow([
         'From ' +
             DateFormat('dd/MM/yyyy').format(initialdate).toString() +
             ' to ' +
             DateFormat('dd/MM/yyyy').format(finaldate).toString(),
       ]);
+      if (textfieldValues == null || textfieldValues == '') {
+      } else {
+        sheet.appendRow([
+         'Filter:-   '+
+         askValues +' = '+textfieldValues
+        ]);
+      }
 
-      FirebaseFirestore.instance
+     await FirebaseFirestore.instance
           .collection('userData')
           .doc(widget.uid)
           .collection('PurchaseInvoice')
+          .where('sdate', isGreaterThanOrEqualTo: initialdate, isLessThanOrEqualTo: finaldate)
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((product) {
           final Timestamp timestamp = (product['sdate']) as Timestamp;
           final DateTime d = timestamp.toDate();
           if (textfieldValues == null || textfieldValues == '') {
-            if ((d.isBefore(finaldate) && d.isAfter(initialdate)) ||
-                d.day == initialdate.day ||
-                d.day == finaldate.day)
-              sheet.appendRow([
+            sheet.appendRow([
                 product['invoiceno'],
                 DateFormat('dd/MM/yyyy').format(d),
                 product['listOfProducts'][0]['productCode'],
+                  product['listOfProducts'][0]['productName'],
                 product['sname'] == null ? '' : product['sgstn'],
+                 product['sname'] == null ? '' : product['sname'],
                 product['listOfProducts'][0]['hsncode'],
-                product['sgstn'] == null ? '' : product['sgstn'],
+               product['listOfProducts'][0]['quantity'] ,
                 product['listOfProducts'][0]['taxrate'],
                 product['listOfProducts'][0]['totalamount'],
                 product['listOfProducts'][0]['taxamount'],
@@ -124,20 +131,19 @@ class _PurchaseSummary extends State<PurchaseSummary> {
           }
           else
           {
-           if((d.isBefore(finaldate) && d.isAfter(initialdate)) &&
-                  (textfieldValues == product['listOfProducts'][0][askValues]) ||
-              (d.day == initialdate.day || d.day == finaldate.day))
-            
-              sheet.appendRow([
+           if((textfieldValues == product['listOfProducts'][0][askValues]) )
+                sheet.appendRow([
                 product['invoiceno'],
                 DateFormat('dd/MM/yyyy').format(d),
                 product['listOfProducts'][0]['productCode'],
+                product['listOfProducts'][0]['productName'],
                 product['sname'] == null ? '' : product['sgstn'],
+                product['sname'] == null ? '' : product['sname'],
                 product['listOfProducts'][0]['hsncode'],
-                product['sgstn'] == null ? '' : product['sgstn'],
+                product['listOfProducts'][0]['quantity'] ,
                 product['listOfProducts'][0]['taxrate'],
                 product['listOfProducts'][0]['totalamount'],
-                product['listOfProducts'][0]['taxamount'],
+                product['listOfProducts'][0]['taxamount'], 
               ]);
           }
         });
@@ -158,7 +164,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
       ]);
 
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
+      String appDocPath = appDocDir.path+sheet.toString();
       print(appDocPath);
 
       final isPermissionStatusGranted = await _requestPermissions();
@@ -250,6 +256,8 @@ class _PurchaseSummary extends State<PurchaseSummary> {
         ),
       ),
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -300,9 +308,9 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                // SizedBox(
+                //   width: 10,
+                // ),
                 Card(
                   elevation: 4,
                   child: InkWell(
@@ -310,7 +318,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     child: Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: Text("From " +
                           DateFormat('dd-MM-yyyy').format(initialdate)),
                     ),
@@ -323,7 +331,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     child: Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: Text(
                           "to " + DateFormat('dd-MM-yyyy').format(finaldate)),
                     ),
@@ -363,14 +371,17 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                       child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 0.35,
-                        height: 50,
-                        child: TextField(
-                          onChanged: (text) {
-                            setState(() {
-                              textfieldValues = text;
-                            });
-                            print('First text field: $text');
-                          },
+                        height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            onChanged: (text) {
+                              setState(() {
+                                textfieldValues = text;
+                              });
+                              print('First text field: $text');
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -379,10 +390,13 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                     elevation: 4,
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.35,
-                      height: 50,
+                      height: 40,
                       child: DropdownButtonFormField<String>(
                         value: selectbyfilter,
-                        icon: Icon(Icons.arrow_downward),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(right:6.0),
+                          child: Icon(Icons.keyboard_arrow_down_sharp),
+                        ),
                         decoration: CoustumInputDecorationWidget('select by')
                             .decoration(),
                         items: listofSelect.map((String value) {
@@ -438,8 +452,8 @@ class _PurchaseSummary extends State<PurchaseSummary> {
             ),
 
             Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width * 0.44,
+              height: 40,
+             // width: MediaQuery.of(context).size.width * 0.44,
               child: RaisedButton(
                   color: const Color(0xff2f2e41),
                   onPressed: () => {
@@ -456,7 +470,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Text(
-                    'Purchase Summury',
+                    'Purchase Summary',
                     style: TextStyle(
                       fontFamily: 'Arial',
                       fontSize: 14,
@@ -490,6 +504,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
             ),
             widgetTable == null
                 ? Container(
+                   height: 16,
                     decoration: BoxDecoration(color: const Color(0xff2F2E41)),
                     child: Row(
                       /*  'Receipt No.',
@@ -507,11 +522,12 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                         Container(
                           alignment: Alignment.center,
                           width: w * 0.1,
+
                           child: Text(
                             'Receipt No.',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -525,7 +541,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Date',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -539,7 +555,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Pro Code',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -553,7 +569,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Pro Name',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -567,7 +583,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'GSTN',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -581,7 +597,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Buyer Name',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -595,7 +611,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'HSN',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -609,7 +625,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Quantity',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -623,7 +639,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'TAX',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -637,7 +653,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'Invoice Value',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),
@@ -651,7 +667,7 @@ class _PurchaseSummary extends State<PurchaseSummary> {
                             'TAX Value',
                             style: TextStyle(
                               fontFamily: 'Arial',
-                              fontSize: 10,
+                              fontSize: 6,
                               color: const Color(0xfff1f3f6),
                               fontWeight: FontWeight.w700,
                             ),

@@ -48,6 +48,7 @@ dependencies:
   firebase_auth: ^0.20.1
   pinput: ^1.0.0
   gst_verification: ^1.0.2
+  flushbar: ^1.10.4
   flutter_svg: ^0.18.0
   change_app_package_name: ^0.1.2
   flutter:
@@ -75,12 +76,18 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+     - assets/screen1.png
+     - assets/screen2.png
+     - assets/screen3.png
+     - assets/screen4.png
      - assets/bg1.jpg
      - assets/Component7.jpg
      - assets/Component12.jpg
      - assets/downloadinvoicebg.jpg
      - assets/Component_8.jpg
      - assets/Component_9.jpg
+     - assets/invoice2.jpeg
+     - assets/invoice1.jpeg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

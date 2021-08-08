@@ -46,8 +46,8 @@ class HomePageTiles extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Container(
-            width: 200,
-            height: 120,
+            width: 210,
+            height: 110,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               color: const Color(0xffffffff),
@@ -64,13 +64,14 @@ class HomePageTiles extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                  
+                  Container(             
+                      padding: const EdgeInsets.fromLTRB(5.0,10,5.0,50),
+                      child: w,
+                    ),
                   Container(
-                    padding: const EdgeInsets.all(5.0),
-                    child: w,
-                  ),
-                  Container(
-                    height: 120,
-                    width: 150,
+                    width: 160,
+                    height: 114,
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -79,54 +80,66 @@ class HomePageTiles extends StatelessWidget {
                               SizedBox(
                                 height: 3,
                               ),
-                              Text(
-                                title,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 14,
-                                  color: const Color(0xff2f2e41),
-                                  fontWeight: FontWeight.w700,
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  title,
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 14,
+                                    color: const Color(0xff2f2e41),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                               SizedBox(
                                 height: 4,
                               ),
-                              Text(
-                                subtitle,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 10,
-                                  color: const Color(0xff707070),
-                                  fontWeight: FontWeight.w700,
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  subtitle,
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 10,
+                                    color: const Color(0xff707070),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                               SizedBox(
                                 height: 2,
                               ),
-                              Text(
-                                subtitle2,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 10,
-                                  color: const Color(0xff707070),
-                                  fontWeight: FontWeight.w700,
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  subtitle2,
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 10,
+                                    color: const Color(0xff707070),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                               SizedBox(
                                 height: 2,
                               ),
-                              Text(
-                                subtitle3,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 10,
-                                  color: const Color(0xff707070),
-                                  fontWeight: FontWeight.w700,
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  subtitle3,
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 10,
+                                    color: const Color(0xff707070),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                             ],
                           ),

@@ -50,16 +50,21 @@ class Tab extends StatelessWidget {
 }
 
 class AboutUs extends StatelessWidget {
+  String aboutUs = 'The Mobile Application JhatpatBill, the Desktop Application JhatpatBill and the Website JhatpatBill are provided by JhatpatBill is a property of Bradvice Solutions PVT Ltd (https://www.bradvicepvt.com), an Indian Company registered under the Companies Act of India having CIN U9000RJ2019PTC065044 with its registered office at FF-27, Cross Road mall, Central Spine, Vidhyadhar Nagar, Jaipur, Rajasthan, India 302039.BRADVICE SOLUTION PVT Ltd is a team of professionals from various domains of corporate consultancy services. At Bradvice Solutions, our professionals are committed to solve business problems and add value to our clients business.Technology is our partner in everything we do. We are committed to delivering quality in all kinds of advisory services.Our services are focused on adding value to the clients by understanding their needs and providing solutions which are theoretically sound and practically implementable as well. We strongly believe in the highest levels of integrity and are committed towards providing excellence and value addition.';
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Customize Invoice',
+          'About Us',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,
@@ -91,16 +96,18 @@ class AboutUs extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: SizedBox(
-                  width: w,
-                  height: 115.0,
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 12,
-                      color: const Color(0xff2f2e41),
+                  height: 125,
+                  child: SingleChildScrollView(
+                  //  controller: controller,
+                                    child: Text(
+                      aboutUs,
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 12,
+                        color: const Color(0xff2f2e41),
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                    textAlign: TextAlign.left,
                   ),
                 ),
               ),
@@ -124,7 +131,7 @@ class AboutUs extends StatelessWidget {
                 () => Navigator.pushNamed(context, './privacypolicy'), w),
             Tab(
                 null,
-                'Acceptable Use Policy',
+                'Refund Policy',
                 () =>
                     Navigator.pushNamed(context, './acceptableusepolicy.dart'),
                 w),

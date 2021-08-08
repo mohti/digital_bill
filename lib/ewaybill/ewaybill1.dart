@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
+import 'package:digitalbillbook/ewaybill/testviewewaybill.dart';
 
 import 'package:digitalbillbook/models/invoicemodel.dart';
 import 'package:digitalbillbook/models/items.dart';
@@ -46,7 +48,7 @@ class GetUrl {
 }
 
 class GetEwayBIllno {
-// ignore: non_constant_identifier_names
+  // ignore: non_constant_identifier_names
   final int ewaybillno;
 
   // ignore: non_constant_identifier_names
@@ -83,6 +85,8 @@ Access_token responsedecode;
 
 class _Ewaybill1State extends State<Ewaybill1> {
   final ewaybillController = TextEditingController();
+
+  bool loader = false;
   Future<Null> createAccessToken() async {
     try {
       final response = await http.post(
@@ -170,6 +174,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
     String _businessNameController;
     final phoneController = TextEditingController();
     final emailController = TextEditingController();
+    final businessPincode = TextEditingController();
     final gstNumberController = TextEditingController();
     final businesAddressController = TextEditingController();
     final bankNameController = TextEditingController();
@@ -188,6 +193,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
     final sphone = TextEditingController();
     final sgstn = TextEditingController();
     DateTime sdate;
+    //DateTime
     final scity = TextEditingController();
     final sstate = TextEditingController();
     final scountry = TextEditingController();
@@ -204,6 +210,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
     final transportername = TextEditingController();
     final tracnsportdocno = TextEditingController();
     final tdate = TextEditingController();
+    //DateTime tdate
     final vehiclemode = TextEditingController();
     final vehicleno = TextEditingController();
     final from = TextEditingController();
@@ -239,7 +246,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
         null,
         null);
 
-    List<Map<String, dynamic>> l = [];
+    List<Map<String, dynamic>> listOfProducts = [];
 
     final db = FirebaseFirestore.instance;
     Future<Null> _getBusinessDetails(String uid) async {
@@ -278,7 +285,11 @@ class _Ewaybill1State extends State<Ewaybill1> {
               valuee.data()['email'] == null ? '' : valuee.data()['email'];
           phoneController.text =
               valuee.data()['phone'] == null ? '' : valuee.data()['phone'];
+          businessPincode.text =
+              valuee.data()['pincode'] == null ? '' : valuee.data()['pincode'];
         });
+        print(gstNumberController.text.toString() +
+            'Mohit gstnumber  controller ');
       });
     }
 
@@ -320,7 +331,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           .then((valuee) {
         setState(() {
           invoiceno1.text = valuee.data()['invoiceno'] == null
-              ? ''
+              ? ' '
               : valuee.data()['invoiceno'];
 
           bname.text =
@@ -334,7 +345,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           scity.text =
               valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
           sstate.text =
-              valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
+              valuee.data()['sstate'] == null ? ' ' : valuee.data()['sstate'];
           bpin.text =
               valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
           bgstn.text =
@@ -354,7 +365,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           tracnsportdocno.text = valuee.data()['transporterdocno'] == null
               ? ''
               : valuee.data()['transporterdocno'];
-          tdate.text = valuee.data()['tdate'];
+          tdate.text = valuee.data()['tdate'].toString();
           sgstn.text =
               valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
           timestamp = (valuee.data()['sdate']) as Timestamp;
@@ -366,11 +377,11 @@ class _Ewaybill1State extends State<Ewaybill1> {
           vehicleno.text = valuee.data()['vehicleno'] == null
               ? ''
               : valuee.data()['vehicleno'];
-          l = List.castFrom(valuee.data()['listOfProducts']);
+          listOfProducts = List.castFrom(valuee.data()['listOfProducts']);
         });
       });
 
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
           totalquantity =
               totalquantity + double.parse(element['quantity'].toString());
@@ -378,6 +389,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
               totalamount + double.parse(element['totalamount'].toString());
         });
       });
+
       db
           .collection("userData")
           .doc(widget.uid)
@@ -417,21 +429,35 @@ class _Ewaybill1State extends State<Ewaybill1> {
       });
 
       List items = [];
-
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
+          int taxbleAmountInt;
+          double d = double.tryParse(element['baseTotalAmount']);
+          taxbleAmountInt = d.toInt();
           items.add({
-            "product_name": element['productName'],
-            "product_description": element['productCode'],
-            "hsn_code": '1001', // element['hsncode'],
-            "unit_of_product": 'BOX', //element['unit'],
-            "cgst_rate": 9,
-            "sgst_rate": 9,
+            "product_name": element['productName'].toString(),
+            "product_description": element['productCode'].toString(),
+            "hsn_code": element['hsncode'].toString(),
+            "unit_of_product":
+                element['unit'] == '' ? "BOX" : element['unit'].toString(),
+            "cgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
+            "sgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
             "igst_rate": 0,
+            //element['taxrate']==null?0:element['taxrate'],
             "cess_rate": 0,
-            "quantity": 9, //int.tryParse(element['quantity']),
+            "quantity": int.parse(element['quantity']),
             "cessNonAdvol": 0,
-            "taxable_amount": 9, // int.tryParse(element['totalamount'])*/
+
+            "taxable_amount": taxbleAmountInt.toString()
+            // int.parse(element['baseTotalAmount'].toInt()
+            //.toString()
+            //  )
+            //.toInt()
+            ,
           });
         });
       });
@@ -448,45 +474,75 @@ class _Ewaybill1State extends State<Ewaybill1> {
           },
           body: jsonEncode(<dynamic, dynamic>{
             "access_token": responsedecode.access_token,
-            "userGstin": "05AAABB0639G1Z8",
+            "userGstin": gstNumberController.text.toString(),
             "supply_type": "outward",
             "sub_supply_type": "Others",
             "sub_supply_description": "sales from other country",
             "document_type": "tax invoice",
-            "document_number": "127-308",
-            "document_date": "10/05/2018",
-            "gstin_of_consignor": "05AAABB0639G1Z8 ",
-            "legal_name_of_consignor": "welton",
-            "address1_of_consignor": "2ND CROSS NO 59 19 A",
-            "address2_of_consignor": "GROUND FLOOR OSBORNE ROAD",
-            "place_of_consignor": "Dehradun",
-            "pincode_of_consignor": 248001,
-            "state_of_consignor": "UTTARAKHAND",
-            "actual_from_state_name": "UTTARAKHAND",
-            "gstin_of_consignee": "05AAABC0181E1ZE ",
-            "legal_name_of_consignee": "sthuthya",
-            "address1_of_consignee": "Shree Nilaya",
-            "address2_of_consignee": "Dasarahosahalli",
-            "place_of_consignee": "Beml Nagar",
-            "pincode_of_consignee": 263001,
-            "state_of_supply": "UTTARAKHAND ",
-            "actual_to_state_name": "UTTARAKHAND",
+            "document_number": invoiceno1.text,
+
+            "document_date": sdate.toString(),
+            "gstin_of_consignor": // bgstn.text == null ?
+                gstNumberController.text.toString()
+            //:
+            //  bgstn.text
+            ,
+            "legal_name_of_consignor": bname.text.toString() == ''
+                ? _businessNameController.toString()
+                : bname.text.toString(),
+            "address1_of_consignor": bcity.text.toString() == ''
+                ? businesAddressController.text.toString()
+                : bcity.text.toString(),
+            "address2_of_consignor": '',
+            "place_of_consignor": bcity.text.toString() == ''
+                ? businesAddressController.text.toString()
+                : bcity.text.toString(),
+            "pincode_of_consignor":
+                //"306401"
+                bpin.text.toString().trim() == ''
+                    ? businessPincode.text.toString()
+                    : bpin.text.toString(),
+            "state_of_consignor":
+                //"rajasthan",
+                sstate.text.toString(),
+            "actual_from_state_name": sstate.text,
+            "gstin_of_consignee":
+                //"03ACDPM7062M1ZH"
+                //"$sgstn.text"
+                // "05AAABB0639G1Z8",
+                sgstn.text.toString(),
+            //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
+            "legal_name_of_consignee": sname.text.toString(),
+            "address1_of_consignee": scity.text.toString(),
+            "address2_of_consignee": scity.text.toString(),
+            "place_of_consignee": scity.text.toString(),
+            "pincode_of_consignee": spin.text.toString(),
+            "state_of_supply":
+                //"rajasthan",
+                sstate.text.toString(),
+            "actual_to_state_name":
+                //"rajasthan",
+                sstate.text.toString(),
             "transaction_type": 1,
-            "other_value": -0.06,
-            "total_invoice_value": 2.06,
-            "taxable_amount": 2,
-            "cgst_amount": 0.03,
-            "sgst_amount": 0.03,
-            "igst_amount": 0,
+            "other_value": 0.00,
+            "total_invoice_value": (totalamount * 118 / 100),
+            "taxable_amount": totalamount.toInt(),
+            "cgst_amount": 0.00,
+            " sgst_amount": 0.00,
+            "igst_amount": 0.00,
+            //(18 / 100 * totalamount).toInt(),
             "cess_amount": 0,
             "cess_nonadvol_value": 0,
-            "transporter_id": "05AAABB0639G1Z8",
-            "transporter_name": "",
-            "transporter_document_number": "",
-            "transporter_document_date": "",
-            "transportation_mode": "road",
-            "transportation_distance": "656",
-            "vehicle_number": "PVC1234",
+            "transporter_id": transporterid.text,
+            "transporter_name": transportername.text,
+            "transporter_document_number": tracnsportdocno.text,
+            "transporter_document_date": sdate.toString()
+            //tdate.text
+            ,
+            "transportation_mode": vehiclemode.text.toString(),
+            "transportation_distance": '0',
+            "vehicle_number": vehicleno.text,
+            //'PVC1234', //vehicleno.text,
             "vehicle_type": "Regular",
             "generate_status": 1,
             "data_source": "erp",
@@ -494,65 +550,11 @@ class _Ewaybill1State extends State<Ewaybill1> {
             "location_code": "XYZ",
             "eway_bill_status": "ABC",
             "auto_print": "Y",
-            "email": "mayanksharma@mastersindia.co",
-            "itemList": [
-              {
-                "product_name": "CRCA",
-                "product_description": "ABC",
-                "hsn_code": "1001",
-                "unit_of_product": "BOX",
-                "cgst_rate": 9,
-                "sgst_rate": 9,
-                "igst_rate": 0,
-                "cess_rate": 0,
-                "quantity": 1,
-                "cessNonAdvol": 0,
-                "taxable_amount": 49
-              },
-              {
-                "quantity": 1,
-                "cessNonAdvol": 0,
-                "product_name": "CRCA",
-                "product_description": "AVC",
-                "hsn_code": "1001",
-                "unit_of_product": "BOX",
-                "cgst_rate": 9,
-                "sgst_rate": 9,
-                "igst_rate": 0,
-                "cess_rate": 0,
-                "taxable_amount": 1
-              },
-              {
-                "quantity": 1.0,
-                "cessNonAdvol": 0,
-                "product_name": "XYZ",
-                "product_description": "ABC",
-                "hsn_code": "1001",
-                "unit_of_product": "KGS",
-                "cgst_rate": 2.5,
-                "sgst_rate": 2.5,
-                "igst_rate": 0,
-                "cess_rate": 0,
-                "taxable_amount": 200
-              },
-              {
-                "quantity": 200,
-                "cessNonAdvol": 0,
-                "product_name": "ABC",
-                "product_description": "ASD",
-                "hsn_code": "1001",
-                "unit_of_product": "NOS",
-                "cgst_rate": 2.5,
-                "sgst_rate": 2.5,
-                "igst_rate": 0,
-                "cess_rate": 0,
-                "taxable_amount": 20000.0
-              }
-            ]
+            "email": emailController.text,
+            "itemList": items,
           }),
         );
         print(response.statusCode);
-
         print(bname.text.toString());
         if (response.statusCode == 201 || response.statusCode == 200) {
           // If the server did return a 201 CREATED response,
@@ -602,7 +604,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           .then((valuee) {
         setState(() {
           invoiceno1.text = valuee.data()['invoiceno'] == null
-              ? ''
+              ? ' '
               : valuee.data()['invoiceno'];
 
           bname.text =
@@ -616,7 +618,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           scity.text =
               valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
           sstate.text =
-              valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
+              valuee.data()['sstate'] == null ? ' ' : valuee.data()['sstate'];
           bpin.text =
               valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
           bgstn.text =
@@ -636,7 +638,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
           tracnsportdocno.text = valuee.data()['transporterdocno'] == null
               ? ''
               : valuee.data()['transporterdocno'];
-          tdate.text = valuee.data()['tdate'];
+          tdate.text = valuee.data()['tdate'].toString();
           sgstn.text =
               valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
           timestamp = (valuee.data()['sdate']) as Timestamp;
@@ -648,11 +650,11 @@ class _Ewaybill1State extends State<Ewaybill1> {
           vehicleno.text = valuee.data()['vehicleno'] == null
               ? ''
               : valuee.data()['vehicleno'];
-          l = List.castFrom(valuee.data()['listOfProducts']);
+          listOfProducts = List.castFrom(valuee.data()['listOfProducts']);
         });
       });
 
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
           totalquantity =
               totalquantity + double.parse(element['quantity'].toString());
@@ -660,6 +662,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
               totalamount + double.parse(element['totalamount'].toString());
         });
       });
+
       db
           .collection("userData")
           .doc(widget.uid)
@@ -699,21 +702,30 @@ class _Ewaybill1State extends State<Ewaybill1> {
       });
 
       List items = [];
-
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
+          int taxbleAmountInt;
+          double d = double.tryParse(element['baseTotalAmount']);
+          taxbleAmountInt = d.toInt();
           items.add({
-            "product_name": element['productName'],
-            "product_description": element['productCode'],
-            "hsn_code": '1001', // element['hsncode'],
-            "unit_of_product": 'BOX', //element['unit'],
-            "cgst_rate": 9,
-            "sgst_rate": 9,
+            "product_name": element['productName'].toString(),
+            "product_description": element['productCode'].toString(),
+            "hsn_code": element['hsncode'].toString(),
+            "unit_of_product":
+                element['unit'] == '' ? "BOX" : element['unit'].toString(),
+            "cgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
+            "sgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
             "igst_rate": 0,
+            //element['taxrate']==null?0:element['taxrate'],
             "cess_rate": 0,
-            "quantity": 9, //int.tryParse(element['quantity']),
+            "quantity": int.parse(element['quantity']),
             "cessNonAdvol": 0,
-            "taxable_amount": 9, // int.tryParse(element['totalamount'])*/
+            "taxable_amount": taxbleAmountInt.toString()
+            // int.parse(element['baseTotalAmount'].toString()),
           });
         });
       });
@@ -730,8 +742,12 @@ class _Ewaybill1State extends State<Ewaybill1> {
           },
           body: jsonEncode(<dynamic, dynamic>{
             "access_token": responsedecode.access_token,
-            "userGstin": gstNumberController.text,
-            "eway_bill_number": ewaybillno,
+            "userGstin": gstNumberController.text.toString(),
+            //'05AAABB0639G1Z8',
+            //gstNumberController.text,
+            "eway_bill_number":
+                //"311002690505",
+                ewaybillno,
             "reason_of_cancel": "Others",
             "cancel_remark": "Cancelled the order",
             "data_source": "erp"
@@ -764,66 +780,70 @@ class _Ewaybill1State extends State<Ewaybill1> {
     }
 
     Future<Null> _invoicedetails() async {
-      await db
-          .collection("userData")
-          .doc(widget.uid)
-          .collection("Invoice")
-          .doc(ewaybillController.text.toString())
-          .get()
-          .then((valuee) {
-        setState(() {
-          invoiceno1.text = valuee.data()['invoiceno'] == null
-              ? ''
-              : valuee.data()['invoiceno'];
+      try {
+        await db
+            .collection("userData")
+            .doc(widget.uid)
+            .collection("Invoice")
+            .doc(ewaybillController.text.toString())
+            .get()
+            .then((valuee) {
+          setState(() {
+            invoiceno1.text = valuee.data()['invoiceno'] == null
+                ? ' '
+                : valuee.data()['invoiceno'];
 
-          bname.text =
-              valuee.data()['bname'] == null ? '' : valuee.data()['bname'];
-          bphone.text =
-              valuee.data()['bphone'] == null ? '' : valuee.data()['bphone'];
-          bcity.text =
-              valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
-          bstate.text =
-              valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
-          scity.text =
-              valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
-          sstate.text =
-              valuee.data()['sstate'] == null ? '' : valuee.data()['sstate'];
-          bpin.text =
-              valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
-          bgstn.text =
-              valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
-          sname.text =
-              valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
-          sphone.text =
-              valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
-          transportername.text = valuee.data()['transportername'] == null
-              ? ''
-              : valuee.data()['transportername'];
-          spin.text =
-              valuee.data()['spin'] == null ? '' : valuee.data()['spin'];
-          transporterid.text = valuee.data()['transporterid'] == null
-              ? ''
-              : valuee.data()['transporterid'];
-          tracnsportdocno.text = valuee.data()['transporterdocno'] == null
-              ? ''
-              : valuee.data()['transporterdocno'];
-          tdate.text = valuee.data()['tdate'];
-          sgstn.text =
-              valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
-          timestamp = (valuee.data()['sdate']) as Timestamp;
-          sdate = timestamp.toDate();
+            bname.text =
+                valuee.data()['bname'] == null ? '' : valuee.data()['bname'];
+            bphone.text =
+                valuee.data()['bphone'] == null ? '' : valuee.data()['bphone'];
+            bcity.text =
+                valuee.data()['bcity'] == null ? '' : valuee.data()['bcity'];
+            bstate.text =
+                valuee.data()['bstate'] == null ? '' : valuee.data()['bstate'];
+            scity.text =
+                valuee.data()['scity;'] == null ? '' : valuee.data()['scity;'];
+            sstate.text =
+                valuee.data()['sstate'] == null ? ' ' : valuee.data()['sstate'];
+            bpin.text =
+                valuee.data()['bpin'] == null ? '' : valuee.data()['bpin'];
+            bgstn.text =
+                valuee.data()['bgstn'] == null ? '' : valuee.data()['bgstn'];
+            sname.text =
+                valuee.data()['sname'] == null ? '' : valuee.data()['sname'];
+            sphone.text =
+                valuee.data()['sphone'] == null ? '' : valuee.data()['sphone'];
+            transportername.text = valuee.data()['transportername'] == null
+                ? ''
+                : valuee.data()['transportername'];
+            spin.text =
+                valuee.data()['spin'] == null ? '' : valuee.data()['spin'];
+            transporterid.text = valuee.data()['transporterid'] == null
+                ? ''
+                : valuee.data()['transporterid'];
+            tracnsportdocno.text = valuee.data()['transporterdocno'] == null
+                ? ''
+                : valuee.data()['transporterdocno'];
+            tdate.text = valuee.data()['tdate'].toString();
+            sgstn.text =
+                valuee.data()['sgstn'] == null ? '' : valuee.data()['sgstn'];
+            timestamp = (valuee.data()['sdate']) as Timestamp;
+            sdate = timestamp.toDate();
 
-          vehiclemode.text = valuee.data()['vehiclemode'] == null
-              ? ''
-              : valuee.data()['vehiclemode'];
-          vehicleno.text = valuee.data()['vehicleno'] == null
-              ? ''
-              : valuee.data()['vehicleno'];
-          l = List.castFrom(valuee.data()['listOfProducts']);
+            vehiclemode.text = valuee.data()['vehiclemode'] == null
+                ? ''
+                : valuee.data()['vehiclemode'];
+            vehicleno.text = valuee.data()['vehicleno'] == null
+                ? ''
+                : valuee.data()['vehicleno'];
+            listOfProducts = List.castFrom(valuee.data()['listOfProducts']);
+          });
         });
-      });
+      } catch (e) {
+        Fluttertoast.showToast(msg: 'Not exits');
+      }
 
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
           totalquantity =
               totalquantity + double.parse(element['quantity'].toString());
@@ -831,6 +851,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
               totalamount + double.parse(element['totalamount'].toString());
         });
       });
+
       db
           .collection("userData")
           .doc(widget.uid)
@@ -870,30 +891,46 @@ class _Ewaybill1State extends State<Ewaybill1> {
       });
 
       List items = [];
-
-      l.forEach((element) {
+      listOfProducts.forEach((element) {
         setState(() {
+          int taxbleAmountInt;
+          double d = double.tryParse(element['baseTotalAmount']);
+          taxbleAmountInt = d.toInt();
           items.add({
-            "product_name": element['productName'],
-            "product_description": element['productCode'],
-            "hsn_code": '1001', // element['hsncode'],
-            "unit_of_product": 'BOX', //element['unit'],
-            "cgst_rate": 9,
-            "sgst_rate": 9,
+            "product_name": element['productName'].toString(),
+            "product_description": element['productCode'].toString(),
+            "hsn_code": element['hsncode'].toString(),
+            "unit_of_product":
+                element['unit'] == '' ? "BOX" : element['unit'].toString(),
+            "cgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
+            "sgst_rate": element['taxrate'] == null
+                ? 0
+                : int.tryParse(element['taxrate']),
             "igst_rate": 0,
+            //element['taxrate']==null?0:element['taxrate'],
             "cess_rate": 0,
-            "quantity": 9, //int.tryParse(element['quantity']),
+            "quantity": int.parse(element['quantity']),
             "cessNonAdvol": 0,
-            "taxable_amount": 9, // int.tryParse(element['totalamount'])*/
+            "taxable_amount": taxbleAmountInt.toString()
+            //int.parse(element['baseTotalAmount'].toString()),
           });
         });
       });
+
       try {
-        (int.parse(spin.text));
+        (int.parse(spin.text.toString()));
       } on FormatException {
         Fluttertoast.showToast(msg: 'Invalid Pincode', timeInSecForIosWeb: 4);
       }
       try {
+        // print(sdate.toString()+'=============mohit');
+        print(sgstn.text.toString() + ' sstate =============mohit');
+        print(bstate.text.toString() + '  bstate=============mohit');
+        print(businessPincode.text.toString() + '   bpin=============mohit');
+        print(items.toString() + '===================mohit  items  values');
+        print(tdate.toString() + '=============mohit');
         final response = await http.post(
           Uri.parse('https://clientbasic.mastersindia.co/ewayBillsGenerate'),
           headers: {
@@ -901,14 +938,19 @@ class _Ewaybill1State extends State<Ewaybill1> {
           },
           body: jsonEncode(<dynamic, dynamic>{
             "access_token": responsedecode.access_token,
-            "userGstin": gstNumberController.text,
+            "userGstin": gstNumberController.text.toString(),
             "supply_type": "outward",
             "sub_supply_type": "Others",
             "sub_supply_description": "sales from other country",
             "document_type": "tax invoice",
             "document_number": invoiceno1.text,
-            "document_date": DateFormat('dd/MM/yyyy').format(sdate).toString(),
-            "gstin_of_consignor": "05AAABB0639G1Z8 ", //sgstn.text,
+
+            "document_date": sdate.toString(),
+            "gstin_of_consignor": // bgstn.text == null ?
+                gstNumberController.text.toString()
+            //:
+            //  bgstn.text
+            ,
             "legal_name_of_consignor": bname.text.toString() == ''
                 ? _businessNameController.toString()
                 : bname.text.toString(),
@@ -919,38 +961,52 @@ class _Ewaybill1State extends State<Ewaybill1> {
             "place_of_consignor": bcity.text.toString() == ''
                 ? businesAddressController.text.toString()
                 : bcity.text.toString(),
-            "pincode_of_consignor": bpin.text == ''
-                ? int.parse(spin.text)
-                : int.tryParse(bpin.text),
-            "state_of_consignor": bstate.text == '' ? sstate.text : sstate.text,
-            "actual_from_state_name":
-                bstate.text == '' ? sstate.text : sstate.text,
+            "pincode_of_consignor":
+                //"306401"
+                bpin.text.toString().trim() == ''
+                    ? businessPincode.text.toString()
+                    : bpin.text.toString(),
+            "state_of_consignor":
+                //"rajasthan",
+                sstate.text.toString(),
+            "actual_from_state_name": sstate.text,
             "gstin_of_consignee":
-                "05AAABC0181E1ZE ", //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
+                //"03ACDPM7062M1ZH"
+                //"$sgstn.text"
+                // "05AAABB0639G1Z8",
+                sgstn.text.toString(),
+            //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
             "legal_name_of_consignee": sname.text.toString(),
             "address1_of_consignee": scity.text.toString(),
             "address2_of_consignee": scity.text.toString(),
             "place_of_consignee": scity.text.toString(),
-            "pincode_of_consignee": int.parse(spin.text),
-            "state_of_supply": sstate.text,
-            "actual_to_state_name": sstate.text,
+            "pincode_of_consignee": spin.text.toString(),
+            "state_of_supply":
+                //"rajasthan",
+                sstate.text.toString(),
+            "actual_to_state_name":
+                //"rajasthan",
+                sstate.text.toString(),
             "transaction_type": 1,
             "other_value": 0.00,
             "total_invoice_value": (totalamount * 118 / 100),
             "taxable_amount": totalamount.toInt(),
             "cgst_amount": 0.00,
-            "sgst_amount": 0.00,
-            "igst_amount": 0,
+            " sgst_amount": 0.00,
+            "igst_amount": 0.00,
+            //(18 / 100 * totalamount).toInt(),
             "cess_amount": 0,
             "cess_nonadvol_value": 0,
             "transporter_id": transporterid.text,
             "transporter_name": transportername.text,
             "transporter_document_number": tracnsportdocno.text,
-            "transporter_document_date": tdate.text,
-            "transportation_mode": 'road',
+            "transporter_document_date": sdate.toString()
+            //tdate.text
+            ,
+            "transportation_mode": vehiclemode.text.toString(),
             "transportation_distance": '0',
-
             "vehicle_number": vehicleno.text,
+            //'PVC1234', //vehicleno.text,
             "vehicle_type": "Regular",
             "generate_status": 1,
             "data_source": "erp",
@@ -959,12 +1015,13 @@ class _Ewaybill1State extends State<Ewaybill1> {
             "eway_bill_status": "ABC",
             "auto_print": "Y",
             "email": emailController.text,
-            "itemList": items
+            "itemList": items,
+            // Items("CRCA", "ABC", "1001", "BOX", 9, 9, 0, 0, 9, 0, 40)
           }),
         );
-        print(response.statusCode);
+        print(response.statusCode.toString() + "   ===MOHIT RESPONCE CODE");
 
-        print(bname.text.toString());
+        print(bname.text.toString() + "   ===MOHIT business  name ");
         if (response.statusCode == 201 || response.statusCode == 200) {
           // If the server did return a 201 CREATED response,
           // then parse the JSON.
@@ -976,28 +1033,27 @@ class _Ewaybill1State extends State<Ewaybill1> {
           GetUrl g;
           g = GetUrl.fromJson(jsonDecode(response.body));
           print(g.url);
-          Future<void> _launchInBrowser(String url) async {
-            if (await canLaunch(url)) {
-              await launch(
-                url,
-                forceSafariVC: false,
-                forceWebView: false,
-                headers: <String, String>{'my_header_key': 'my_header_value'},
-              );
-            } else {
-              throw 'Could not launch $url';
-            }
-          }
+          // Future<void> _launchInBrowser(String url) async {
+          //   if (await canLaunch(url)) {
+          //     await launch(
+          //       url,
+          //       forceSafariVC: false,
+          //       forceWebView: false,
+          //       headers: <String, String>{'my_header_key': 'my_header_value'},
+          //     );
+          //   } else {
+          //     throw 'Could not launch $url';
+          //   }
+          // }
 
           if (g.url != null) {
             //   downloadFile(g.url, 'ewaybill' + invoiceno1.text, null);
             // createFile(g.url, 'ewaybill' + invoiceno1.text);
-            _launchInBrowser('http://' + g.url);
-            /*      Navigator.push(
+            // _launchInBrowser('http://' + g.url);
+            Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => TestViewEwayBill(g.url)));
-      */
           }
           //print(jsonDecode(response.body).cast<Map<String, dynamic>>().map<Photo>((json) => Photo.fromJson(json)));
         } else {
@@ -1005,14 +1061,20 @@ class _Ewaybill1State extends State<Ewaybill1> {
           // then throw an exception.
           throw Exception('Failed to load album');
         }
+        setState(() {
+          loader = false;
+        });
       } catch (e) {
+        setState(() {
+          loader = false;
+        });
         print(e);
         print('error');
       }
     }
 
-    /*  Future<Null> generateewaybill() async {
-      _invoicedetails();
+    Future<Null> generateewaybill() async {
+      // _invoicedetails();
       try {
         final response = await http.post(
           Uri.parse('https://clientbasic.mastersindia.co/ewayBillsGenerate'),
@@ -1021,29 +1083,32 @@ class _Ewaybill1State extends State<Ewaybill1> {
           },
           body: jsonEncode(<dynamic, dynamic>{
             "access_token": responsedecode.access_token,
-            "userGstin": '05AAABB0639G1Z8',
+            "userGstin":
+                //gstNumberController.text,
+
+                '05AAABB0639G1Z8',
             "supply_type": "outward",
             "sub_supply_type": "Others",
             "sub_supply_description": "sales from other country",
             "document_type": "tax invoice",
-            "document_number": '130q30',
+            "document_number": '1456sas546',
             "document_date": sdate.toString(),
-            "gstin_of_consignor": "05AAABB0639G1Z8 ", //sgstn.text,
-            "legal_name_of_consignor": bname.text.toString() == ''
+            "gstin_of_consignor": sgstn.text,
+            "legal_name_of_consignor": sname.text.toString() == ''
                 ? _businessNameController.toString()
                 : bname.text.toString(),
-            "address1_of_consignor": bcity.text.toString() == ''
+            "address1_of_consignor": scity.text.toString() == ''
                 ? businesAddressController.text.toString()
-                : bcity.text.toString(),
+                : scity.text.toString(),
             "address2_of_consignor": '',
-            "place_of_consignor": bcity.text.toString() == ''
+            "place_of_consignor": scity.text.toString() == ''
                 ? businesAddressController.text.toString()
-                : bcity.text.toString(),
-            "pincode_of_consignor": 248001,
-            "state_of_consignor": "UTTARAKHAND",
-            "actual_from_state_name": "UTTARAKHAND",
-            "gstin_of_consignee":
-                "05AAABC0181E1ZE ", //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
+                : scity.text.toString(),
+            "pincode_of_consignor": spin.text,
+            "state_of_consignor": sstate.text,
+            "actual_from_state_name": sstate.text,
+            "gstin_of_consignee": "05AAABC0181E1ZE ",
+            //  bgstn.text == '' ? gstNumberController.text : bgstn.text,
             "legal_name_of_consignee": sname.text.toString(),
             "address1_of_consignee": scity.text.toString(),
             "address2_of_consignee": scity.text.toString(),
@@ -1060,7 +1125,8 @@ class _Ewaybill1State extends State<Ewaybill1> {
             "igst_amount": (18 / 100 * totalamount).toInt(),
             "cess_amount": 0,
             "cess_nonadvol_value": 0,
-            "transporter_id": transporterid.text,
+            "transporter_id": '29BQSPA3829E1Z0',
+            //transporterid.text,
             "transporter_name": transportername.text,
             "transporter_document_number": tracnsportdocno.text,
             "transporter_document_date": tdate.text,
@@ -1098,10 +1164,24 @@ class _Ewaybill1State extends State<Ewaybill1> {
         print('error');
       }
     }
- */
+
+    asyncorise() async {
+      await _getBusinessDetails(widget.uid);
+      setState(() {
+        loader = true;
+      });
+      print(responsedecode.access_token + 'MOHIT access token ');
+      await _invoicedetails();
+      //generateewaybill();
+    }
+
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -1115,7 +1195,11 @@ class _Ewaybill1State extends State<Ewaybill1> {
           textAlign: TextAlign.left,
         ),
       ),
-      body: SingleChildScrollView(
+      body:
+          // loader?
+          // Center(child:CircularProgressIndicator()):
+
+          SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1139,10 +1223,12 @@ class _Ewaybill1State extends State<Ewaybill1> {
                 width: w * 0.8,
                 color: Colors.white,
                 child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Invoice No",
-                    fillColor: Colors.white,
-                  ),
+                  decoration:
+                      CoustumInputDecorationWidget("Invoice No").decoration(),
+                  //  InputDecoration(
+                  //   labelText: "Invoice No",
+                  //   fillColor: Colors.white,
+                  // ),
                   controller: ewaybillController,
                 ),
               ),
@@ -1166,14 +1252,18 @@ class _Ewaybill1State extends State<Ewaybill1> {
                     alignment: Alignment.center,
                     child: InkWell(
                       onTap: () => {
-                        _getBusinessDetails(widget.uid),
-                        print(responsedecode.access_token),
-                        _invoicedetails(),
+                        asyncorise(),
+                        // _getBusinessDetails(widget.uid),
+                        // print(responsedecode.access_token +
+                        //     'MOHIT access token '),
+                        // _invoicedetails(),
 
-                        //     generateewaybill()
+                        //  generateewaybill()
                       },
                       child: Container(
-                        color: const Color(0xfff3F3D56),
+                        decoration: BoxDecoration(
+                            color: const Color(0xfff3F3D56),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(

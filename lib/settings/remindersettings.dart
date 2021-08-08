@@ -125,6 +125,8 @@ class _ReminderSettingState extends State<ReminderSetting> {
 
     return Scaffold(
       appBar: AppBar(
+         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.of(context).pop(),),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -156,82 +158,91 @@ class _ReminderSettingState extends State<ReminderSetting> {
                 textAlign: TextAlign.left,
               ),
             ),
-            Tab(
-                null,
-                'Low Stock ALert',
-                SizedBox(
-                  width: 70,
-                  height: 30,
-                  child: Switch(
-                    //initial value
-                    value: lowStockAlert,
-                    activeTrackColor: Color(0xff2F2E41),
-                    activeColor: Colors.white,
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Tab(
+                  null,
+                  'Low Stock ALert',
+                  SizedBox(
+                    width: 70,
+                    height: 30,
+                    child: Switch(
+                      //initial value
+                      value: lowStockAlert,
+                      activeTrackColor: Color(0xff2F2E41),
+                      activeColor: Colors.white,
 
-                    inactiveThumbColor: Colors.white,
+                      inactiveThumbColor: Colors.white,
 
-                    onChanged: (bool state) {
-                      setState(() {
-                        lowStockAlert = state;
-                        reminderSettingsfc();
-                      });
+                      onChanged: (bool state) {
+                        setState(() {
+                          lowStockAlert = state;
+                          reminderSettingsfc();
+                        });
 
-                      //Use it to manage the different states
-                    },
+                        //Use it to manage the different states
+                      },
+                    ),
                   ),
-                ),
-                w),
-            Tab(
-                null,
-                'GSTR 1 Due Date Alert',
-                SizedBox(
-                  width: 70,
-                  height: 30,
-                  child: Switch(
-                    //initial value
-                    value: gstr1,
-                    activeTrackColor: Color(0xff2F2E41),
-                    activeColor: Colors.white,
+                  w),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Tab(
+                  null,
+                  'GSTR 1 Due Date Alert',
+                  SizedBox(
+                    width: 70,
+                    height: 30,
+                    child: Switch(
+                      //initial value
+                      value: gstr1,
+                      activeTrackColor: Color(0xff2F2E41),
+                      activeColor: Colors.white,
 
-                    inactiveThumbColor: Colors.white,
+                      inactiveThumbColor: Colors.white,
 
-                    onChanged: (bool state) {
-                      setState(() {
-                        gstr1 = state;
-                        reminderSettingsfc();
-                      });
+                      onChanged: (bool state) {
+                        setState(() {
+                          gstr1 = state;
+                          reminderSettingsfc();
+                        });
 
-                      //Use it to manage the different states
-                    },
+                        //Use it to manage the different states
+                      },
+                    ),
                   ),
-                ),
-                w),
-            Tab(
-                null,
-                'GSTR 3B Due Date Alert',
-                SizedBox(
-                  width: 70,
-                  height: 100,
-                  child: Switch(
-                    //initial value
-                    value: gstr3b,
+                  w),
+            ),
+           Padding(
+             padding: const EdgeInsets.only(left: 10),
+             child: Tab(
+                  null,
+                  'GSTR 3B Due Date Alert',
+                  SizedBox(
+                    width: 70,
+                    height: 100,
+                    child: Switch(
+                      //initial value
+                      value: gstr3b,
 
-                    activeTrackColor: Color(0xff2F2E41),
-                    activeColor: Colors.white,
+                      activeTrackColor: Color(0xff2F2E41),
+                      activeColor: Colors.white,
 
-                    inactiveThumbColor: Colors.white,
+                      inactiveThumbColor: Colors.white,
 
-                    onChanged: (bool state) {
-                      setState(() {
-                        gstr3b = state;
-                        reminderSettingsfc();
-                      });
+                      onChanged: (bool state) {
+                        setState(() {
+                          gstr3b = state;
+                          reminderSettingsfc();
+                        });
 
-                      //Use it to manage the different states
-                    },
+                        //Use it to manage the different states
+                      },
+                    ),
                   ),
-                ),
-                w),
+                  w),
+           ),
           ],
         ),
       ),
