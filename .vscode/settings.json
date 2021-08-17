@@ -1,3 +1,4 @@
 {
-    "editor.fontSize": 16
+    "editor.fontSize": 16,
+    "dart.flutterSdkPath": "/home/mohit/fluttersdk/flutter_linux_1.24.0-7.0.pre-dev/flutter"
 }

@@ -91,7 +91,7 @@ class _SignupotpState extends State<Signupotp>
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
+     // resizeToAvoidBottomPadding: false,
       key: _scaffoldkey,
       body: Center(
         child: SingleChildScrollView(
