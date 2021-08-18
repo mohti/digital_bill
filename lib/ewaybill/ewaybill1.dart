@@ -1209,15 +1209,15 @@ class _Ewaybill1State extends State<Ewaybill1> {
               child: Text(
                 'Invoice No.',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.left,
               ),
             ),
-            Align(
-              alignment: Alignment.center,
+            Padding(
+              padding: const EdgeInsets.only(left:20.0),
               child: Container(
                 alignment: Alignment.center,
                 width: w * 0.8,

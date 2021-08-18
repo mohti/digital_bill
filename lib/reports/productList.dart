@@ -244,7 +244,7 @@ class _ProductListState extends State<ProductList> {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
-          'Products List',
+          'Product List',
           style: TextStyle(
             fontFamily: 'Bell MT',
             fontSize: 24,

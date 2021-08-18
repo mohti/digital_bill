@@ -1436,7 +1436,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     TextInputType.text,
                                     null,
                                     spin,
-                                    'Pincoode',
+                                    'Pincode',
                                     TextInputType.number, (value) {
                                   if (value.isEmpty && value.length != 6) {
                                     return 'Pease enter Pincode';
@@ -2231,7 +2231,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                               ),
                                             )
                                               ]));
-
+                                        
 
                                         
                                         //  Container(
@@ -2407,32 +2407,43 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
+                                        color: Colors.grey[300],
                                         boxShadow: []),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Other Charges',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 14,
-                                            color: const Color(0xff2f2e41),
-                                            fontWeight: FontWeight.w700,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Other Charges',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 14,
+                                              color: const Color(0xff2f2e41),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
                                           ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.green,
-                                        )
-                                      ],
+                                            Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(
+                                                                                  90)),
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          color: Colors
+                                                                              .green)),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 2,
+                                  height: 10,
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
@@ -2819,33 +2830,44 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          color: Colors.white,
+                                          color: Colors.grey[300],
                                           boxShadow: []),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Discount',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 14,
-                                              color: const Color(0xff2f2e41),
-                                              fontWeight: FontWeight.w700,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Discount',
+                                              style: TextStyle(
+                                                fontFamily: 'Arial',
+                                                fontSize: 14,
+                                                color: const Color(0xff2f2e41),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.left,
                                             ),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                          Icon(
-                                            Icons.add,
-                                            color: Colors.green,
-                                          )
-                                        ],
+                                             Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(
+                                                                                  90)),
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          color: Colors
+                                                                              .green)),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 2,
+                                  height: 10,
                                 ),
                                 InkWell(
                                   onTap: () {
@@ -3088,34 +3110,46 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
+                                        color: Colors.grey[300],
                                         boxShadow: []),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'TCS',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 14,
-                                            color: const Color(0xff2f2e41),
-                                            fontWeight: FontWeight.w700,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'TCS',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 14,
+                                              color: const Color(0xff2f2e41),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
                                           ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.green,
-                                        )
-                                      ],
+                                            Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(
+                                                                                  90)),
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          color: Colors
+                                                                              .green)),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 2,
+                                  height: 10,
                                 ),
                                 InkWell(
+
                                   borderRadius: new BorderRadius.only(
                                       topLeft: const Radius.circular(15.0),
                                       topRight: const Radius.circular(15.0)),
@@ -3480,27 +3514,38 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     //  color: Colors.transparent,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
+                                        color: Colors.grey[300],
                                         boxShadow: []),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Round Off',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 14,
-                                            color: const Color(0xff2f2e41),
-                                            fontWeight: FontWeight.w700,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Round Off',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 14,
+                                              color: const Color(0xff2f2e41),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.left,
                                           ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.green,
-                                        )
-                                      ],
+                                         Container(
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                90)),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .add,
+                                                                        color: Colors
+                                                                            .green)),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
