@@ -219,14 +219,31 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                                     SizedBox(
                                       height: 50,
                                     ),
-                                    Text(
-                                      'Edit Invoice Prefix & Starting \nSerial Number',
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 24,
-                                        color: const Color(0xfff1f3f6),
-                                      ),
-                                      textAlign: TextAlign.left,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                     // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          'Edit Invoice Prefix & Starting \nSerial Number',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 24,
+                                            color: const Color(0xfff1f3f6),
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Icon(
+                                                            Icons
+                                                                .close_outlined,
+                                                            color:
+                                                                Colors.white),
+                                                      )
+                                      ],
                                     ),
                                     SizedBox(
                                       height: 50,
@@ -370,6 +387,7 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                 () => showModalBottomSheet<void>(
                     isScrollControlled: true,
                     context: context,
+                    
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(15.0),
@@ -378,6 +396,8 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                     // shape: RoundedRectangleBorder(
                     builder: (BuildContext context) {
                       return Container(
+                           padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
                         height: MediaQuery.of(context).size.height / 1.5,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
@@ -410,18 +430,36 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
                                   height: 50,
                                 ),
-                                Text(
-                                  'Terms & Condition on Invoice',
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 24,
-                                    color: const Color(0xfff1f3f6),
-                                  ),
-                                  textAlign: TextAlign.left,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      'Terms & Condition on Invoice',
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 24,
+                                        color: const Color(0xfff1f3f6),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Icon(
+                                                            Icons
+                                                                .close_outlined,
+                                                            color:
+                                                                Colors.white),
+                                                      )
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 50,
@@ -480,23 +518,26 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                                           termsAndCondition(),
                                           Navigator.pop(context)
                                         },
-                                    child: Container(
-                                      width: 100,
-                                      height: 50,
-                                      alignment: Alignment.center,
-                                      decoration:
-                                          BoxDecoration(color: Colors.white
-                                          ,
-                                          borderRadius: BorderRadius.circular(10)),
-                                      child: Text(
-                                        'SET',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 16,
-                                          color: const Color(0xff2f2e41),
-                                          fontWeight: FontWeight.w700,
+                                    child: Center(
+                                   //   padding: const EdgeInsets.only(left:150.0),
+                                      child: Container(
+                                        width: 100,
+                                        height: 50,
+                                        alignment: Alignment.center,
+                                        decoration:
+                                            BoxDecoration(color: Colors.white
+                                            ,
+                                            borderRadius: BorderRadius.circular(10)),
+                                        child: Text(
+                                          'SET',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 16,
+                                            color: const Color(0xff2f2e41),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          textAlign: TextAlign.left,
                                         ),
-                                        textAlign: TextAlign.left,
                                       ),
                                     ))
                               ],

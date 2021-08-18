@@ -257,102 +257,106 @@ class _ProductListState extends State<ProductList> {
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 30,),
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.only(left: 20),
               child: Text(
                 'Product List',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
-                  fontSize: 18,
+                  fontSize: 14,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.left,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Date',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 12,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 10, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Date',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 12,
+                      color: const Color(0xff2f2e41),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
-                ),
-                Card(
-                  elevation: 4,
-                  child: InkWell(
-                    onTap: () => selectDate1(context),
-                    child: Container(
-                      alignment:Alignment.centerLeft,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 40,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                  SizedBox(width: 60,),
+                  Card(
+                    elevation: 4,
+                    child: InkWell(
+                      onTap: () => selectDate1(context),
+                      child: Container(
+                        alignment:Alignment.center,
+                        width: MediaQuery.of(context).size.width * 0.33,
+                        height: 40,
                         child: Text("From    " +
                             DateFormat('dd-MM-yyyy').format(initialdate)),
                       ),
                     ),
                   ),
-                ),
-                Card(
-                  elevation: 4,
-                  child: InkWell(
-                    onTap: () => selectDate2(context),
-                    child: Container(
-                      alignment:Alignment.centerLeft,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 40,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                  Card(
+                    elevation: 4,
+                    child: InkWell(
+                      onTap: () => selectDate2(context),
+                      child: Container(
+                        alignment:Alignment.center,
+                        width: MediaQuery.of(context).size.width * 0.33,
+                        height: 40,
                         child: Text(
                             "To        " + DateFormat('dd-MM-yyyy').format(finaldate)),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
             ),
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: 40,
-              width: MediaQuery.of(context).size.width * 0.42,
-              child: RaisedButton(
-                  color: const Color(0xff2f2e41),
-                  onPressed: () => {
-                        setState(() => {
-                              print(initialdate.toString() + "mohit"),
-                              print(finaldate.toString() + "mohit"),
-                              print(widget.uid.toString() + "mohit"),
-                              widgetTable =
-                                  Table1(widget.uid, initialdate, finaldate)
-                            })
-                      },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text(
-                    'Product List',
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )),
+            Padding(
+              padding: const EdgeInsets.only(left:161.0),
+          
+              child: Container(
+                height: 32,
+                
+                width: MediaQuery.of(context).size.width * 0.45,
+                child: RaisedButton(
+                    color: const Color(0xff2f2e41),
+                    onPressed: () => {
+                          setState(() => {
+                                print(initialdate.toString() + "mohit"),
+                                print(finaldate.toString() + "mohit"),
+                                print(widget.uid.toString() + "mohit"),
+                                widgetTable =
+                                    Table1(widget.uid, initialdate, finaldate)
+                              })
+                        },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(
+                      'Product List',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )),
+              ),
             ),
             SizedBox(
-              height: 20,
+              height: 84,
             ),
             widgetTable == null
                 ? Padding(

@@ -7,9 +7,10 @@ class AddNewParty {
   String state;
   String city;
   String pincode;
+  String email;
 
   AddNewParty(this.partyName, this.phone, this.gstn, this.address, this.country,
-      this.state, this.city, this.pincode);
+      this.state, this.city, this.pincode,this.email);
   Map<String, dynamic> toJson() => {
         'partyName': partyName,
         'phone': phone,
@@ -18,6 +19,7 @@ class AddNewParty {
         'country': country,
         'state': state,
         'city': city,
-        'pincode': pincode
+        'pincode': pincode,
+        'email':email
       };
 }

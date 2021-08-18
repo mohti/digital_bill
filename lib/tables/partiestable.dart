@@ -172,7 +172,7 @@ class PartiesTable extends StatelessWidget {
             height: 16,
             decoration: BoxDecoration(color: const Color(0xff2F2E41)),
             child: Padding(
-              padding: const EdgeInsets.only(left:2.0),
+              padding: const EdgeInsets.only(left:3.0),
               child: Row(
                 children: [
                   Container(

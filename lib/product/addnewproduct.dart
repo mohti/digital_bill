@@ -185,7 +185,7 @@ class _AddproductState extends State<Addproduct> {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Eachrow(
                   productCodeController,
@@ -198,7 +198,7 @@ class _AddproductState extends State<Addproduct> {
                   validation,
                   50),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -280,7 +280,7 @@ class _AddproductState extends State<Addproduct> {
               ),
 
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -374,7 +374,7 @@ class _AddproductState extends State<Addproduct> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               // Eachrow(
               //     purchaserateController,
@@ -456,7 +456,7 @@ class _AddproductState extends State<Addproduct> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -498,7 +498,7 @@ class _AddproductState extends State<Addproduct> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -570,7 +570,7 @@ class _AddproductState extends State<Addproduct> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 60,
               ),
               Align(
                 alignment: Alignment.center,
@@ -607,21 +607,24 @@ class _AddproductState extends State<Addproduct> {
                       }
                     },
                     child: Container(
+                      width:200 ,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(5),
                       color: const Color(0xfff3F3D56),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Add Product',
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 16,
-                            color: const Color(0xffffffff),
-                            fontWeight: FontWeight.w700,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Add Product',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 16,
+                              color: const Color(0xffffffff),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
                     )),

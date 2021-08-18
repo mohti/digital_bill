@@ -215,92 +215,103 @@ class _LowStockState extends State<LowStock> {
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 49,),
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.only(left:20.0),
               child: Text(
                 'Low Stock Summary',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
-                  fontSize: 18,
+                  fontSize: 14,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.left,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Date',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 12,
-                    color: const Color(0xff2f2e41),
-                    fontWeight: FontWeight.w700,
+            SizedBox(height: 25,),
+            Padding(
+              padding: const EdgeInsets.fromLTRB( 20,0,10,0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Date',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 12,
+                      color: const Color(0xff2f2e41),
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
-                ),
-                Card(
-                  elevation: 4,
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: 40,
-                    child: InkWell(
-                      onTap: () => selectDate1(context),
-                      child: Text("From " +
-                          DateFormat('dd-MM-yyyy').format(initialdate)),
+                  SizedBox(width: 60,),
+                  Card(
+                    elevation: 4,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * 0.33,
+                      height: 30,
+                      child: InkWell(
+                        onTap: () => selectDate1(context),
+                        child: Text("From " +
+                            DateFormat('dd-MM-yyyy').format(initialdate)),
+                      ),
                     ),
                   ),
-                ),
-                Card(
-                  elevation: 4,
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: 40,
-                    child: InkWell(
-                      onTap: () => selectDate2(context),
-                      child: Text(
-                          "To " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                  Card(
+                    elevation: 4,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * 0.33,
+                      height: 30,
+                      child: InkWell(
+                        onTap: () => selectDate2(context),
+                        child: Text(
+                            "To " + DateFormat('dd-MM-yyyy').format(finaldate)),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
             ),
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: 40,
-            
-              width: MediaQuery.of(context).size.width * 0.42,
-              child: RaisedButton(
-                  color: const Color(0xff2f2e41),
-                  onPressed: () => {
-                        setState(() => {
-                              widgetTable = LowStockTable(
-                                  widget.uid, initialdate, finaldate)
-                            })
-                      },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text(
-                    'Get Low Stock',
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )),
+            Padding(
+              padding: const EdgeInsets.only(left:161.0),
+              child: Container(
+                alignment: Alignment.bottomRight,
+                height: 32,
+              
+                width: MediaQuery.of(context).size.width * 0.42,
+                child: RaisedButton(
+                    color: const Color(0xff2f2e41),
+                    onPressed: () => {
+                          setState(() => {
+                                widgetTable = LowStockTable(
+                                    widget.uid, initialdate, finaldate)
+                              })
+                        },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(
+                      'Get Stock Details',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )),
+              ),
             ),
+            SizedBox(height: 100,),
             /*         Container(
               decoration: BoxDecoration(
                   color: const Color(0xfff3F3D56),

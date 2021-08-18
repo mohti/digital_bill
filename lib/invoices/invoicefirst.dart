@@ -42,7 +42,10 @@ class Tab extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(Icons.arrow_forward_ios)
+              Padding(
+                padding: const EdgeInsets.only(right:20.0),
+                child: Icon(Icons.arrow_forward_ios),
+              )
             ],
           ),
         ),

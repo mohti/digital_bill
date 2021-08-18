@@ -2880,11 +2880,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.fromLTRB(
-                                                        25, 44, 0, 0),
+                                                        25, 44, 25, 0),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
-                                                          .spaceEvenly,
+                                                          .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'TCS (Tax Collected at Service)',

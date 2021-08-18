@@ -105,6 +105,7 @@ class _PartiesListState extends State<PartiesList> {
           child: Stack(
             children: <Widget>[
               Pinned.fromSize(
+                
                 bounds: Rect.fromLTWH(0.0, 0.0, 65.0, 65.0),
                 size: Size(65.0, 65.0),
                 pinLeft: true,
@@ -183,51 +184,39 @@ class _PartiesListState extends State<PartiesList> {
           textAlign: TextAlign.left,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Parties List',
-                style: TextStyle(
-                  fontFamily: 'Bell MT',
-                  fontSize: 18,
-                  color: const Color(0xff2f2e41),
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.left,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+             crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+             Padding(
+               padding: EdgeInsets.fromLTRB(30,10,0,0),
+               child: Container(
+                 height: 110,
+                 alignment: Alignment.centerLeft,
+                                    child: Text(               
+                     'Parties List',
+                     style: TextStyle(
+                       fontFamily: 'Bell MT',
+                       fontSize: 18,
+                       color: const Color(0xff2f2e41),
+                       fontWeight: FontWeight.w700,
+                     ),
+                     textAlign: TextAlign.left,
+                   ),
+                 ),
+               ),
+             
+              SizedBox(
+                height: 20,
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            /*         Container(
-              decoration: BoxDecoration(
-                  color: const Color(0xfff3F3D56),
-                  borderRadius: BorderRadius.circular(2)),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 60.0, right: 60, top: 10, bottom: 10),
-                child: Text(
-                  'Parties List',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 16,
-                    color: const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ),*/
-            SizedBox(
-              height: 20,
-            ),
-            PartiesTable(widget.uid, initialdate, finaldate)
-          ],
+        
+             
+              PartiesTable(widget.uid, initialdate, finaldate)
+            ],
+          ),
         ),
       ),
     );

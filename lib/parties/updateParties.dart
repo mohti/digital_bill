@@ -76,8 +76,8 @@ class Eachrow extends StatelessWidget {
 }
 
 class UpdateParty extends StatefulWidget {
-   String uid = FirebaseAuth.instance.currentUser.uid;
-   final String partyName;
+  String uid = FirebaseAuth.instance.currentUser.uid;
+  final String partyName;
   UpdateParty(this.partyName);
 
   @override
@@ -93,8 +93,9 @@ class _UpdatePartyState extends State<UpdateParty> {
   var stateValue = TextEditingController();
   final cityValue = TextEditingController();
   var pincodeController = TextEditingController();
+  var emailController = TextEditingController();
   final newParty =
-      new AddNewParty(null, null, null, null, null, null, null, null);
+      new AddNewParty(null, null, null, null, null, null, null, null, null);
   final _keyForm = GlobalKey<FormState>();
   bool isvalueIdentified = true;
   String gstNo, response = '';
@@ -113,10 +114,10 @@ class _UpdatePartyState extends State<UpdateParty> {
       setState(() {
         phoneController.text =
             valuee.data()['phone'] == null ? ' ' : valuee.data()['phone'];
-        partyNameController.text = valuee
-            .data()['partyName']==null ? ' ':valuee
-            .data()['partyName'];
-         gstnController.text =
+        partyNameController.text = valuee.data()['partyName'] == null
+            ? ' '
+            : valuee.data()['partyName'];
+        gstnController.text =
             valuee.data()['gstn'] == null ? '' : valuee.data()['gstn'];
         cityValue.text =
             valuee.data()['city'] == null ? ' ' : valuee.data()['city'];
@@ -126,9 +127,8 @@ class _UpdatePartyState extends State<UpdateParty> {
             valuee.data()['country'] == null ? ' ' : valuee.data()['country'];
         pincodeController.text =
             valuee.data()['pincode'] == null ? ' ' : valuee.data()['pincode'];
-        addressController.text =    
-             valuee.data()['address'] == null ? ' ' : valuee.data()['address'];
-      
+        addressController.text =
+            valuee.data()['address'] == null ? ' ' : valuee.data()['address'];
       });
     });
   }
@@ -176,6 +176,7 @@ class _UpdatePartyState extends State<UpdateParty> {
       newParty.city = cityValue.text;
 
       newParty.pincode = pincodeController.text;
+      newParty.email = emailController.text;
 
       // Call the user's CollectionReference to add a new user
       return db
@@ -190,9 +191,10 @@ class _UpdatePartyState extends State<UpdateParty> {
     return Scaffold(
       key: _keyForm,
       appBar: AppBar(
-           leading: IconButton(icon:Icon(Icons.arrow_back_ios),
-          onPressed: ()=> Navigator.of(context).pop(),),
-       
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -208,6 +210,8 @@ class _UpdatePartyState extends State<UpdateParty> {
       ),
       body: Form(
         key: _keyForm,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidate:true,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -228,9 +232,6 @@ class _UpdatePartyState extends State<UpdateParty> {
                   ),
                   textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(
-                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -273,6 +274,7 @@ class _UpdatePartyState extends State<UpdateParty> {
                           decoration:
                               CoustumInputDecorationWidget('Phone Number')
                                   .decoration(),
+                          // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value.isEmpty || value.length != 10) {
                               return 'Please Enter correct ' + 'phone Number';
@@ -286,7 +288,7 @@ class _UpdatePartyState extends State<UpdateParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -357,7 +359,7 @@ class _UpdatePartyState extends State<UpdateParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -398,6 +400,15 @@ class _UpdatePartyState extends State<UpdateParty> {
                           controller: stateValue,
                           decoration: CoustumInputDecorationWidget("State")
                               .decoration(),
+
+                          // The validator receives the text that the user has entered
+                          // onTap: () {
+                          //   setState(() {
+                          //     hiderrors = true;
+                          //     autovalidateMode =
+                          //         AutovalidateMode.onUserInteraction;
+                          //   });
+                          // },
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please Enter ' + 'state';
@@ -411,7 +422,7 @@ class _UpdatePartyState extends State<UpdateParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -451,8 +462,10 @@ class _UpdatePartyState extends State<UpdateParty> {
                           ],
                           keyboardType: TextInputType.number,
                           controller: pincodeController,
-                          decoration: CoustumInputDecorationWidget("Pincode")
+                          decoration: CoustumInputDecorationWidget("Pin Code")
                               .decoration(),
+                          // The validator receives the text that the user has entered.
+
                           validator: (value) {
                             if (value.isEmpty || value.length != 6) {
                               return 'Please Enter ' + 'Pincode';
@@ -466,17 +479,66 @@ class _UpdatePartyState extends State<UpdateParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 9,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Card(
+                  elevation: 4,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailController,
+                      decoration:
+                          CoustumInputDecorationWidget("Email").decoration(),
+                      // The validator receives the text that the user has entered.
+
+                      // validator: (value) {
+                      //   if (value.isEmpty || value.length != 6) {
+                      //     return 'Please Enter ' + 'Pincode';
+                      //   }
+                      //   return null;
+                      // },
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 25,
               ),
               Align(
                 alignment: Alignment.center,
                 child: FlatButton(
+                    /* if (_formKey.currentState.validate()) {
+                                          // If the form is valid, display a Snackbar.
+                                          addParty(),Company name'
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>Company name'
+                                                      Signupotp(
+                                                          _controller.text)));
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content:Company name'
+                                                      Text('')));
+                                        } else {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text('Please fill all the fields'
+                                               )));
+                                        }
+                                      },*/
                     onPressed: () {
                       setState(() {
                         autovalidateMode = AutovalidateMode.onUserInteraction;
                         print('updated autovalidateMode');
                       });
                       if (_keyForm.currentState.validate()) {
+                        // If the form is valid, display a Snackbar.
                         addParty();
                         Fluttertoast.showToast(
                             msg: "Added",
@@ -492,14 +554,13 @@ class _UpdatePartyState extends State<UpdateParty> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                          
                           color: const Color(0xfff3F3D56),
                           borderRadius: BorderRadius.circular(10)),
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 60.0, right: 60, top: 10, bottom: 10),
                         child: Text(
-                          'Save Party',
+                          'Update Party',
                           style: TextStyle(
                             fontFamily: 'Arial',
                             fontSize: 16,

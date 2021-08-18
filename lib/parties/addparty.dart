@@ -92,8 +92,9 @@ class _AddPartyState extends State<AddParty> {
   var stateValue = TextEditingController();
   final cityValue = TextEditingController();
   var pincodeController = TextEditingController();
+  var emailController = TextEditingController();
   final newParty =
-      new AddNewParty(null, null, null, null, null, null, null, null);
+      new AddNewParty(null, null, null, null, null, null, null, null, null);
   final _keyForm = GlobalKey<FormState>();
   bool isvalueIdentified = true;
   String gstNo, response = '';
@@ -106,7 +107,6 @@ class _AddPartyState extends State<AddParty> {
     final db = FirebaseFirestore.instance;
 
     bool verifyGSTNumber(String gst) {
-  
       setState(() {
         gstNo = gst;
       });
@@ -125,7 +125,7 @@ class _AddPartyState extends State<AddParty> {
         });
       }).catchError((error) {
         //isvalueIdentified = false;
-         setState(() {
+        setState(() {
           isvalueIdentified = false;
         });
         // print(error.toString() + "error mohit ");
@@ -144,7 +144,7 @@ class _AddPartyState extends State<AddParty> {
       newParty.city = cityValue.text;
 
       newParty.pincode = pincodeController.text;
-
+      newParty.email = emailController.text;
       // Call the user's CollectionReference to add a new user
       return db
           .collection("userData")
@@ -153,13 +153,15 @@ class _AddPartyState extends State<AddParty> {
           .doc(partyNameController.text)
           .set(newParty.toJson());
     }
-
+                                
     bool hiderrors = false;
     return Scaffold(
       key: _keyForm,
       appBar: AppBar(
-         leading: IconButton(icon:Icon(Icons.arrow_back_ios),
-          onPressed: ()=> Navigator.of(context).pop(),),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -197,9 +199,6 @@ class _AddPartyState extends State<AddParty> {
                   ),
                   textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(
-                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -256,7 +255,7 @@ class _AddPartyState extends State<AddParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -327,7 +326,7 @@ class _AddPartyState extends State<AddParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -390,7 +389,7 @@ class _AddPartyState extends State<AddParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 12,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -430,7 +429,7 @@ class _AddPartyState extends State<AddParty> {
                           ],
                           keyboardType: TextInputType.number,
                           controller: pincodeController,
-                          decoration: CoustumInputDecorationWidget("Pincode")
+                          decoration: CoustumInputDecorationWidget("Pin Code")
                               .decoration(),
                           // The validator receives the text that the user has entered.
 
@@ -447,7 +446,36 @@ class _AddPartyState extends State<AddParty> {
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 9,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Card(
+                  elevation: 4,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailController,
+                      decoration:
+                          CoustumInputDecorationWidget("Email").decoration(),
+                      // The validator receives the text that the user has entered.
+
+                      // validator: (value) {
+                      //   if (value.isEmpty || value.length != 6) {
+                      //     return 'Please Enter ' + 'Pincode';
+                      //   }
+                      //   return null;
+                      // },
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 25,
               ),
               Align(
                 alignment: Alignment.center,
