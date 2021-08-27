@@ -107,6 +107,7 @@ class _AddproductState extends State<Addproduct> {
     ];
     String cgst = listOfCgst[0];
     String igst = "28 ";
+    
     final db = FirebaseFirestore.instance;
     Future<void> addproduct() {
       newProduct.productCode = productCodeController.text;
