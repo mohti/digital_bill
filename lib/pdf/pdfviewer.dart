@@ -366,6 +366,7 @@ class _PdfViewerState extends State<PdfViewer> {
             //mohit
             return widget.generalreportornot == false
                 ? pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
                         pw.Align(
@@ -383,7 +384,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           ),
                         ),
                         pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: pw.MainAxisAlignment.center,
                             children: [
                               pw.SizedBox(
                                   width: 50.0,
@@ -394,22 +395,35 @@ class _PdfViewerState extends State<PdfViewer> {
                                   //  child: null,
                                   ),
                               pw.Column(children: [
-                                pw.Container(
-                                  width: 520,
-                                  //height: 200,
-                                  child: pw.Padding(
-                                    padding: pw.EdgeInsets.only(right: 10),
-                                    //width: 100,
-                                    child: pw.Paragraph(
-                                      style: pw.TextStyle(
-                                        fontSize: 25,
-                                        color: PdfColor.fromInt(0xff2f2e41),
-                                        fontWeight: pw.FontWeight.bold,
-                                      ),
-                                      text: businessNameController.text,
-                                    ),
-                                  ),
-                                ),
+                                // pw.Container(
+                                //   width: 520,
+                                //   //height: 200,
+                                //   child: pw.Padding(
+                                //     padding: pw.EdgeInsets.only(right: 10),
+                                //     //width: 100,
+                                //     child: pw.Paragraph(
+                                //       style: pw.TextStyle(
+                                //         fontSize: 25,
+                                //         color: PdfColor.fromInt(0xff2f2e41),
+                                //         fontWeight: pw.FontWeight.bold,
+                                //       ),
+                                //       text: 
+                                //       businessNameController.text.length>20?
+                                //       businessNameController.text.substring(10):
+                                //       businessNameController.text,
+                                //     ),
+                                //   ),
+                                // ),
+                                  pw.Text(
+                                  businessNameController.text.length>20?
+                                      businessNameController.text.substring(0,20):
+                                      businessNameController.text,
+                              style: pw.TextStyle(
+                                fontSize: 25,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
                                 // pw.Text(
                                 //   businessNameController.text,
                                 //   style: pw.TextStyle(
@@ -435,7 +449,7 @@ class _PdfViewerState extends State<PdfViewer> {
                                   ),
                             ]),
                         pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
                             children: [
                               pw.SizedBox(
                                 width: 96.0,
@@ -721,7 +735,7 @@ class _PdfViewerState extends State<PdfViewer> {
                       ),
                     ),
                     pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
                         children: [
                           pw.SizedBox(
                               width: 50.0,
@@ -730,30 +744,34 @@ class _PdfViewerState extends State<PdfViewer> {
                               //  child: null,
                               ),
                           pw.Column(children: [
-                            pw.Container(
-                              width: 520,
-                              //height: 200,
-                              child: pw.Padding(
-                                padding: pw.EdgeInsets.only(right: 10),
-                                //width: 100,
-                                child: pw.Paragraph(
-                                  style: pw.TextStyle(
-                                    fontSize: 25,
-                                    color: PdfColor.fromInt(0xff2f2e41),
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                  text: businessNameController.text,
-                                ),
-                              ),
-                            ),
-                            // pw.Text(
-                            //   businessNameController.text,
-                            //   style: pw.TextStyle(
-                            //     fontSize: 25,
-                            //     color: PdfColor.fromInt(0xff2f2e41),
-                            //     fontWeight: pw.FontWeight.bold,
+                          //  pw.Container(
+                            //   width: 520,
+                            //   //height: 200,
+                            //   child: pw.Padding(
+                            //     padding: pw.EdgeInsets.only(right: 10),
+                            //     //width: 100,
+                            //     child: pw.Paragraph(
+                            //       style: pw.TextStyle(
+                            //         fontSize: 25,
+                            //         color: PdfColor.fromInt(0xff2f2e41),
+                            //         fontWeight: pw.FontWeight.bold,
+                            //       ),
+                            //       text:    businessNameController.text.length>20?
+                            //           businessNameController.text.substring(0,20):
+                            //           businessNameController.text,
+                            //     ),
                             //   ),
                             // ),
+                            pw.Text(
+                                  businessNameController.text.length>20?
+                                      businessNameController.text.substring(0,20):
+                                      businessNameController.text,
+                              style: pw.TextStyle(
+                                fontSize: 25,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
                             pw.SizedBox(
                               width: 242.0,
                               child: pw.Text(

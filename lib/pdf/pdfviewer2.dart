@@ -123,7 +123,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
   double totaltax = 0;
 
   final businessInfo = new BusinessProfile(
-      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ');
+      '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
   final invoicedetails = new InvoiceModel(
       '',
       ' ',
@@ -315,8 +315,8 @@ class _PdfViewer2State extends State<PdfViewer2> {
     });
     l.forEach((element) {
       setState(() {
-        taxes[element['taxrate']] =
-            taxes[element['taxrate']] + double.parse(element['baseTotalAmount']);
+        taxes[element['taxrate']] = taxes[element['taxrate']] +
+            double.parse(element['baseTotalAmount']);
         print(taxes[element['taxrate']]);
       });
     });
@@ -334,8 +334,10 @@ class _PdfViewer2State extends State<PdfViewer2> {
       });
     });
     setState(() {
-       finalamount =(finalamount - ((discount) * (totalamount / 100)))+(tcs * totalamount / 100) + roundoff;
-     // finalamount = finalamount - (discount * totalamount / 100) + roundoff;
+      finalamount = (finalamount - ((discount) * (totalamount / 100))) +
+          (tcs * totalamount / 100) +
+          roundoff;
+      // finalamount = finalamount - (discount * totalamount / 100) + roundoff;
     });
     final pdf = pw.Document();
     Future<void> uploadtostorage() async {
@@ -382,7 +384,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                   mainAxisAlignment: pw.MainAxisAlignment.start,
                                   children: [
                                     pw.Container(
-                                        width: 272,
+                                        width: 282,
                                         padding: pw.EdgeInsets.all(0),
                                         decoration: pw.BoxDecoration(
                                             border: pw.Border.all()),
@@ -393,9 +395,15 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                 pw.CrossAxisAlignment.start,
                                             children: [
                                               pw.Column(
+                                                mainAxisAlignment: pw
+                                                    .MainAxisAlignment
+                                                    .spaceBetween,
+                                                crossAxisAlignment:
+                                                    pw.CrossAxisAlignment.start,
                                                 children: [
                                                   pw.Container(
-                                                      height: 140,
+                                                      width: 282,
+                                                      height: 150,
                                                       decoration:
                                                           pw.BoxDecoration(
                                                               border: pw.Border
@@ -414,12 +422,11 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                   child: pw.Image(
                                                                       pw.MemoryImage(
                                                                           widget
-                                                                              .logo))
-                                                                  ),
-                                                                   pw.SizedBox(
-                                                                height: 10),
+                                                                              .logo))),
+                                                              pw.SizedBox(
+                                                                  height: 10),
 
-                                                                  /*
+                                                              /*
                                                                  pw.SizedBox(
                                                                     child: pw.SizedBox(
                                                                         width: 50.0,
@@ -440,23 +447,32 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                       .CrossAxisAlignment
                                                                       .start,
                                                                   children: [
-                                                             pw.Container
-                                                  ( width:200,
-                                                //  height: 130,
-                                                    //height: 200,
-                                                    child:pw.Padding(
-                                                    padding: pw.EdgeInsets.all(1),
-                                                    //width: 100,
-                                                    child:pw.Paragraph(
-                                                      style:pw.TextStyle(
-                                                        fontSize: 12,
-                                                        color: PdfColor.fromInt(0xff2f2e41),
-                                                        fontWeight: pw.FontWeight.bold,
-                                                ), 
-                                                      text: 
-                                                        businessNameController.text,
-                                                    
-                                                  ),),),
+                                                                    pw.Container(
+                                                                      width:
+                                                                          200,
+                                                                      //  height: 130,
+                                                                      //height: 200,
+                                                                      child: pw
+                                                                          .Padding(
+                                                                        padding:
+                                                                            pw.EdgeInsets.all(1),
+                                                                        //width: 100,
+                                                                        child: pw
+                                                                            .Paragraph(
+                                                                          style:
+                                                                              pw.TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                            color:
+                                                                                PdfColor.fromInt(0xff2f2e41),
+                                                                            fontWeight:
+                                                                                pw.FontWeight.bold,
+                                                                          ),
+                                                                          text:
+                                                                              businessNameController.text,
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                     // pw.Text(
                                                                     //   // 'hello mohit',
                                                                     //   businessNameController
@@ -510,7 +526,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                             .center,
                                                                       ),
                                                                     ),
-                                                                   
+
                                                                     pw.SizedBox(
                                                                         width:
                                                                             230.0,
@@ -529,7 +545,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                               .TextAlign
                                                                               .center,
                                                                         )),
-                                                                         pw.SizedBox(
+                                                                    pw.SizedBox(
                                                                       width:
                                                                           230.0,
                                                                       child: pw
@@ -550,212 +566,212 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                     ),
                                                                   ]),
                                                             ]),
-                                                            widget
-                                                                    .generalreportornot
-                                                                ? pw.Container(
-                                                                    width: 272,
-                                                                    height: 100,
-                                                                    decoration: pw
-                                                                        .BoxDecoration(
-                                                                      border: pw.Border.all(
-                                                                          width:
-                                                                              1),
-                                                                    ),
-                                                                    child: pw.Row(
-                                                                        children: [
-                                                                          pw.SizedBox(
-                                                                              width: 10),
-                                                                          pw.Column(
-                                                                            mainAxisAlignment:
-                                                                                pw.MainAxisAlignment.start,
-                                                                            crossAxisAlignment:
-                                                                                pw.CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              pw.SizedBox(height: 3),
-                                                                              pw.Text(
-                                                                                'Billed to :  ',
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 15,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  fontWeight: pw.FontWeight.bold,
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                              pw.SizedBox(height: 10),
-                                                                              pw.Text(
-                                                                                'Name :        ' + sname.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                              pw.SizedBox(height: 10),
-                                                                              pw.Text(
-                                                                                'Mobile No :  ' + sphone.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                              pw.Text(
-                                                                                'GSTN :        ' + sgstn.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          pw.Column(
-                                                                            mainAxisAlignment:
-                                                                                pw.MainAxisAlignment.start,
-                                                                            crossAxisAlignment:
-                                                                                pw.CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              pw.SizedBox(height: 10),
-                                                                              pw.Text(
-                                                                                sname.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                              pw.SizedBox(height: 10),
-                                                                              pw.Text(
-                                                                                sphone.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                              pw.Text(
-                                                                                sgstn.text,
-                                                                                style: pw.TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: PdfColor.fromInt(0xff2f2e41),
-                                                                                ),
-                                                                                textAlign: pw.TextAlign.left,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ]))
-                                                                : pw.Column(
-                                                                    children: [
-                                                                      pw.Container(
-                                                                          width: 272,
-                                                                          height: 100,
-                                                                          decoration: pw.BoxDecoration(
-                                                                            border:
-                                                                                pw.Border.all(width: 1),
-                                                                          ),
-                                                                          child: pw.Row(children: [
-                                                                            pw.SizedBox(width: 10),
-                                                                            pw.Column(
-                                                                              mainAxisAlignment: pw.MainAxisAlignment.start,
-                                                                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                pw.SizedBox(height: 3),
-                                                                                pw.Text(
-                                                                                  'Billed to :  ',
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 15,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                    fontWeight: pw.FontWeight.bold,
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.SizedBox(height: 10),
-                                                                                pw.Text(
-                                                                                  'Name :        ' + sname.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.SizedBox(height: 10),
-                                                                                pw.Text(
-                                                                                  'Mobile No :' + sphone.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.Text(
-                                                                                  'GSTN :        ' + sgstn.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ])),
-                                                                      pw.Container(
-                                                                          width: 272,
-                                                                          height: 100,
-                                                                          decoration: pw.BoxDecoration(
-                                                                            border:
-                                                                                pw.Border.all(width: 1),
-                                                                          ),
-                                                                          child: pw.Row(children: [
-                                                                            pw.SizedBox(width: 10),
-                                                                            pw.Column(
-                                                                              mainAxisAlignment: pw.MainAxisAlignment.start,
-                                                                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                pw.SizedBox(height: 3),
-                                                                                pw.Text(
-                                                                                  'Shipped to :  ',
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 15,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                    fontWeight: pw.FontWeight.bold,
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.SizedBox(height: 10),
-                                                                                pw.Text(
-                                                                                  'Name :        ' + bname.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.SizedBox(height: 10),
-                                                                                pw.Text(
-                                                                                  'Mobile No :   ' + bphone.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                                pw.Text(
-                                                                                  'GSTN :        ' + bgstn.text,
-                                                                                  style: pw.TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: PdfColor.fromInt(0xff2f2e41),
-                                                                                  ),
-                                                                                  textAlign: pw.TextAlign.left,
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ])),
-                                                                    ],
-                                                                  ),
+                                                            // widget
+                                                            //         .generalreportornot
+                                                            //     ? pw.Container(
+                                                            //         width: 272,
+                                                            //         height: 100,
+                                                            //         decoration: pw
+                                                            //             .BoxDecoration(
+                                                            //           border: pw.Border.all(
+                                                            //               width:
+                                                            //                   1),
+                                                            //         ),
+                                                            //         child: pw.Row(
+                                                            //             children: [
+                                                            //               pw.SizedBox(
+                                                            //                   width: 10),
+                                                            //               pw.Column(
+                                                            //                 mainAxisAlignment:
+                                                            //                     pw.MainAxisAlignment.start,
+                                                            //                 crossAxisAlignment:
+                                                            //                     pw.CrossAxisAlignment.start,
+                                                            //                 children: [
+                                                            //                   pw.SizedBox(height: 3),
+                                                            //                   pw.Text(
+                                                            //                     'Billed to :  ',
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 15,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       fontWeight: pw.FontWeight.bold,
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                   pw.SizedBox(height: 10),
+                                                            //                   pw.Text(
+                                                            //                     'Name :        ' + sname.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                   pw.SizedBox(height: 10),
+                                                            //                   pw.Text(
+                                                            //                     'Mobile No :  ' + sphone.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                   pw.Text(
+                                                            //                     'GSTN :        ' + sgstn.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                 ],
+                                                            //               ),
+                                                            //               pw.Column(
+                                                            //                 mainAxisAlignment:
+                                                            //                     pw.MainAxisAlignment.start,
+                                                            //                 crossAxisAlignment:
+                                                            //                     pw.CrossAxisAlignment.start,
+                                                            //                 children: [
+                                                            //                   pw.SizedBox(height: 10),
+                                                            //                   pw.Text(
+                                                            //                     sname.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                   pw.SizedBox(height: 10),
+                                                            //                   pw.Text(
+                                                            //                     sphone.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                   pw.Text(
+                                                            //                     sgstn.text,
+                                                            //                     style: pw.TextStyle(
+                                                            //                       fontSize: 13,
+                                                            //                       color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                     ),
+                                                            //                     textAlign: pw.TextAlign.left,
+                                                            //                   ),
+                                                            //                 ],
+                                                            //               ),
+                                                            //             ]))
+                                                            //     : pw.Column(
+                                                            //         children: [
+                                                            //           pw.Container(
+                                                            //               width: 272,
+                                                            //               height: 100,
+                                                            //               decoration: pw.BoxDecoration(
+                                                            //                 border:
+                                                            //                     pw.Border.all(width: 1),
+                                                            //               ),
+                                                            //               child: pw.Row(children: [
+                                                            //                 pw.SizedBox(width: 10),
+                                                            //                 pw.Column(
+                                                            //                   mainAxisAlignment: pw.MainAxisAlignment.start,
+                                                            //                   crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                            //                   children: [
+                                                            //                     pw.SizedBox(height: 3),
+                                                            //                     pw.Text(
+                                                            //                       'Billed to :  ',
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 15,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                         fontWeight: pw.FontWeight.bold,
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.SizedBox(height: 10),
+                                                            //                     pw.Text(
+                                                            //                       'Name :        ' + sname.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.SizedBox(height: 10),
+                                                            //                     pw.Text(
+                                                            //                       'Mobile No :' + sphone.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.Text(
+                                                            //                       'GSTN :        ' + sgstn.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                   ],
+                                                            //                 ),
+                                                            //               ])),
+                                                            //           pw.Container(
+                                                            //               width: 272,
+                                                            //               height: 100,
+                                                            //               decoration: pw.BoxDecoration(
+                                                            //                 border:
+                                                            //                     pw.Border.all(width: 1),
+                                                            //               ),
+                                                            //               child: pw.Row(children: [
+                                                            //                 pw.SizedBox(width: 10),
+                                                            //                 pw.Column(
+                                                            //                   mainAxisAlignment: pw.MainAxisAlignment.start,
+                                                            //                   crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                                            //                   children: [
+                                                            //                     pw.SizedBox(height: 3),
+                                                            //                     pw.Text(
+                                                            //                       'Shipped to :  ',
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 15,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                         fontWeight: pw.FontWeight.bold,
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.SizedBox(height: 10),
+                                                            //                     pw.Text(
+                                                            //                       'Name :        ' + bname.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.SizedBox(height: 10),
+                                                            //                     pw.Text(
+                                                            //                       'Mobile No :   ' + bphone.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                     pw.Text(
+                                                            //                       'GSTN :        ' + bgstn.text,
+                                                            //                       style: pw.TextStyle(
+                                                            //                         fontSize: 13,
+                                                            //                         color: PdfColor.fromInt(0xff2f2e41),
+                                                            //                       ),
+                                                            //                       textAlign: pw.TextAlign.left,
+                                                            //                     ),
+                                                            //                   ],
+                                                            //                 ),
+                                                            //               ])),
+                                                            //         ],
+                                                            //       ),
                                                           ])),
                                                   pw.Container(
-                                                      width: 272,
-                                                      height: 130,
+                                                      width: 282,
+                                                      height: 150,
                                                       decoration:
                                                           pw.BoxDecoration(
                                                         border: pw.Border.all(
@@ -839,8 +855,8 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                         ),
                                                       ])),
                                                   pw.Container(
-                                                      width: 272,
-                                                      height: 130,
+                                                      width: 282,
+                                                      height: 100,
                                                       decoration:
                                                           pw.BoxDecoration(
                                                         border: pw.Border.all(
@@ -1587,7 +1603,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                         pw.MainAxisAlignment.start,
                                     children: [
                                       pw.Container(
-                                        width: 272,
+                                          width: 272,
                                           height: 150,
                                           decoration: pw.BoxDecoration(
                                               border: pw.Border.all()),
@@ -1612,23 +1628,31 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                           .CrossAxisAlignment
                                                           .start,
                                                       children: [
-                                             
-                                                  pw.Container
-                                                  ( width:200,
-                                                    //height: 200,
-                                                    child:pw.Padding(
-                                                    padding: pw.EdgeInsets.all(2),
-                                                    //width: 100,
-                                                    child:pw.Paragraph(
-                                                      style:pw.TextStyle(
-                                                        fontSize: 12,
-                                                        color: PdfColor.fromInt(0xff2f2e41),
-                                                        fontWeight: pw.FontWeight.bold,
-                                                ), 
-                                                      text: 
-                                                        businessNameController.text,
-                                                    
-                                                  ),),),
+                                                        pw.Container(
+                                                          width: 200,
+                                                          //height: 200,
+                                                          child: pw.Padding(
+                                                            padding:
+                                                                pw.EdgeInsets
+                                                                    .all(2),
+                                                            //width: 100,
+                                                            child: pw.Paragraph(
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                color: PdfColor
+                                                                    .fromInt(
+                                                                        0xff2f2e41),
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              ),
+                                                              text:
+                                                                  businessNameController
+                                                                      .text,
+                                                            ),
+                                                          ),
+                                                        ),
                                                         // pw.Text(
                                                         //   businessNameController
                                                         //       .text,
@@ -1659,166 +1683,96 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                           ),
                                                         ),
                                                         pw.Row(
-                                                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                                          mainAxisAlignment: pw.MainAxisAlignment.start,
-                                                          children: [
-                                                          pw.Padding(
-                                                            padding: pw
-                                                                    .EdgeInsets
-                                                                .only(left: 0),
-                                                            child: pw.Column(
-                                                              mainAxisAlignment: pw.MainAxisAlignment.start,
-                                                                children: [
-                                                                  pw.SizedBox(
-                                                                    width: 75.0,
-                                                                    child:
-                                                                        pw.Text(
-                                                                      'Gstn : ',
-                                                                      style: pw
-                                                                          .TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: PdfColor.fromInt(
-                                                                            0xff2f2e41),
+                                                            crossAxisAlignment: pw
+                                                                .CrossAxisAlignment
+                                                                .start,
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .start,
+                                                            children: [
+                                                              pw.Padding(
+                                                                padding: pw
+                                                                        .EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            0),
+                                                                child: pw.Column(
+                                                                    mainAxisAlignment: pw
+                                                                        .MainAxisAlignment
+                                                                        .start,
+                                                                    children: [
+                                                                      pw.SizedBox(
+                                                                        width:
+                                                                            75.0,
+                                                                        child: pw
+                                                                            .Text(
+                                                                          'Gstn : ',
+                                                                          style:
+                                                                              pw.TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                PdfColor.fromInt(0xff2f2e41),
+                                                                          ),
+                                                                          textAlign: pw
+                                                                              .TextAlign
+                                                                              .center,
+                                                                        ),
                                                                       ),
-                                                                      textAlign: pw
-                                                                          .TextAlign
-                                                                          .center,
-                                                                    ),
-                                                                  ),
-                                                                  pw.SizedBox(
-                                                                    width: 75.0,
-                                                                    child:
-                                                                        pw.Text(
-                                                                      'Phone No. :',
-                                                                      style: pw
-                                                                          .TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: PdfColor.fromInt(
-                                                                            0xff2f2e41),
+                                                                      pw.SizedBox(
+                                                                        width:
+                                                                            75.0,
+                                                                        child: pw
+                                                                            .Text(
+                                                                          'Phone No. :',
+                                                                          style:
+                                                                              pw.TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                PdfColor.fromInt(0xff2f2e41),
+                                                                          ),
+                                                                          textAlign: pw
+                                                                              .TextAlign
+                                                                              .center,
+                                                                        ),
                                                                       ),
-                                                                      textAlign: pw
-                                                                          .TextAlign
-                                                                          .center,
-                                                                    ),
-                                                                  ),
-                                                                  // pw.SizedBox(
-                                                                  //     width:
-                                                                  //         75.0,
-                                                                  //     child: pw
-                                                                  //         .Text(
-                                                                  //       'Email :  ',
-                                                                  //       style: pw
-                                                                  //           .TextStyle(
-                                                                  //         fontSize:
-                                                                  //             13,
-                                                                  //         color:
-                                                                  //             PdfColor.fromInt(0xff2f2e41),
-                                                                  //       ),
-                                                                  //       textAlign: pw
-                                                                  //           .TextAlign
-                                                                  //           .center,
-                                                                  //     ))
-                                                                ]),
-                                                          ),
-                                                          pw.Column(
-                                                              mainAxisAlignment:
-                                                                  pw.MainAxisAlignment
+                                                                      // pw.SizedBox(
+                                                                      //     width:
+                                                                      //         75.0,
+                                                                      //     child: pw
+                                                                      //         .Text(
+                                                                      //       'Email :  ',
+                                                                      //       style: pw
+                                                                      //           .TextStyle(
+                                                                      //         fontSize:
+                                                                      //             13,
+                                                                      //         color:
+                                                                      //             PdfColor.fromInt(0xff2f2e41),
+                                                                      //       ),
+                                                                      //       textAlign: pw
+                                                                      //           .TextAlign
+                                                                      //           .center,
+                                                                      //     ))
+                                                                    ]),
+                                                              ),
+                                                              pw.Column(
+                                                                  mainAxisAlignment: pw
+                                                                      .MainAxisAlignment
                                                                       .start,
-                                                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                                              children: [
-                                                                pw.Container(
-                                                                  height: 15,
-                                                                  width: 115.0,
-                                                                  child:
-                                                                      pw.Text(
-                                                                    gstNumberController
-                                                                        .text,
-                                                                    style: pw
-                                                                        .TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: PdfColor
-                                                                          .fromInt(
-                                                                              0xff2f2e41),
-                                                                    ),
-                                                                    textAlign: pw
-                                                                        .TextAlign
-                                                                        .center,
-                                                                  ),
-                                                                ),
-                                                                  
-                                                                // pw.SizedBox(
-                                                                //   height: 40,
-                                                                //   width:115.0,
-                                                                //   child:pw.Padding(
-                                                                //   padding: pw.EdgeInsets.only(right:2),
-                                                                //   child:
-                                                                //       pw.Paragraph(
-                                                                //     text:emailController
-                                                                //         .text,
-                                                                //     style: pw
-                                                                //         .TextStyle(
-                                                                //       fontSize:
-                                                                //           13,
-                                                                //       color: PdfColor
-                                                                //           .fromInt(
-                                                                //               0xff2f2e41),
-                                                                //     ),
-                                                                //     // textAlign: pw
-                                                                //     //     .TextAlign
-                                                                //     //     .left,
-                                                                //   ),
-                                                                // )),
-                                                                pw.SizedBox(
-                                                                  height: 15,
-                                                                    width:
-                                                                        115.0,
-                                                                    child:
-                                                                        pw.Text(
-                                                                      phoneController
-                                                                          .text,
-                                                                      style: pw
-                                                                          .TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: PdfColor.fromInt(
-                                                                            0xff2f2e41),
-                                                                      ),
-                                                                      textAlign: pw
-                                                                          .TextAlign
-                                                                          .center,
-                                                                    )),
-                                                                //     pw.Container
-                                                                //   ( width:75,
-                                                                //     height: 50,
-                                                                //     child:pw.Container(
-                                                                //     child:pw.Padding(
-                                                                //     padding: pw.EdgeInsets.all(2),
-                                                                //     //width: 100,
-                                                                //     child:pw.Paragraph(
-                                                                //       style:pw.TextStyle(
-                                                                //         fontSize: 10,
-                                                                //         color: PdfColor.fromInt(0xff2f2e41),
-                                                                //         fontWeight: pw.FontWeight.bold,
-                                                                // ), 
-                                                                //       text: emailController.text
-                                                                    
-                                                                //   ),
-                                                                //   ),
-                                                                //   ),
-                                                                //   ),
-                                                              ]),
-                                                             
-                                                        ]),
-                                                           pw.SizedBox(
+                                                                  crossAxisAlignment: pw
+                                                                      .CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    pw.Container(
+                                                                      height:
+                                                                          15,
                                                                       width:
-                                                                          272.0,
+                                                                          115.0,
                                                                       child: pw
                                                                           .Text(
-                                                                        'Email :' +
-                                                                            emailController.text,
+                                                                        gstNumberController
+                                                                            .text,
                                                                         style: pw
                                                                             .TextStyle(
                                                                           fontSize:
@@ -1831,7 +1785,87 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                                             .center,
                                                                       ),
                                                                     ),
-                                                       
+
+                                                                    // pw.SizedBox(
+                                                                    //   height: 40,
+                                                                    //   width:115.0,
+                                                                    //   child:pw.Padding(
+                                                                    //   padding: pw.EdgeInsets.only(right:2),
+                                                                    //   child:
+                                                                    //       pw.Paragraph(
+                                                                    //     text:emailController
+                                                                    //         .text,
+                                                                    //     style: pw
+                                                                    //         .TextStyle(
+                                                                    //       fontSize:
+                                                                    //           13,
+                                                                    //       color: PdfColor
+                                                                    //           .fromInt(
+                                                                    //               0xff2f2e41),
+                                                                    //     ),
+                                                                    //     // textAlign: pw
+                                                                    //     //     .TextAlign
+                                                                    //     //     .left,
+                                                                    //   ),
+                                                                    // )),
+                                                                    pw.SizedBox(
+                                                                        height:
+                                                                            15,
+                                                                        width:
+                                                                            115.0,
+                                                                        child: pw
+                                                                            .Text(
+                                                                          phoneController
+                                                                              .text,
+                                                                          style:
+                                                                              pw.TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                PdfColor.fromInt(0xff2f2e41),
+                                                                          ),
+                                                                          textAlign: pw
+                                                                              .TextAlign
+                                                                              .center,
+                                                                        )),
+                                                                    //     pw.Container
+                                                                    //   ( width:75,
+                                                                    //     height: 50,
+                                                                    //     child:pw.Container(
+                                                                    //     child:pw.Padding(
+                                                                    //     padding: pw.EdgeInsets.all(2),
+                                                                    //     //width: 100,
+                                                                    //     child:pw.Paragraph(
+                                                                    //       style:pw.TextStyle(
+                                                                    //         fontSize: 10,
+                                                                    //         color: PdfColor.fromInt(0xff2f2e41),
+                                                                    //         fontWeight: pw.FontWeight.bold,
+                                                                    // ),
+                                                                    //       text: emailController.text
+
+                                                                    //   ),
+                                                                    //   ),
+                                                                    //   ),
+                                                                    //   ),
+                                                                  ]),
+                                                            ]),
+                                                        pw.SizedBox(
+                                                          width: 272.0,
+                                                          child: pw.Text(
+                                                            'Email :' +
+                                                                emailController
+                                                                    .text,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 13,
+                                                              color: PdfColor
+                                                                  .fromInt(
+                                                                      0xff2f2e41),
+                                                            ),
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                          ),
+                                                        ),
                                                       ]),
                                                 ]),
                                                 pw.Container(
@@ -2047,37 +2081,6 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                                             ),
                                                           ]),
                                                     ]),
-                                                // pw.Text(
-                                                //   'Name:              ' +
-                                                //   sname.text,
-                                                //   style: pw.TextStyle(
-                                                //     fontSize: 13,
-                                                //     color: PdfColor.fromInt(
-                                                //         0xff2f2e41),
-                                                //   ),
-                                                //   textAlign: pw.TextAlign.left,
-                                                // ),
-                                                // pw.SizedBox(height: 10),
-                                                // pw.Text(
-                                                //   'Mobile No :        ' +
-                                                //       sphone.text,
-                                                //   style: pw.TextStyle(
-                                                //     fontSize: 13,
-                                                //     color: PdfColor.fromInt(
-                                                //         0xff2f2e41),
-                                                //   ),
-                                                //   textAlign: pw.TextAlign.left,
-                                                // ),
-                                                // pw.Text(
-                                                //   'GSTN :            ' +
-                                                //   sgstn.text,
-                                                //   style: pw.TextStyle(
-                                                //     fontSize: 13,
-                                                //     color: PdfColor.fromInt(
-                                                //         0xff2f2e41),
-                                                //   ),
-                                                //   textAlign: pw.TextAlign.left,
-                                                // ),
                                               ],
                                             ),
                                           ])),

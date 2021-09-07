@@ -127,6 +127,55 @@ class _InvoiceMainState extends State<InvoiceMain> {
 
   final _keyForm = GlobalKey<FormState>();
 
+  final foc = ['None', "Gift", "Free of Cost", 'Free Sample'];
+  final taxtypes = ['IGST', "CGST+SGST"];
+  final units = [
+    'BAG-BAGS',
+    'BAL-BALE',
+    'BDL-BUNDLES',
+    'BKL-BUCKLES',
+    'BOU-BILLIONS OF UNITS',
+    'BOX-BOX',
+    'BTL-BOTTLES',
+    'BUN-BUNCHES',
+    'CAN-CANS',
+    'CBM-CUBIC METER',
+    'CCM-CUBIC CENTIMETER',
+    'CMS-CENTIMETER',
+    'CTN-CARTONS',
+    'DOZ-DOZEN',
+    'DRM-DRUM',
+    'GGR-GREAT GROSS',
+    'GMS-GRAMS',
+    'GRS-GROSS',
+    'GYD-GROSS YARDS',
+    'KGS-KILOGRAMS',
+    'KLR-KILOLITER',
+    'KME-KILOMETRE',
+    'MLT-MILLILITRE',
+    'MTR-METERS',
+    'NOS-NUMBERS',
+    'PAC-PACKS',
+    'PCS-PIECES',
+    'PRS-PAIRS',
+    'QTL-QUINTAL',
+    'ROL-ROLLS',
+    'SET-SETS',
+    'SQF-SQUARE FEET',
+    'SQM-SQUARE METERS',
+    'SQY-SQUARE YARDS',
+    'TBS-TABLETS',
+    'TGM-TEN GROSS',
+    'THD-THOUSANDS',
+    'TON-TONNES',
+    'TUB-TUBES',
+    'UGS-US GALLONS',
+    'UNT-UNITS',
+    'YDS-YARDS',
+    'OTH-OTHERS'
+  ];
+  final vehiclemodes = ['Road', 'Train', 'Ship', 'Air'];
+
   bool generalInvoiceornot = true;
   String numberOfInvoies;
   String invoiceStyle;
@@ -444,54 +493,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
         });
     }
 
-    final foc = ['None', "Gift", "Free of Cost", 'Free Sample'];
-    final taxtypes = ['IGST', "CGST+SGST"];
-    final units = [
-      'BAG-BAGS',
-      'BAL-BALE',
-      'BDL-BUNDLES',
-      'BKL-BUCKLES',
-      'BOU-BILLIONS OF UNITS',
-      'BOX-BOX',
-      'BTL-BOTTLES',
-      'BUN-BUNCHES',
-      'CAN-CANS',
-      'CBM-CUBIC METER',
-      'CCM-CUBIC CENTIMETER',
-      'CMS-CENTIMETER',
-      'CTN-CARTONS',
-      'DOZ-DOZEN',
-      'DRM-DRUM',
-      'GGR-GREAT GROSS',
-      'GMS-GRAMS',
-      'GRS-GROSS',
-      'GYD-GROSS YARDS',
-      'KGS-KILOGRAMS',
-      'KLR-KILOLITER',
-      'KME-KILOMETRE',
-      'MLT-MILLILITRE',
-      'MTR-METERS',
-      'NOS-NUMBERS',
-      'PAC-PACKS',
-      'PCS-PIECES',
-      'PRS-PAIRS',
-      'QTL-QUINTAL',
-      'ROL-ROLLS',
-      'SET-SETS',
-      'SQF-SQUARE FEET',
-      'SQM-SQUARE METERS',
-      'SQY-SQUARE YARDS',
-      'TBS-TABLETS',
-      'TGM-TEN GROSS',
-      'THD-THOUSANDS',
-      'TON-TONNES',
-      'TUB-TUBES',
-      'UGS-US GALLONS',
-      'UNT-UNITS',
-      'YDS-YARDS',
-      'OTH-OTHERS'
-    ];
-    final vehiclemodes = ['Road', 'Train', 'Ship', 'Air'];
     final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
@@ -1987,35 +1988,36 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: new BorderRadius
-                                                        .only(
-                                                    topLeft:
-                                                        const Radius.circular(
-                                                            15.0),
-                                                    topRight:
-                                                        const Radius.circular(
-                                                            15.0)),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  colors: <Color>[
-                                                    Color(0xff573666),
-                                                    Color(0xff1B1B2A)
-                                                  ], // red to yellow
-                                                  // repeats the gradient over the canvas
-                                                ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft:
+                                                          const Radius.circular(
+                                                              15.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              15.0)),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                colors: <Color>[
+                                                  Color(0xff573666),
+                                                  Color(0xff1B1B2A)
+                                                ], // red to yellow
+                                                // repeats the gradient over the canvas
                                               ),
-                                              child: Column(children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          30, 51, 30, 0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(children:[Text(
+                                            ),
+                                            child: Column(children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        30, 51, 30, 0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(children: [
+                                                      Text(
                                                         'Add Other Charges',
                                                         style: TextStyle(
                                                           fontFamily: 'Arial',
@@ -2026,378 +2028,222 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                         textAlign:
                                                             TextAlign.left,
                                                       ),
-                                                      SizedBox(width:10),
-                                                        Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                100)),
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .add,
-                                                                        color: Colors
-                                                                            .green)),
-                                                             
-                                                      ]),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Icon(
-                                                            Icons
-                                                                .close_outlined,
-                                                            color:
-                                                                Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 41),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Container(
-                                                      //color: Colors.white,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      //height: 50,
-                                                      child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                  'Charge Name',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .white)),
-                                                              SizedBox(
-                                                                  height: 13),
-                                                              Container(
-                                                                decoration: new BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10))),
-                                                                height: 40,
-                                                                child:
-                                                                    TextFormField(
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                               contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                          fillColor:
-                                                                              Colors.white,
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10.0),
-                                                                          ),
-                                                                        ),
-                                                                        controller:
-                                                                            chargename),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ),
-                                                    Container(
-                                                      //color: Colors.white,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      //height: 50,
-                                                      child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                  'Charges',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .white)),
-                                                              SizedBox(
-                                                                  height: 13),
-                                                              Container(
-                                                                decoration: new BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10))),
-                                                                height: 40,
-                                                                child:
-                                                                    TextFormField(
-                                                                      autofocus:true,
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                      //        floatingLabelBehavior: FloatingLabelBehavior.always,
-                                                                      contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                      suffixIcon: 
-                                                                      Container(
-                                                                      
-                                                                        height: 10,
-                                                                        width:5,
-                                                                        child:Text('\u20B9')),
-                                                                      // suffixStyle: TextStyle(
-                                                                      //   color:Colors.black
-                                                                      
-                                                                      // ),
-                                                                          fillColor:
-                                                                              Colors.white,
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10.0),
-                                                                          ),
-                                                                        ),
-                                                                        controller:
-                                                                            chargevalue),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ),
+                                                      SizedBox(width: 10),
+                                                      Container(
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          100)),
+                                                          child: Icon(Icons.add,
+                                                              color: Colors
+                                                                  .green)),
+                                                    ]),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Icon(
+                                                          Icons.close_outlined,
+                                                          color: Colors.white),
+                                                    )
                                                   ],
                                                 ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                
-                                            InkWell(
-                                              onTap: () {
-                                                othercharges.add(OtherCharges(
-                                                    chargename.text.toString(),
-                                                    double.parse(
-                                                        chargevalue.text)));
+                                              ),
+                                              SizedBox(height: 41),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Container(
+                                                    //color: Colors.white,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.4,
+                                                    //height: 50,
+                                                    child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text('Charge Name',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Colors
+                                                                        .white)),
+                                                            SizedBox(
+                                                                height: 13),
+                                                            Container(
+                                                              decoration: new BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      new BorderRadius
+                                                                          .all(new Radius
+                                                                              .circular(
+                                                                          10))),
+                                                              height: 40,
+                                                              child:
+                                                                  TextFormField(
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        contentPadding: const EdgeInsets.only(
+                                                                            left:
+                                                                                8.0,
+                                                                            bottom:
+                                                                                1.0,
+                                                                            top:
+                                                                                1.0),
+                                                                        fillColor:
+                                                                            Colors.white,
+                                                                        border:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10.0),
+                                                                        ),
+                                                                      ),
+                                                                      controller:
+                                                                          chargename),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ),
+                                                  Container(
+                                                    //color: Colors.white,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.4,
+                                                    //height: 50,
+                                                    child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text('Charges',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Colors
+                                                                        .white)),
+                                                            SizedBox(
+                                                                height: 13),
+                                                            Container(
+                                                              decoration: new BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      new BorderRadius
+                                                                          .all(new Radius
+                                                                              .circular(
+                                                                          10))),
+                                                              height: 40,
+                                                              child:
+                                                                  TextFormField(
+                                                                      autofocus:
+                                                                          true,
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        //        floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                                        contentPadding: const EdgeInsets.only(
+                                                                            left:
+                                                                                8.0,
+                                                                            bottom:
+                                                                                1.0,
+                                                                            top:
+                                                                                1.0),
+                                                                        suffixIcon: Container(
+                                                                            height:
+                                                                                10,
+                                                                            width:
+                                                                                5,
+                                                                            child:
+                                                                                Text('\u20B9')),
+                                                                        // suffixStyle: TextStyle(
+                                                                        //   color:Colors.black
 
-                                                chargevalue.text = '';
-                                                chargename.text = '';
-                                                Navigator.pop(context);
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                width: 80,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: Text(
-                                                    'ADD',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Arial',
-                                                      fontSize: 16,
-                                                      color: const Color(
-                                                          0xff3f3d56),
-                                                      fontWeight:
-                                                          FontWeight.w700,
+                                                                        // ),
+                                                                        fillColor:
+                                                                            Colors.white,
+                                                                        border:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10.0),
+                                                                        ),
+                                                                      ),
+                                                                      controller:
+                                                                          chargevalue),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  othercharges.add(OtherCharges(
+                                                      chargename.text
+                                                          .toString(),
+                                                      double.parse(
+                                                          chargevalue.text)));
+
+                                                  chargevalue.text = '';
+                                                  chargename.text = '';
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: 80,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: Text(
+                                                      'ADD',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Arial',
+                                                        fontSize: 16,
+                                                        color: const Color(
+                                                            0xff3f3d56),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign: TextAlign.left,
                                                     ),
-                                                    textAlign: TextAlign.left,
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                              ]));
-                                        
-
-                                        
-                                        //  Container(
-                                        //   decoration: BoxDecoration(
-                                        //     borderRadius: BorderRadius.only(
-                                        //         topLeft: Radius.circular(15.0),
-                                        //         topRight:
-                                        //             Radius.circular(15.0)),
-                                        //     gradient: LinearGradient(
-                                        //       begin: Alignment.topCenter,
-                                        //       colors: <Color>[
-                                        //         Color(0xff573666),
-                                        //         Color(0xff1B1B2A)
-                                        //       ], // red to yellow
-                                        //       // repeats the gradient over the canvas
-                                        //     ),
-                                        //   ),
-                                        //   child: Column(children: [
-                                        //     SizedBox(
-                                        //       height: 10,
-                                        //     ),
-                                        //     Row(
-                                        //       children: [
-                                        //         Padding(
-                                        //           padding:
-                                        //               const EdgeInsets.all(8.0),
-                                        //           child: Text(
-                                        //             'Add Other Charges',
-                                        //             style: TextStyle(
-                                        //               fontFamily: 'Arial',
-                                        //               fontSize: 24,
-                                        //               color: const Color(
-                                        //                   0xffffffff),
-                                        //             ),
-                                        //             textAlign: TextAlign.left,
-                                        //           ),
-                                        //         ),
-                                        //         SizedBox(
-                                        //           width: 10,
-                                        //         ),
-                                        //         Container(
-                                        //             decoration: BoxDecoration(
-                                        //                 color: Colors.white,
-                                        //                 borderRadius:
-                                        //                     BorderRadius
-                                        //                         .circular(100)),
-                                        //             child: Icon(Icons.add,
-                                        //                 color: Colors.green)),
-                                        //       ],
-                                        //     ),
-                                        //     SizedBox(
-                                        //       height: 10,
-                                        //     ),
-                                        //     Row(
-                                        //       mainAxisAlignment:
-                                        //           MainAxisAlignment.spaceEvenly,
-                                        //       children: [
-                                        //         Column(
-                                        //           children: [
-                                        //             Text(
-                                        //               'Charge Name',
-                                        //               style: TextStyle(
-                                        //                 fontFamily: 'Arial',
-                                        //                 fontSize: 12,
-                                        //                 color: const Color(
-                                        //                     0xffffffff),
-                                        //               ),
-                                        //               textAlign: TextAlign.left,
-                                        //             ),
-                                        //             Container(
-                                        //               color: Colors.white,
-                                        //               width:
-                                        //                   MediaQuery.of(context)
-                                        //                           .size
-                                        //                           .width *
-                                        //                       0.4,
-                                        //               height: 50,
-                                        //               child: Padding(
-                                        //                 padding:
-                                        //                     const EdgeInsets
-                                        //                             .only(
-                                        //                         left: 8.0),
-                                        //                 child: TextFormField(
-                                        //                     controller:
-                                        //                         chargename),
-                                        //               ),
-                                        //             )
-                                        //           ],
-                                        //         ),
-                                        //         Column(
-                                        //           children: [
-                                        //             Text(
-                                        //               'Charge Value',
-                                        //               style: TextStyle(
-                                        //                 fontFamily: 'Arial',
-                                        //                 fontSize: 12,
-                                        //                 color: const Color(
-                                        //                     0xffffffff),
-                                        //               ),
-                                        //               textAlign: TextAlign.left,
-                                        //             ),
-                                        //             Container(
-                                        //               color: Colors.white,
-                                        //               width:
-                                        //                   MediaQuery.of(context)
-                                        //                           .size
-                                        //                           .width *
-                                        //                       0.45,
-                                        //               height: 50,
-                                        //               child: Padding(
-                                        //                 padding:
-                                        //                     const EdgeInsets
-                                        //                             .only(
-                                        //                         left: 8.0),
-                                        //                 child: TextFormField(
-                                        //                     controller:
-                                        //                         chargevalue),
-                                        //               ),
-                                        //             )
-                                        //           ],
-                                        //         )
-                                        //       ],
-                                        //     ),
-                                        //     SizedBox(
-                                        //       height: 10,
-                                        // //     ),
-                                        //     InkWell(
-                                        //       onTap: () {
-                                        //         othercharges.add(OtherCharges(
-                                        //             chargename.text.toString(),
-                                        //             double.parse(
-                                        //                 chargevalue.text)));
-
-                                        //         chargevalue.text = '';
-                                        //         chargename.text = '';
-                                        //         Navigator.pop(context);
-                                        //       },
-                                        //       child: Container(
-                                        //         alignment: Alignment.center,
-                                        //         width: 80,
-                                        //         decoration: BoxDecoration(
-                                        //           color: Colors.white,
-                                        //           borderRadius:
-                                        //               BorderRadius.circular(4),
-                                        //         ),
-                                        //         child: Padding(
-                                        //           padding: const EdgeInsets.all(
-                                        //               10.0),
-                                        //           child: Text(
-                                        //             'ADD',
-                                        //             style: TextStyle(
-                                        //               fontFamily: 'Arial',
-                                        //               fontSize: 16,
-                                        //               color: const Color(
-                                        //                   0xff3f3d56),
-                                        //               fontWeight:
-                                        //                   FontWeight.w700,
-                                        //             ),
-                                        //             textAlign: TextAlign.left,
-                                        //           ),
-                                        //         ),
-                                        //       ),
-                                        //     )
-                                        //  ]),
-                                        // );
-                                      
+                                              )
+                                            ]));
                                       },
                                     );
                                   },
@@ -2425,18 +2271,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             ),
                                             textAlign: TextAlign.left,
                                           ),
-                                            Container(
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(
-                                                                                  90)),
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          color: Colors
-                                                                              .green)),
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          90)),
+                                              child: Icon(Icons.add,
+                                                  color: Colors.green)),
                                         ],
                                       ),
                                     ),
@@ -2565,11 +2407,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                 height: 40,
                                                                 child:
                                                                     TextFormField(
-                                                                      
                                                                         decoration:
                                                                             InputDecoration(
-                                                                                           contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                 
+                                                                          contentPadding: const EdgeInsets.only(
+                                                                              left: 8.0,
+                                                                              bottom: 1.0,
+                                                                              top: 1.0),
                                                                           fillColor:
                                                                               Colors.white,
                                                                           border:
@@ -2626,8 +2469,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                     TextFormField(
                                                                         decoration:
                                                                             InputDecoration(
-                                                                                     contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                  
+                                                                          contentPadding: const EdgeInsets.only(
+                                                                              left: 8.0,
+                                                                              bottom: 1.0,
+                                                                              top: 1.0),
                                                                           fillColor:
                                                                               Colors.white,
                                                                           border:
@@ -2848,18 +2693,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                               ),
                                               textAlign: TextAlign.left,
                                             ),
-                                             Container(
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(
-                                                                                  90)),
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          color: Colors
-                                                                              .green)),
+                                            Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            90)),
+                                                child: Icon(Icons.add,
+                                                    color: Colors.green)),
                                           ],
                                         ),
                                       ),
@@ -2920,8 +2761,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                     ),
                                                     InkWell(
                                                       onTap: () {
-                                                          Navigator.pop(
-                                                              context);
+                                                        Navigator.pop(context);
                                                       },
                                                       child: Icon(
                                                           Icons.close_outlined,
@@ -2930,7 +2770,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height:42),
+                                              SizedBox(height: 42),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2978,8 +2818,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                   TextFormField(
                                                                       decoration:
                                                                           InputDecoration(
-                                                                     contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                 
+                                                                        contentPadding: const EdgeInsets.only(
+                                                                            left:
+                                                                                8.0,
+                                                                            bottom:
+                                                                                1.0,
+                                                                            top:
+                                                                                1.0),
                                                                         fillColor:
                                                                             Colors.white,
                                                                         border:
@@ -3036,8 +2881,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                   TextFormField(
                                                                       decoration:
                                                                           InputDecoration(
-                                                                                      contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),      
-                                                                 
+                                                                        contentPadding: const EdgeInsets.only(
+                                                                            left:
+                                                                                8.0,
+                                                                            bottom:
+                                                                                1.0,
+                                                                            top:
+                                                                                1.0),
                                                                         fillColor:
                                                                             Colors.white,
                                                                         border:
@@ -3128,18 +2978,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             ),
                                             textAlign: TextAlign.left,
                                           ),
-                                            Container(
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(
-                                                                                  90)),
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          color: Colors
-                                                                              .green)),
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          90)),
+                                              child: Icon(Icons.add,
+                                                  color: Colors.green)),
                                         ],
                                       ),
                                     ),
@@ -3149,7 +2995,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   height: 10,
                                 ),
                                 InkWell(
-
                                   borderRadius: new BorderRadius.only(
                                       topLeft: const Radius.circular(15.0),
                                       topRight: const Radius.circular(15.0)),
@@ -3321,7 +3166,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                   TextFormField(
                                                                       decoration:
                                                                           InputDecoration(
-                                                                    contentPadding: const EdgeInsets.only(left: 8.0, bottom: 1.0, top: 1.0),
+                                                                        contentPadding: const EdgeInsets.only(
+                                                                            left:
+                                                                                8.0,
+                                                                            bottom:
+                                                                                1.0,
+                                                                            top:
+                                                                                1.0),
                                                                         fillColor:
                                                                             Colors.white,
                                                                         border:
@@ -3532,18 +3383,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             ),
                                             textAlign: TextAlign.left,
                                           ),
-                                         Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                90)),
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .add,
-                                                                        color: Colors
-                                                                            .green)),
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          90)),
+                                              child: Icon(Icons.add,
+                                                  color: Colors.green)),
                                         ],
                                       ),
                                     ),

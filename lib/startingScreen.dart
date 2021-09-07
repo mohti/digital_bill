@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:digitalbillbook/signup_and_loginpages/signup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +13,28 @@ class StartingScreeen extends StatefulWidget {
 }
 
 class _StartingScreeenState extends State<StartingScreeen> {
+  Timer timer;
   var buttonIndex = 1;
-void initState() {
-       SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-      // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-      super.initState();
-    }
+  void initState() {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+      timer = Timer.periodic(Duration(seconds: 2), (Timer t) => setState(() => {
+                        buttonIndex = buttonIndex + 1,
+                        if (buttonIndex > 4)
+                          {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyHomePage()),
+                                (route) => false)
+                          }
+                      }));
+
+    // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: Container(
         child: Stack(
@@ -71,21 +85,6 @@ void initState() {
                 ),
               ),
             ),
-            Positioned(
-              top: 40,
-              right: 30,
-              child: InkWell(
-                onTap:() =>  {
-                   print('on tapped mohit ' ),
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                      (route) => false)
-                },
-             
-                child: Container(child: Text('Skip')),
-              ),
-            ),
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -96,6 +95,36 @@ void initState() {
                       : buttonIndex == 3
                           ? Image.asset('assets/images/screen3.png')
                           : Image.asset('assets/images/screen4.png'),
+            ),
+              Positioned(
+              top: 20,
+              right: 30,
+              child: InkWell(
+                onTap: () => {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                      (route) => false),
+                },
+              
+                child: Container(
+                  width: 50,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  //  color: Colors.white70,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6.0),
+                        child: Text('Skip'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             Positioned(
               bottom: 40,

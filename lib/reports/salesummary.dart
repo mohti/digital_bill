@@ -24,13 +24,48 @@ class SalesSummary extends StatefulWidget {
 
 class _SalesSummary extends State<SalesSummary> {
  
+  var initialdate = DateTime.now(), finaldate = DateTime.now();
+  String textfieldValues;
+    String askValues = 'productCode';
+    String selectbyfilter;
+      // String selectbyfilter;
+    String settingUitextvalues = 'Product code';
+    Widget widgetTable;
+
+    String selctbyFilter;
+ double fontSizeForMainColumn = 6;
+    final listofSelect = [
+      'Product Code',
+      'Product name',
+      'Quanitity',
+      'Tax Rate',
+      'Date',
+      'Ammount'
+    ];
+
+
+
   @override
+
   void initState() {
     // ignore: todo
     // TODO: implement initState
 
     super.initState();
   }
+   Future<bool> _requestPermissions() async {
+    var permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+
+    if (permission != PermissionStatus.granted) {
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      permission = await PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.storage);
+    }
+
+      return permission == PermissionStatus.granted;
+    }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1175,6 +1175,8 @@ class _Ewaybill1State extends State<Ewaybill1> {
       //generateewaybill();
     }
 
+
+
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
