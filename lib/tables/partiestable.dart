@@ -19,17 +19,20 @@ Widget buildtable(BuildContext context, DocumentSnapshot product, double w,
               padding: const EdgeInsets.only(left:2.0),
               child: Row(
                 children: [
-                  Container(
-                    alignment:Alignment.centerLeft,
-                    width: w * 0.15,
-                    child: Text(
-                      product['partyName'],
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: fontSizeForMainColumn,
-                        fontWeight: FontWeight.w700,
+                  Padding(
+                    padding: const EdgeInsets.only(left:4.0),
+                    child: Container(
+                      alignment:Alignment.centerLeft,
+                      width: w * 0.15,
+                      child: Text(
+                        product['partyName'],
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: fontSizeForMainColumn,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
@@ -175,18 +178,21 @@ class PartiesTable extends StatelessWidget {
               padding: const EdgeInsets.only(left:3.0),
               child: Row(
                 children: [
-                  Container(
-                    alignment:Alignment.centerLeft,
-                    width: w * 0.15,
-                    child: Text(
-                      'Company Name',
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: fontSizeForMainColumn,
-                        color: const Color(0xfff1f3f6),
-                        fontWeight: FontWeight.w700,
+                  Padding(
+                    padding: const EdgeInsets.only(left:4.0),
+                    child: Container(
+                      alignment:Alignment.centerLeft,
+                      width: w * 0.15,
+                      child: Text(
+                        'Company Name',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: fontSizeForMainColumn,
+                          color: const Color(0xfff1f3f6),
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.left,
                     ),
                   ),
                   Container(

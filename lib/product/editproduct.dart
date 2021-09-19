@@ -59,7 +59,10 @@ class _UpdateproductState extends State<Updateproduct> {
     '2.5+2.5',
     '1.5+1.5'
   ];
+
   final listofIGST = ["28 ", "18", '12', '9', '5', '3'];
+
+  String igst = "28 ";
   final units = [
     'BAG-BAGS',
     'BAL-BALE',
@@ -107,7 +110,6 @@ class _UpdateproductState extends State<Updateproduct> {
   ];
   intilizer() {}
 
-  String igst = "28 ";
   final db = FirebaseFirestore.instance;
   Future<void> getProductData(String value) {
     print('getProduct details mohit');
@@ -145,7 +147,6 @@ class _UpdateproductState extends State<Updateproduct> {
       // print(widget.productName + 'mohit productname');
     });
     String cgst = listOfCgst[0];
-
     check() {
       getProductData(widget.productCode);
     }
@@ -190,10 +191,10 @@ class _UpdateproductState extends State<Updateproduct> {
     //getProductData(widget.productCode);
     return Scaffold(
       appBar: AppBar(
-         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(47, 46, 65, 1),
         title: Text(
@@ -223,7 +224,7 @@ class _UpdateproductState extends State<Updateproduct> {
                   'Update Product',
                   style: TextStyle(
                     fontFamily: 'Arial',
-                    fontSize: 14,
+                    fontSize: 20,
                     color: const Color(0xff2f2e41),
                     fontWeight: FontWeight.w700,
                   ),
@@ -359,14 +360,78 @@ class _UpdateproductState extends State<Updateproduct> {
                       ),
                     ),
                   ),
+                  // Card(
+                  //   elevation: 4,
+                  //   child: Container(
+                  //     width: MediaQuery.of(context).size.width * 0.45,
+                  //     // height: 50,
+                  //     child: DropdownButtonFormField<String>(
+                  //       value: igst,
+                  //       icon: Icon(Icons.keyboard_arrow_down_sharp),
+                  //       decoration: InputDecoration(
+                  //         labelText: "IGST",
+                  //         contentPadding: const EdgeInsets.only(
+                  //           left: 8.0,
+                  //         ),
+                  //       ),
+                  //       items: [
+                  //         "14+14",
+                  //         "9+9",
+                  //         '6+6',
+                  //         '4.5+4.5',
+                  //         '2.5+2.5',
+                  //         '1.5+1.5'
+                  //       ].map((String value) {
+                  //         return new DropdownMenuItem<String>(
+                  //           value: value,
+                  //           child: new Text(value.toString() + " %"),
+                  //         );
+                  //       }).toList(),
+                  //       // items: listofIGST.map((String value1) {
+                  //       //   return new DropdownMenuItem<String>(
+                  //       //     value: value1,
+                  //       //     child: new Text(value1 + " %"),
+                  //       //   );
+                  //       // }).toList(),
+                  //       onChanged: (String newValue) {
+                  //         setState(() {
+                  //           igst = newValue;
+                  //           igstController.text = newValue;
+                  //           String taxRate = igst;
+                  //           // String result;
+                  //           // result =
+                  //           //     taxRate.substring(0, taxRate.length - 1);
+                  //           var taxammount =
+                  //               (int.parse(purchaserateController.text) *
+                  //                       int.parse(quantityController.text) *
+                  //                       int.parse(taxRate)) /
+                  //                   100;
+                  //           var tam = (int.parse(purchaserateController.text) *
+                  //                   int.parse(quantityController.text)) +
+                  //               taxammount;
+                  //           totalAmount.text = tam.toString();
+                  //         });
+                  //       },
+                  //       validator: (value) {
+                  //         if (value.isEmpty) {
+                  //           return 'Pease select IGST';
+                  //         }
+                  //         return null;
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
+
                   Card(
                     elevation: 4,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.45,
-                      // height: 50,
                       child: DropdownButtonFormField<String>(
-                        value: igst,
-                        icon: Icon(Icons.keyboard_arrow_down_sharp),
+                        value: igst.isNotEmpty?igst:null,
+                        icon: Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Icon(Icons.keyboard_arrow_down_sharp),
+                        ),
                         decoration: InputDecoration(
                           labelText: "IGST",
                           contentPadding: const EdgeInsets.only(
@@ -543,7 +608,7 @@ class _UpdateproductState extends State<Updateproduct> {
                           ),
                           value: 'OTH-OTHERS',
                           icon: Padding(
-                            padding: const EdgeInsets.only(right:5.0),
+                            padding: const EdgeInsets.only(right: 5.0),
                             child: Icon(Icons.keyboard_arrow_down_sharp),
                           ),
                           decoration: InputDecoration(
@@ -553,9 +618,13 @@ class _UpdateproductState extends State<Updateproduct> {
                           ),
                           items: units.map((String value) {
                             return new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(value,style: TextStyle(fontSize: 10,),)
-                            );
+                                value: value,
+                                child: new Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                  ),
+                                ));
                           }).toList(),
                           onChanged: (String newValue) {
                             setState(() {
@@ -616,9 +685,8 @@ class _UpdateproductState extends State<Updateproduct> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                      color: const Color(0xfff3F3D56),
-                      borderRadius: BorderRadius.circular(10)
-                      ),
+                          color: const Color(0xfff3F3D56),
+                          borderRadius: BorderRadius.circular(10)),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(

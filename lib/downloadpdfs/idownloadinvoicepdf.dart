@@ -83,7 +83,7 @@ class _DownloadInvoiceState extends State<DownloadInvoice> {
             children: [
                  
               Container(alignment: Alignment.topLeft,
-              child: Text('ALL Invoices',style: TextStyle(fontSize: 14),)),
+              child: Text('All Invoices',style: TextStyle(fontSize: 20),)),
               SizedBox(height: 20,),
               Container(
                 height:MediaQuery.of(context).size.height/1.27,

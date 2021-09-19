@@ -191,38 +191,15 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
    
-                           SizedBox( height: screenHeight * 0.02,),
+                           SizedBox( height: screenHeight /10,),
   
                           Row(
+                            
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text.rich(
-                                TextSpan(
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
-                                    fontSize: 12,
-                                    color: const Color(0xff8a9ead),
-                                    letterSpacing: 0.30000000000000004,
-                                    height: 1.5,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: '                      \n',
-                                    ),
-                                    TextSpan(
-                                      text: '        ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: const Color(0xff1d1a2f),
-                                        letterSpacing: 0.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
+                             SizedBox(width: screenWidth/2.7,),
                               SizedBox(
-                                width: 100.0,
+                                width: 130.0,
                                 height: 50.0,
                                 child: Stack(
                                   alignment: Alignment.center,
@@ -277,6 +254,7 @@ class MyHomePage extends StatelessWidget {
                                           Icon(
                                             Icons.arrow_forward,
                                             color: Colors.white,
+                                            size: 36,
                                           )
                                         ],
                                       ),

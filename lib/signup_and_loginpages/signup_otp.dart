@@ -109,159 +109,155 @@ class _SignupotpState extends State<Signupotp>
                     //   border: Border.all(width: 1.0, color: const Color(0xff707070)),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: SingleChildScrollView(
-                        reverse: true,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              height: h * 0.025,
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0,0,20,40),
+                    child: SingleChildScrollView(
+                      reverse: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // SizedBox(
+                          //   height: h * 0.025,
+                          // ),
+                          Text(
+                            'Welcome To! Digital Bill Book',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 24,
+                              color: const Color(0xff2f2e41),
+                              fontWeight: FontWeight.w700,
                             ),
-                            Text(
-                              'Welcome To! Digital Bill Book',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 24,
-                                color: const Color(0xff2f2e41),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: h * 0.01,
+                          ),
+                          Text(
+                            'Enter 6 Digit OTP',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 16,
+                              color: const Color(0x992f2e41),
+                              fontWeight: FontWeight.w700,
                             ),
-                            SizedBox(
-                              height: h * 0.01,
-                            ),
-                            Text(
-                              'Enter 6 Digit OTP',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 16,
-                                color: const Color(0x992f2e41),
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(
-                              height: h * 0.02,
-                            ),
-                            Container(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 2.0,
-                                    left: 2,
-                                    right: 2,
-                                    bottom: bottom),
-                                child: PinPut(
-                                  onTap: () {},
-                                  fieldsCount: 6,
-                                  keyboardType: TextInputType.number,
-                                  textStyle: const TextStyle(
-                                      fontSize: 25.0, color: Colors.black),
-                                  eachFieldWidth: 40.0,
-                                  eachFieldHeight: 55.0,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: h/30,
+                          ),
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 2.0,
+                                  left: 2,
+                                  right: 2,
+                                  bottom: bottom),
+                              child: PinPut(
+                                onTap: () {},
+                                fieldsCount: 6,
+                                keyboardType: TextInputType.number,
+                                textStyle: const TextStyle(
+                                    fontSize: 25.0, color: Colors.black),
+                                eachFieldWidth: 40.0,
+                                eachFieldHeight: 55.0,
 
-                                  controller: _pinPutController,
-                                  submittedFieldDecoration: pinPutDecoration,
-                                  selectedFieldDecoration: pinPutDecoration,
-                                  followingFieldDecoration: pinPutDecoration,
-                                  pinAnimationType: PinAnimationType.fade,
-                                  // onSubmit: (pin)  async {
-                                  //   Navigator.pushAndRemoveUntil(
-                                  //             context,
-                                  //             MaterialPageRoute(
-                                  //                 builder: (context) =>
-                                  //                     Home('GMl4S5PXe2eIDthRS0bpwZGrRuy2'))
-                                  //                     ,(route) => false);
+                                controller: _pinPutController,
+                                submittedFieldDecoration: pinPutDecoration,
+                                selectedFieldDecoration: pinPutDecoration,
+                                followingFieldDecoration: pinPutDecoration,
+                                pinAnimationType: PinAnimationType.fade,
+                                // onSubmit: (pin)  async {
+                                //   Navigator.pushAndRemoveUntil(
+                                //             context,
+                                //             MaterialPageRoute(
+                                //                 builder: (context) =>
+                                //                     Home('GMl4S5PXe2eIDthRS0bpwZGrRuy2'))
+                                //                     ,(route) => false);
 
-                                  // },
-                                  onSubmit: (pin) async {
-                                    print('TRIED');
-                                    try {
-                                      await FirebaseAuth.instance
-                                          .signInWithCredential(
-                                              PhoneAuthProvider.credential(
-                                                  verificationId:
-                                                      _verificationCode,
-                                                  smsCode: pin))
-                                          .then((value) async {
-                                        print(value.additionalUserInfo.isNewUser
-                                                .toString() +
-                                            "mohit");
-                                        if (value
-                                                .additionalUserInfo.isNewUser ==
-                                            true) {
-                                          setState(() {
-                                            uid = value.user.uid;
-                                            // obtain shared preferences
-                                            // final prefs =
-                                            //     await SharedPreferences
-                                            //         .getInstance();
-                                            // set value
-                                            //  prefs.setString('UID', uid);
+                                // },
+                                onSubmit: (pin) async {
+                                  print('TRIED');
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .signInWithCredential(
+                                            PhoneAuthProvider.credential(
+                                                verificationId:
+                                                    _verificationCode,
+                                                smsCode: pin))
+                                        .then((value) async {
+                                      print(value.additionalUserInfo.isNewUser
+                                              .toString() +
+                                          "mohit");
+                                      if (value
+                                              .additionalUserInfo.isNewUser ==
+                                          true) {
+                                        setState(() {
+                                          uid = value.user.uid;
+                                          // obtain shared preferences
+                                          // final prefs =
+                                          //     await SharedPreferences
+                                          //         .getInstance();
+                                          // set value
+                                          //  prefs.setString('UID', uid);
 
-                                            // userCredantial user =
-                                            //     userCredantial();
+                                          // userCredantial user =
+                                          //     userCredantial();
 
-                                            //user.setUserid = uid;
-                                          });
-                                          print('newuser here mohit');
-                                          await setUpdatabase();
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Home(value.user.uid)),
-                                              (route) => false);
-                                        } else if (value.user != null) {
-                                          print(value.user.toString() +
-                                              "mohit  else if from pin submitted ");
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Home(value.user.uid)),
-                                              (route) => false);
-                                        }
-                                      });
-                                    } catch (e) {
-                                      print(e.toString());
-                                      FocusScope.of(context).unfocus();
-                                      _scaffoldkey.currentState.showSnackBar(
-                                          SnackBar(
-                                              content: Text('invalid OTP')));
-                                    }
-                                  },
-                                ),
+                                          //user.setUserid = uid;
+                                        });
+                                        print('newuser here mohit');
+                                        await setUpdatabase();
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Home(value.user.uid)),
+                                            (route) => false);
+                                      } else if (value.user != null) {
+                                        print(value.user.toString() +
+                                            "mohit  else if from pin submitted ");
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Home(value.user.uid)),
+                                            (route) => false);
+                                      }
+                                    });
+                                  } catch (e) {
+                                    print(e.toString());
+                                    FocusScope.of(context).unfocus();
+                                    _scaffoldkey.currentState.showSnackBar(
+                                        SnackBar(
+                                            content: Text('invalid OTP')));
+                                  }
+                                },
                               ),
                             ),
-                            SizedBox(
-                              height: h * 0.04,
-                            ),
-                          ],
-                        ),
+                          ), SizedBox(
+                            height: 100,
+                          ),
+                        ],
                       ),
                     ),
-                    width: w * 1,
-                    height: h * 375 / 870 + bottom,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(45.0),
-                        topRight: Radius.circular(45.0),
-                      ),
-                      color: const Color(0xfff1f3f6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0x66000000),
-                          offset: Offset(3, 3),
-                          blurRadius: 6,
-                        ),
-                      ],
+                  ),
+                  width: w * 1,
+                  height: h * 375 / 870 + bottom,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(45.0),
+                      topRight: Radius.circular(45.0),
                     ),
+                    color: const Color(0xfff1f3f6),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0x66000000),
+                        offset: Offset(3, 3),
+                        blurRadius: 6,
+                      ),
+                    ],
                   ),
                 )
               ])
@@ -360,4 +356,5 @@ class _SignupotpState extends State<Signupotp>
         },
         timeout: Duration(seconds: 120));
   }
+
 }

@@ -1175,8 +1175,6 @@ class _Ewaybill1State extends State<Ewaybill1> {
       //generateewaybill();
     }
 
-
-
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -1211,7 +1209,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
               child: Text(
                 'Invoice No.',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 20,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
@@ -1219,7 +1217,7 @@ class _Ewaybill1State extends State<Ewaybill1> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left:20.0),
+              padding: const EdgeInsets.only(left: 20.0),
               child: Container(
                 alignment: Alignment.center,
                 width: w * 0.8,

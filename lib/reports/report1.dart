@@ -1,6 +1,7 @@
 import 'package:digitalbillbook/reports/lowstock.dart';
 import 'package:digitalbillbook/reports/partieslist.dart';
 import 'package:digitalbillbook/reports/productList.dart';
+import 'package:digitalbillbook/reports/productListcopy.dart';
 import 'package:digitalbillbook/reports/purchsesummary.dart';
 import 'package:digitalbillbook/reports/salesummary.dart';
 import 'package:digitalbillbook/reports/stocksummary.dart';
@@ -126,7 +127,12 @@ class Report1 extends StatelessWidget {
                 null,
                 ' Party List',
                 () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PartiesList(uid))),
+                    MaterialPageRoute(builder: (context) =>
+                    PartiesList(uid)
+                    //  ProductListweb()
+                     //PartiesList
+                     )
+                    ),
                 w),
             Tab(
                 null,

@@ -226,7 +226,7 @@ class _UpdatePartyState extends State<UpdateParty> {
                   'Update Party',
                   style: TextStyle(
                     fontFamily: 'Arial',
-                    fontSize: 14,
+                    fontSize: 20,
                     color: const Color(0xff2f2e41),
                     fontWeight: FontWeight.w700,
                   ),

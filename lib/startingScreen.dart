@@ -17,17 +17,21 @@ class _StartingScreeenState extends State<StartingScreeen> {
   var buttonIndex = 1;
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-      timer = Timer.periodic(Duration(seconds: 2), (Timer t) => setState(() => {
+      timer = Timer.periodic(Duration(seconds: 3), (Timer t) => setState(() => {
                         buttonIndex = buttonIndex + 1,
                         if (buttonIndex > 4)
                           {
+                            timer.cancel(),
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MyHomePage()),
                                 (route) => false)
                           }
-                      }));
+
+                      }
+                      )
+                      );
 
     // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     super.initState();
@@ -119,7 +123,7 @@ class _StartingScreeenState extends State<StartingScreeen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 6.0),
-                        child: Text('Skip'),
+                        child: Text('Skip',style: TextStyle(fontSize: 22,),),
                       ),
                     ],
                   ),
@@ -144,24 +148,33 @@ class _StartingScreeenState extends State<StartingScreeen> {
                       })
                 },
                 child: Container(
+                  alignment: Alignment.center,
                   width: 184,
                   height: 52,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white70,
+                    borderRadius: BorderRadius.circular(25),
+                    color: Colors.grey[300],
+                            boxShadow: [
+            BoxShadow(
+                color: Colors.black,
+                blurRadius: 2.0,
+                spreadRadius: 0.0,
+                offset: Offset(2.0, 2.0), // shadow direction: bottom right
+            )
+        ],
+
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6.0),
-                        child: Text('GET STARTED'),
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      Icon(Icons.arrow_forward_rounded)
-                    ],
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(child: Text('GET STARTED',style: TextStyle(fontSize: 16),)),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Icon(Icons.arrow_forward_rounded)
+                      ],
+                    ),
                   ),
                 ),
               ),

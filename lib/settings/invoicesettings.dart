@@ -174,7 +174,7 @@ class _InvoiceSettingsState extends State<InvoiceSettings> {
                 'Invoice Settings',
                 style: TextStyle(
                   fontFamily: 'Bell MT',
-                  fontSize: 18,
+                  fontSize: 20,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),

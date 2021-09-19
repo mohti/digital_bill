@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:digitalbillbook/theme/colors/colors.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gst_verification/gst_verification.dart';
 import 'package:digitalbillbook/Invoicestyle.dart';
 import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
@@ -85,9 +87,12 @@ class _InvoiceMainState extends State<InvoiceMain> {
   final tcs = TextEditingController();
   final from = TextEditingController();
   final taxtype = TextEditingController();
+  final tcsAmount = TextEditingController();
   var bdate = DateTime.now();
   var sdate = DateTime.now();
   var tdate = DateTime.now();
+  final discountedAmount = TextEditingController();
+  double totalAmountforDiscount;
 
   List<Customtexteditingcontroller> t = List<Customtexteditingcontroller>();
   List<OtherCharges> othercharges = List<OtherCharges>();
@@ -175,7 +180,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
     'OTH-OTHERS'
   ];
   final vehiclemodes = ['Road', 'Train', 'Ship', 'Air'];
-
+  double totalAmountforTcs;
   bool generalInvoiceornot = true;
   String numberOfInvoies;
   String invoiceStyle;
@@ -389,6 +394,24 @@ class _InvoiceMainState extends State<InvoiceMain> {
                 : valuee.data()['invoiceStyle'];
           });
         });
+      }
+    }
+
+    totalForTcs() {
+      for (int i = 0; i < noofproducts; i++) {
+        print('noofproducts in for loop' + noofproducts.toString());
+
+        totalAmountforTcs =
+            totalAmountforTcs + double.tryParse(t[i].totalamount.text);
+      }
+    }
+
+    totalforDicount() {
+      for (int i = 0; i < noofproducts; i++) {
+        print('noofproducts in for loop' + noofproducts.toString());
+
+        totalAmountforDiscount =
+            totalAmountforDiscount + double.tryParse(t[i].totalamount.text);
       }
     }
 
@@ -2173,16 +2196,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                                 1.0,
                                                                             top:
                                                                                 1.0),
-                                                                        suffixIcon: Container(
-                                                                            height:
-                                                                                10,
-                                                                            width:
-                                                                                5,
-                                                                            child:
-                                                                                Text('\u20B9')),
-                                                                        // suffixStyle: TextStyle(
-                                                                        //   color:Colors.black
-
+                                                                         suffixIcon: Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 21,)),  // Image.asset("assets/images/rupeesign.png",height: 5,width: 5,),
+                                                                        
+                                                                        // suffixIconConstraints: BoxConstraints(
+                                                                          
+                                                                        //   minHeight: 21,
+                                                                        //   minWidth: 16
                                                                         // ),
                                                                         fillColor:
                                                                             Colors.white,
@@ -2261,15 +2283,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'Other Charges',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 14,
-                                              color: const Color(0xff2f2e41),
-                                              fontWeight: FontWeight.w700,
+                                          Padding(
+                                            padding: const EdgeInsets.only(left:4.0),
+                                            child: Text(
+                                              'Other Charges',
+                                              style: TextStyle(
+                                                fontFamily: 'Arial',
+                                                fontSize: 14,
+                                                color: const Color(0xff2f2e41),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.left,
                                             ),
-                                            textAlign: TextAlign.left,
                                           ),
                                           Container(
                                               decoration: BoxDecoration(
@@ -2409,6 +2434,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                     TextFormField(
                                                                         decoration:
                                                                             InputDecoration(
+                                                                              suffixIcon: Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.percent,color:purpleForapp ,size: 21,)),
+                                                                         
                                                                           contentPadding: const EdgeInsets.only(
                                                                               left: 8.0,
                                                                               bottom: 1.0,
@@ -2421,8 +2451,22 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                                 BorderRadius.circular(10.0),
                                                                           ),
                                                                         ),
+                                                                        onChanged:
+                                                                            (value) {
+                                                                          setState(
+                                                                              () {
+                                                                            totalAmountforDiscount =
+                                                                                0;
+                                                                            totalforDicount();
+                                                                            print('on changed trigred');
+
+                                                                            discountedAmount.text =
+                                                                                (totalAmountforDiscount * int.tryParse(discountrate.text) / 100).toStringAsFixed(2);
+                                                                            print(totalAmountforDiscount.toString());
+                                                                          });
+                                                                        },
                                                                         controller:
-                                                                            tcs),
+                                                                            discountrate),
                                                               ),
                                                             ],
                                                           )),
@@ -2469,6 +2513,11 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                     TextFormField(
                                                                         decoration:
                                                                             InputDecoration(
+                                                                              
+                                                                              suffixIcon: Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
                                                                           contentPadding: const EdgeInsets.only(
                                                                               left: 8.0,
                                                                               bottom: 1.0,
@@ -2482,7 +2531,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                           ),
                                                                         ),
                                                                         controller:
-                                                                            tcs),
+                                                                            discountedAmount),
                                                               ),
                                                             ],
                                                           )),
@@ -2494,19 +2543,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                 ),
                                                 InkWell(
                                                   onTap: () {
-                                                    if (tcs.text.isNotEmpty)
-                                                      Navigator.pop(context);
-                                                    else
-                                                      Fluttertoast.showToast(
-                                                          msg: 'Enter Value',
-                                                          toastLength: Toast
-                                                              .LENGTH_SHORT,
-                                                          backgroundColor:
-                                                              Colors.black12,
-                                                          textColor:
-                                                              const Color(
-                                                                  0xff3f3d56));
-                                                  },
+                                                     Navigator.pop(context);
+                                                    },
                                                   child: Container(
                                                     alignment: Alignment.center,
                                                     width: 110,
@@ -2683,15 +2721,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Discount',
-                                              style: TextStyle(
-                                                fontFamily: 'Arial',
-                                                fontSize: 14,
-                                                color: const Color(0xff2f2e41),
-                                                fontWeight: FontWeight.w700,
+                                            Padding(
+                                              padding: const EdgeInsets.only(left:4.0),
+                                              child: Text(
+                                                'Discount',
+                                                style: TextStyle(
+                                                  fontFamily: 'Arial',
+                                                  fontSize: 14,
+                                                  color: const Color(0xff2f2e41),
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                textAlign: TextAlign.left,
                                               ),
-                                              textAlign: TextAlign.left,
                                             ),
                                             Container(
                                                 decoration: BoxDecoration(
@@ -2833,6 +2874,28 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                               BorderRadius.circular(10.0),
                                                                         ),
                                                                       ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          totalAmountforTcs =
+                                                                              0;
+                                                                              totalForTcs();
+                                                                     
+                                                                          tcsAmount.text =
+                                                                              (int.tryParse(tcs.text) * totalAmountforTcs / 100).toStringAsFixed(2);
+                                                                          print(tcsAmount.toString() +
+                                                                              'tcsamount');
+                                                                          // totalAmountforDiscount =
+                                                                          //     0;
+                                                                          //   totalforDicount();
+                                                                          //   print('on changed trigred');
+
+                                                                          //   discountedAmount.text =
+                                                                          //       (totalAmountforDiscount * int.tryParse(discountrate.text) / 100).toString();
+                                                                          //   print(totalAmountforDiscount.toString());
+                                                                        });
+                                                                      },
                                                                       controller:
                                                                           tcs),
                                                             ),
@@ -2881,6 +2944,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                   TextFormField(
                                                                       decoration:
                                                                           InputDecoration(
+                                                                             suffixIcon: Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
                                                                         contentPadding: const EdgeInsets.only(
                                                                             left:
                                                                                 8.0,
@@ -2897,7 +2964,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                         ),
                                                                       ),
                                                                       controller:
-                                                                          tcs),
+                                                                          tcsAmount),
                                                             ),
                                                           ],
                                                         )),
@@ -2968,15 +3035,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'TCS',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 14,
-                                              color: const Color(0xff2f2e41),
-                                              fontWeight: FontWeight.w700,
+                                          Padding(
+                                            padding: const EdgeInsets.only(left:4.0),
+                                            child: Text(
+                                              'TCS',
+                                              style: TextStyle(
+                                                fontFamily: 'Arial',
+                                                fontSize: 14,
+                                                color: const Color(0xff2f2e41),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.left,
                                             ),
-                                            textAlign: TextAlign.left,
                                           ),
                                           Container(
                                               decoration: BoxDecoration(
@@ -3091,36 +3161,64 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                                         .white)),
                                                             SizedBox(
                                                                 height: 13),
-                                                            Row(
-                                                              children: [
-                                                                Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                100)),
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .add,
-                                                                        color: Colors
-                                                                            .green)),
-                                                                SizedBox(
-                                                                    width: 5),
-                                                                Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                100)),
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .add,
-                                                                        color: Colors
-                                                                            .green)),
-                                                              ],
-                                                            )
+                                                           Row(
+                                                        children: [
+                                                          Container(
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              100)),
+                                                              child: InkWell(
+                                                                onTap: () {setState(() {
+                                                                  
+                                                                });
+                                                                 roundoffamount
+                                                                      .text = (double.tryParse(roundoffamount
+                                                                              .text) +
+                                                                          0.1
+                                                                      //int.tryParse(gxValues.roundoffamount.text)
+                                                                      )
+                                                                      .toStringAsFixed(2);
+                                                                },
+                                                                child: Icon(
+                                                                    Icons.add,
+                                                                    color: Colors
+                                                                        .green),
+                                                              )),
+                                                          SizedBox(width: 20),
+                                                          Container(
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              100)),
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  roundoffamount
+                                                                      .text = (double.tryParse(roundoffamount
+                                                                              .text) -
+                                                                          0.1
+                                                                      //int.tryParse(gxValues.roundoffamount.text) /
+
+                                                                      )
+                                                                      .toStringAsFixed(2);
+                                                                setState(() {
+                                                                  
+                                                                });
+                                                                },
+                                                                child: Icon(
+                                                                    Icons
+                                                                        .remove,
+                                                                    color: Colors
+                                                                        .red),
+                                                              )),
+                                                        ],
+                                                      )
                                                           ],
                                                         )),
                                                   ),
@@ -3153,37 +3251,43 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                             SizedBox(
                                                                 height: 13),
                                                             Container(
-                                                              decoration: new BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      new BorderRadius
-                                                                          .all(new Radius
-                                                                              .circular(
-                                                                          10))),
-                                                              height: 40,
-                                                              child:
-                                                                  TextFormField(
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        contentPadding: const EdgeInsets.only(
-                                                                            left:
-                                                                                8.0,
-                                                                            bottom:
-                                                                                1.0,
-                                                                            top:
-                                                                                1.0),
-                                                                        fillColor:
-                                                                            Colors.white,
-                                                                        border:
-                                                                            OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10.0),
-                                                                        ),
-                                                                      ),
-                                                                      controller:
-                                                                          tcs),
-                                                            ),
+                                                                decoration: new BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius: new BorderRadius
+                                                                        .all(new Radius
+                                                                            .circular(
+                                                                        10))),
+                                                                height: 40,
+                                                                child:
+                                                                    TextFormField(
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                         suffixIcon: Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
+                                                                    contentPadding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            8.0,
+                                                                        bottom:
+                                                                            1.0,
+                                                                        top:
+                                                                            1.0),
+                                                                    fillColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    border:
+                                                                        OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                  ),
+                                                                  controller:
+                                                                      roundoffamount,
+                                                                )),
                                                           ],
                                                         )),
                                                   ),
@@ -3194,18 +3298,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                               ),
                                               InkWell(
                                                 onTap: () {
-                                                  if (tcs.text.isNotEmpty)
                                                     Navigator.pop(context);
-                                                  else
-                                                    Fluttertoast.showToast(
-                                                        msg: 'Enter Value',
-                                                        toastLength:
-                                                            Toast.LENGTH_SHORT,
-                                                        backgroundColor:
-                                                            Colors.black12,
-                                                        textColor: const Color(
-                                                            0xff3f3d56));
-                                                },
+                                                  },
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: 110,
@@ -3373,15 +3467,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'Round Off',
-                                            style: TextStyle(
-                                              fontFamily: 'Arial',
-                                              fontSize: 14,
-                                              color: const Color(0xff2f2e41),
-                                              fontWeight: FontWeight.w700,
+                                          Padding(
+                                            padding: const EdgeInsets.only(left:4.0),
+                                            child: Text(
+                                              'Round Off',
+                                              style: TextStyle(
+                                                fontFamily: 'Arial',
+                                                fontSize: 14,
+                                                color: const Color(0xff2f2e41),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.left,
                                             ),
-                                            textAlign: TextAlign.left,
                                           ),
                                           Container(
                                               decoration: BoxDecoration(
@@ -3399,6 +3496,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               ],
                             ),
                           ),
+                        
                           Column(
                             children: [
                               othercharges.length > 0
@@ -3425,27 +3523,34 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                 padding:
                                                     const EdgeInsets.all(8.0),
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
+                                                
                                                   children: [
-                                                    Text(
-                                                      othercharges[index]
-                                                          .otherchargename
-                                                      //+
-                                                      // "                 " +
-                                                      // othercharges[index]
-                                                      //     .otherchargevalue
-                                                      //     .toString(),
-                                                      ,
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 12,
-                                                        color: const Color(
-                                                            0xcc2f2e41),
+                                                    Expanded(
+                                                      flex:2,
+                                                                                                          child: Text(
+                                                        othercharges[index]
+                                                            .otherchargename
+                                                        //+
+                                                        // "                 " +
+                                                        // othercharges[index]
+                                                        //     .otherchargevalue
+                                                        //     .toString(),
+                                                        ,
+                                                        style: TextStyle(
+                                                          fontFamily: 'Arial',
+                                                          fontSize: 12,
+                                                          color: const Color(
+                                                              0xcc2f2e41),
+                                                        ),
+                                                        textAlign: TextAlign.left,
                                                       ),
-                                                      textAlign: TextAlign.left,
                                                     ),
+                                                         Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
+                                  
+                                       
                                                     Text(
                                                       othercharges[index]
                                                           .otherchargevalue
@@ -3497,16 +3602,36 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       MediaQuery.of(context).size.width * 0.4,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Discount' +
-                                          "           " +
-                                          discountrate.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 12,
-                                        color: const Color(0xcc2f2e41),
-                                      ),
-                                      textAlign: TextAlign.left,
+                                    child: Row(
+                                      children: [
+                                          Expanded(
+                                            flex: 2,
+                                                                                      child: Text(
+                                            'Discount       '  ,
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 12,
+                                              color: const Color(0xcc2f2e41),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                        ),
+                                          ),
+                                              Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
+                                  
+                                        Text(
+                                        
+                                              discountedAmount.text,
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 12,
+                                            color: const Color(0xcc2f2e41),
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                       ],
                                     ),
                                   ),
                                 ),
@@ -3520,14 +3645,35 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       MediaQuery.of(context).size.width * 0.4,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'TCS' + "                   " + tcs.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 12,
-                                        color: const Color(0xcc2f2e41),
-                                      ),
-                                      textAlign: TextAlign.left,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                                                                  child: Text(
+                                            'TCS' ,
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 12,
+                                              color: const Color(0xcc2f2e41),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                          Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
+                                  
+                                        Text(
+                                          tcsAmount.text.toString(),
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 12,
+                                            color: const Color(0xcc2f2e41),
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -3541,16 +3687,37 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       MediaQuery.of(context).size.width * 0.4,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Round Off' +
-                                          "         " +
-                                          roundoffamount.text,
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 12,
-                                        color: const Color(0xcc2f2e41),
-                                      ),
-                                      textAlign: TextAlign.left,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                                                                  child: Text(
+                                            'Round Off' ,
+                                          style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 12,
+                                              color: const Color(0xcc2f2e41),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                         Container(
+                                                                                width: 20,
+                                                                                alignment: Alignment.center,
+                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
+                                  
+                                      
+                                        Text(
+                                          
+                                              roundoffamount.text,
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 12,
+                                            color: const Color(0xcc2f2e41),
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -3559,6 +3726,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           ),
                         ],
                       ),
+                    
+                    
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Text(

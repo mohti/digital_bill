@@ -193,7 +193,7 @@ class _AddPartyState extends State<AddParty> {
                   'Add Party',
                   style: TextStyle(
                     fontFamily: 'Arial',
-                    fontSize: 14,
+                    fontSize: 20,
                     color: const Color(0xff2f2e41),
                     fontWeight: FontWeight.w700,
                   ),
@@ -213,7 +213,7 @@ class _AddPartyState extends State<AddParty> {
                           maxLines: 1,
                           controller: partyNameController,
                           decoration:
-                              CoustumInputDecorationWidget('Company name')
+                              CoustumInputDecorationWidget('Name/Company Name')
                                   .decoration(),
                           // The validator receives the text that the user has entered.
                           validator: (value) {

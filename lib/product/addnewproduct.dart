@@ -178,7 +178,7 @@ class _AddproductState extends State<Addproduct> {
                   'Add Product',
                   style: TextStyle(
                     fontFamily: 'Arial',
-                    fontSize: 14,
+                    fontSize: 20,
                     color: const Color(0xff2f2e41),
                     fontWeight: FontWeight.w700,
                   ),
@@ -293,7 +293,10 @@ class _AddproductState extends State<Addproduct> {
                       //height: 50,
                       child: DropdownButtonFormField(
                         value: cgst,
-                        icon: Icon(Icons.keyboard_arrow_down_sharp),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(right:10.0),
+                          child: Icon(Icons.keyboard_arrow_down_sharp),
+                        ),
                         decoration: CoustumInputDecorationWidget("CGST + SGST")
                             .decoration(),
                         items: [
@@ -331,7 +334,10 @@ class _AddproductState extends State<Addproduct> {
                       width: MediaQuery.of(context).size.width * 0.45,
                       child: DropdownButtonFormField<String>(
                         value: igst,
-                        icon: Icon(Icons.keyboard_arrow_down_sharp),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(right:10.0),
+                          child: Icon(Icons.keyboard_arrow_down_sharp),
+                        ),
                         decoration: InputDecoration(
                           labelText: "IGST",
                           contentPadding: const EdgeInsets.only(
@@ -442,7 +448,7 @@ class _AddproductState extends State<Addproduct> {
                             //  keyboardType: keyboardTypeC2,
                             controller: sellingpriceController,
                             decoration:
-                                CoustumInputDecorationWidget("Selling price")
+                                CoustumInputDecorationWidget("Selling Rate")
                                     .decoration(),
                             // The validator receives the text that the user has entered.
                             validator: (value) {

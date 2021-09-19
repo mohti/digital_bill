@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (BuildContext context) =>
         FirebaseAuth.instance.currentUser != null
-            ? Home(FirebaseAuth.instance.currentUser.uid)
+            ? 
+             Home(FirebaseAuth.instance.currentUser.uid)
             :StartingScreeen(),
           //   : MyHomePage(),
          

@@ -84,7 +84,7 @@ class _DownloadPurchaseInvoiceState extends State<DownloadPurchaseInvoice> {
         child: Column(
           children: [
              Container(alignment: Alignment.topLeft,
-              child: Text('ALL Invoices')),
+              child: Text('All Purchase Invoices',style: TextStyle(fontSize: 20,)),),
               SizedBox(height: 20,),
             Container(
                height:MediaQuery.of(context).size.height/1.27,

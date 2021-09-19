@@ -399,44 +399,120 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                   //  child: null,
                                   ),
                             ]),
-                        pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                            children: [
-                              pw.SizedBox(
-                                width: 96.0,
-                                child: pw.Text(
-                                  'GSTN : ' + sgstn.text,
+                                  pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                        children: [
+                          pw.Expanded(
+                            flex: 1,
+                            child:pw.Container(
+                                width: 91.0,
+                                child: pw.Row(
+
+                                  children:[pw.Text(
+                                  'GSTN : ' ,
                                   style: pw.TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     color: PdfColor.fromInt(0xff2f2e41),
                                   ),
                                   textAlign: pw.TextAlign.center,
                                 ),
-                              ),
-                              // pw.SizedBox(
-                              //   width: 96.0,
-                              //   child: pw.Text(
-                              //     'Email : ' + 
-                              //     emailController.text,
-                              //     style: pw.TextStyle(
-                              //       fontSize: 13,
-                              //       color: PdfColor.fromInt(0xff2f2e41),
-                              //     ),
-                              //     textAlign: pw.TextAlign.center,
-                              //   ),
-                              // ),
-                              pw.SizedBox(
-                                width: 96.0,
-                                child: pw.Text(
-                                  'Phone No. : ' +sphone.text,
+                                pw.Text(
+                                   sgstn.text,
                                   style: pw.TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     color: PdfColor.fromInt(0xff2f2e41),
                                   ),
                                   textAlign: pw.TextAlign.center,
-                                ),
+                                ),])
+                              ), ),
+                          pw.Expanded(
+                            flex: 1,
+                            child: pw.Container(
+                            width: 122,
+                             child: pw.Row(
+                                  children:[
+                             pw.Text(
+                              'Email : ',
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                color: PdfColor.fromInt(0xff2f2e41),
                               ),
-                            ]),
+                              textAlign: pw.TextAlign.center,
+                            ), pw.Text(
+                            emailController.text,
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            )]),
+                          ),),
+                            pw.Expanded(
+                            flex: 1,
+                            child:
+                          pw.Container(
+                            width: 89.0,
+                            child:
+                            pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.end,
+                              children: [pw.Text(
+                              'Phone No.: ',
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),pw.Text(
+                            sphone.text,
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                color: PdfColor.fromInt(0xff2f2e41),
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),]), 
+                          ), )
+                          
+                        ]),
+                        // pw.Row(
+                        //     mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        //     children: [
+                        //       pw.SizedBox(
+                        //         width: 96.0,
+                        //         child: pw.Text(
+                        //           'GSTN : ' + sgstn.text,
+                        //           style: pw.TextStyle(
+                        //             fontSize: 13,
+                        //             color: PdfColor.fromInt(0xff2f2e41),
+                        //           ),
+                        //           textAlign: pw.TextAlign.center,
+                        //         ),
+                        //       ),
+                        //       pw.SizedBox(
+                        //         width: 96.0,
+                        //         child: pw.Text(
+                        //           'Email : ' + 
+                        //           emailController.text,
+                        //           style: pw.TextStyle(
+                        //             fontSize: 13,
+                        //             color: PdfColor.fromInt(0xff2f2e41),
+                        //           ),
+                        //           textAlign: pw.TextAlign.center,
+                        //         ),
+                        //       ),
+                        //       pw.SizedBox(
+                        //         width: 96.0,
+                        //         child: pw.Text(
+                        //           'Phone No. : ' +sphone.text,
+                        //           style: pw.TextStyle(
+                        //             fontSize: 13,
+                        //             color: PdfColor.fromInt(0xff2f2e41),
+                        //           ),
+                        //           textAlign: pw.TextAlign.center,
+                        //         ),
+                        //       ),
+                        //     ]),
+                      
                         pw.SizedBox(height: 10),
                         pw.Container(height: 2, color: PdfColors.black),
                         pw.SizedBox(height: 10),
@@ -736,7 +812,7 @@ class _PurchasePdfState extends State<PurchasePdf> {
                                                     width: 150,
                                                     child: pw.Text(
                                                       //mohit todo 
-                                                      gstNumberController.text,
+                                                      emailController.text.toString().length>19? emailController.text.toString().substring(0,emailController.text.toString().lastIndexOf("@")) : emailController.text,
                                                       style: pw.TextStyle(
                                                         fontSize: 13,
                                                         color: PdfColor.fromInt(

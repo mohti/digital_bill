@@ -92,6 +92,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
   void initState() {
     super.initState();
     _getBusinessDetails(widget.uid);
+      //  verifyGSTNumber( gstNumberController.text);
     downloadURLExample();
     downloadURLExamplesign();
     downloadURLExamplestamp();
@@ -180,6 +181,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
   }
 
   bool verifyGSTNumber(String gstno) {
+    
     gstNo = gstno;
     GstVerification.verifyGST(gstNo, key_secret).then((result) {
       //package link here
@@ -445,7 +447,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.fromLTRB(20.0,50,20,0),
                             child: Text(
                               'Business Name',
                               style: TextStyle(
@@ -465,13 +467,18 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                 height: 41,
                                 decoration: BoxDecoration(color: Colors.white),
                                 child: _edit
-                                    ? TextFormField(
-                                        controller: businessNameController,
-                                        decoration: InputDecoration(
-                                          labelText: '',
+                                    ? Center(
+                                      child: TextFormField(
+                                          controller: businessNameController,
+                                          
+                                          decoration: InputDecoration(
+                                                  
+                                          contentPadding: EdgeInsets.only(left:20),
+                                            labelText: '',
+                                          ),
+                                          // The validator receives the text that the user has entered.
                                         ),
-                                        // The validator receives the text that the user has entered.
-                                      )
+                                    )
                                     : Text(
                                         '',
                                         style: TextStyle(
@@ -489,7 +496,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                     padding:
                                         const EdgeInsets.fromLTRB(10, 8, 10, 0),
                                     child: Container(
-                                      height: 100,
+                                      height: 100, 
                                       width: w * 0.25,
                                       child: RaisedButton(
                                           child: (_downloadURL == null)
@@ -1016,7 +1023,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                        padding: const EdgeInsets.all(20.0),
+                                        padding: const EdgeInsets.fromLTRB(20.0,40,20,0),
                                         child: Text(
                                           'Business Name',
                                           style: TextStyle(

@@ -190,7 +190,7 @@ class _SupportState extends State<Support> {
                 'FAQ',
                 style: TextStyle(
                   fontFamily: 'Arial',
-                  fontSize: 16,
+                  fontSize: 20,
                   color: const Color(0xff2f2e41),
                   fontWeight: FontWeight.w700,
                 ),
@@ -229,7 +229,7 @@ class _SupportState extends State<Support> {
                             fontSize: 14,
                             color: _selected == 1
                                 ? Color(0xff2F2E41)
-                                :  Colors.grey[800],
+                                :  Colors.grey[500],
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.left,
@@ -252,7 +252,7 @@ class _SupportState extends State<Support> {
                               fontSize: 14,
                               color: _selected == 2
                                   ? Color(0xff2F2E41)
-                                  : Colors.grey[800],
+                                  : Colors.grey[500],
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.left,
@@ -275,7 +275,7 @@ class _SupportState extends State<Support> {
                             fontSize: 14,
                             color: _selected == 3
                                 ? Color(0xff2F2E41)
-                                : Colors.grey[800],
+                                : Colors.grey[500],
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.left,
@@ -295,7 +295,7 @@ class _SupportState extends State<Support> {
                             fontSize: 14,
                             color: _selected == 4
                                 ? Color(0xff2f2e41)
-                                : Colors.grey[800],
+                                : Colors.grey[500],
 
                             //    const Color(0xff2f2e41),
                             fontWeight: FontWeight.w700,
@@ -402,7 +402,7 @@ class _SupportState extends State<Support> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text("1800-210-210-996",
+                          Text("07742330144",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 10)),
                           SizedBox(

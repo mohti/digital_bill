@@ -3058,7 +3058,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                   ),
                                 ),
                                 pw.Container(
-                                  alignment: pw.Alignment.center,
+                                  alignment: pw.Alignment.centerLeft,
                                   width: 50,
                                   child: pw.Text(
                                     (double.parse(taxes.entries
@@ -3075,6 +3075,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                         fontSize: 13,
                                         fontWeight: pw.FontWeight.bold),
                                     textAlign: pw.TextAlign.right,
+                           
                                   ),
                                 ),
                               ],
@@ -3158,7 +3159,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                   ),
                                 ),
                                 pw.Container(
-                                  alignment: pw.Alignment.center,
+                                  alignment: pw.Alignment.centerLeft,
                                   width: 80,
                                   child: pw.Text(
                                     l2[index]['otherchargename'],
@@ -3191,7 +3192,7 @@ class _PdfViewer2State extends State<PdfViewer2> {
                                   ),
                                 ),
                                 pw.Container(
-                                  alignment: pw.Alignment.center,
+                                  alignment: pw.Alignment.centerLeft,
                                   width: 50,
                                   child: pw.Text(
                                     l2[index]['otherchargevalue'].toString(),
