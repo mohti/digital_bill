@@ -102,7 +102,7 @@ class _PartiesListState extends State<PartiesList> {
         child: InkWell(
           onTap: () => fc(),
           
-          child:Image.asset("assets/images/exporticon.png"),
+          child:Image.asset("assets/images/exporticon.png",width: 100,height: 100,),
           // child: SizedBox(
           //   width: 65.0,
           //   height: 65.0,

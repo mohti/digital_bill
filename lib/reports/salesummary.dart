@@ -99,7 +99,7 @@ class _SalesSummary extends State<SalesSummary> {
               return InkWell(
                 onTap: () => gxValues.fc(initialdate, finaldate),
 
-                child: Image.asset("assets/images/exporticon.png"),
+                child: Image.asset("assets/images/exporticon.png",width: 100,height: 100,),
                 //  SizedBox(
                 //   width: 65.0,
                 //   height: 65.0,

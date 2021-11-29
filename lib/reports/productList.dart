@@ -174,7 +174,7 @@ class _ProductListState extends State<ProductList> {
           //mohit here the  button is  clicked
           onTap: () => fc(),
           
-          child:Image.asset("assets/images/exporticon.png",filterQuality: FilterQuality.high,), 
+          child:Image.asset("assets/images/exporticon.png",filterQuality: FilterQuality.high,width: 100,height: 100,), 
           // SizedBox(
           //   width: 65.0,
           //   height: 65.0,

@@ -94,7 +94,7 @@ class _StockSummaryState extends State<StockSummary> {
         return InkWell(
           onTap: () => gxValues.fc(initialdate,finaldate,textfieldValues),
          
-          child:Image.asset("assets/images/exporticon.png"),
+          child:Image.asset("assets/images/exporticon.png",width: 100,height: 100,),
         
         
           // SizedBox(

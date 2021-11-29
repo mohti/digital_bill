@@ -1,6 +1,6 @@
 import 'package:digitalbillbook/downloadpdfs/idownloadPurchaseinvoice.dart';
 import 'package:digitalbillbook/downloadpdfs/idownloadinvoicepdf.dart';
-import 'package:digitalbillbook/invoices/invoicemain.dart';
+import 'package:digitalbillbook/invoices/genrateNewSalersInvoice.dart';
 import 'package:digitalbillbook/purchase/purchaseinvoice.dart';
 import 'package:flutter/material.dart';
 

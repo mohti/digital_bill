@@ -4,7 +4,6 @@ import 'package:digitalbillbook/theme/colors/colors.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gst_verification/gst_verification.dart';
-import 'package:digitalbillbook/Invoicestyle.dart';
 import 'package:digitalbillbook/customwidgets/CustomInputDecorationWidget.dart';
 import 'package:digitalbillbook/customwidgets/EachrowTextfield.dart';
 import 'package:digitalbillbook/models/invoicemodel.dart';
@@ -12,7 +11,6 @@ import 'package:digitalbillbook/pdf/pdfviewer.dart';
 import 'package:digitalbillbook/pdf/pdfviewer2.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,7 +18,7 @@ import 'package:intl/intl.dart';
 
 /*
 ############## READ FOR BETTER UNDERSTANDING ######################
- search  after ctrl+f 
+search  after ctrl+f 
 generalInvoiceornot == false
 to see the ternary operator code  
 
@@ -342,183 +340,18 @@ class _InvoiceMainState extends State<InvoiceMain> {
     downloadURLExamplestamp();
   }
 
-  @override
-  Widget build(BuildContext context) {
+
     List<InvoiceProduct> listOfProducts = [];
-    void addproducts(int j) {
-      var newProduct =
-          new InvoiceProduct('', '', '', '', '', '', '', '', '', '', '');
-      for (var i = 0; i < j; i++) {
-        setState(() {
-          newProduct =
-              new InvoiceProduct('', '', '', '', '', '', '', '', '', '', '');
-          print(t[i].productCode.text);
-          newProduct.productCode = t[i].productCode.text;
-          newProduct.productName = t[i].productName.text;
-          newProduct.hsncode = t[i].hsncode.text;
-          newProduct.quantity = t[i].quantity.text;
-          newProduct.sellingrate = t[i].sellingrate.text;
-          newProduct.taxamount = t[i].taxamount.text;
-          newProduct.taxrate = t[i].taxrate.text;
-          newProduct.unit = t[i].unit.text;
-          newProduct.totalamount = t[i].totalamount.text;
-          newProduct.focornot = t[i].focornot;
-          //  int baseamount
-          newProduct.baseTotalAmount = (double.tryParse(t[i].quantity.text) *
-                  double.tryParse(t[i].sellingrate.text))
-              .toString();
-          listOfProducts.insert(i, newProduct);
-        });
-
-        print(newProduct.productCode);
-        print(listOfProducts.first);
-      }
-    }
-
     // ignore: unused_local_variable
     List<InvoiceProduct> l2 = List<InvoiceProduct>();
 
-    Future<Null> invoiceStyleDetails(String uid) async {
-      final db = FirebaseFirestore.instance;
-      {
-        await db
-            .collection("userData")
-            .doc(uid)
-            .collection("invoiceStyle")
-            .doc("invoiceStyle")
-            .get()
-            .then((valuee) {
-          setState(() {
-            invoiceStyle = valuee.data()['invoiceStyle'] == null
-                ? ''
-                : valuee.data()['invoiceStyle'];
-          });
-        });
-      }
-    }
-
-    totalForTcs() {
-      for (int i = 0; i < noofproducts; i++) {
-        print('noofproducts in for loop' + noofproducts.toString());
-
-        totalAmountforTcs =
-            totalAmountforTcs + double.tryParse(t[i].totalamount.text);
-      }
-    }
-
-    totalforDicount() {
-      for (int i = 0; i < noofproducts; i++) {
-        print('noofproducts in for loop' + noofproducts.toString());
-
-        totalAmountforDiscount =
-            totalAmountforDiscount + double.tryParse(t[i].totalamount.text);
-      }
-    }
-
-    Future<void> generateInvoice() async {
-      final db = FirebaseFirestore.instance;
-      //mohit genrate invoice
-      print('genrate Invoice Triggred ');
-
-      addproducts(noofproducts);
-
-      print(widget.uid.toString() + 'mohit here the uid in genrate fun');
-      print(newInvoice.toString() + 'mohit here the invoice text');
-
-      newInvoice.invoiceno = invoiceno.text;
-      newInvoice.bname = bname.text;
-      newInvoice.bphone = bphone.text;
-      newInvoice.taxtype = taxtype.text;
-      newInvoice.bgstn = bgstn.text;
-      newInvoice.bdate = bdate;
-      newInvoice.listOfProducts = listOfProducts;
-      newInvoice.bcity = bcity.text;
-      newInvoice.bstate = bstate.text;
-      newInvoice.bcountry = bcountry.text;
-      newInvoice.bpin = bpin.text;
-      newInvoice.sname = sname.text;
-      newInvoice.sphone = sphone.text;
-      newInvoice.sgstn = sgstn.text;
-      newInvoice.sdate = sdate;
-      newInvoice.scity = scity.text;
-      newInvoice.sstate = sstate.text;
-      newInvoice.scountry = scountry.text;
-      newInvoice.spin = spin.text;
-      newInvoice.from = from.text;
-      newInvoice.transporterid = transporterid.text;
-      newInvoice.transportername = transportername.text;
-      newInvoice.tracnsportdocno = tracnsportdocno.text;
-      newInvoice.tdate = tdate;
-      newInvoice.vehiclemode = vehiclemode.text;
-      newInvoice.vehicleno = vehicleno.text;
-      newInvoice.othercharges = othercharges;
-      newInvoice.discount = discountrate.text;
-      newInvoice.tcs = tcs.text;
-      newInvoice.roundoff = roundoffamount.text;
-
-      return db
-          .collection("userData")
-          .doc(widget.uid)
-          .collection("Invoice")
-          .doc(invoiceno.text)
-          .set(
-            newInvoice.toJson(),
-          )
-          .then((value) => setState(() {
-                invoiceGenrated = true;
-                invoiceStyle == 'pdf2'
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PdfViewer2(
-                                widget.uid,
-                                generalInvoiceornot,
-                                invoiceno.text,
-                                sign,
-                                stamp,
-                                logo)))
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PdfViewer(
-                                widget.uid,
-                                generalInvoiceornot,
-                                invoiceno.text,
-                                sign,
-                                stamp,
-                                logo)));
-              }));
-    }
-
-    Future<Null> _selectDate(BuildContext context, DateTime dateTime) async {
-      final DateTime picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          initialDatePickerMode: DatePickerMode.day,
-          firstDate: DateTime(2015),
-          lastDate: DateTime(2101));
-      if (picked != null)
-        setState(() {
-          sdate = picked;
-        });
-    }
-
-    Future<Null> _selectDate1(BuildContext context) async {
-      final DateTime picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          initialDatePickerMode: DatePickerMode.day,
-          firstDate: DateTime(2015),
-          lastDate: DateTime(2101));
-      if (picked != null)
-        setState(() {
-          bdate = picked;
-        });
-    }
-
     final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
-    return Scaffold(
+   
+
+  @override
+  Widget build(BuildContext context) {
+   return Scaffold(
         key: _scaffoldkey,
         appBar: AppBar(
           leading: IconButton(
@@ -1994,280 +1827,13 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Container(
-                            //   decoration: BoxDecoration( borderRadius: BorderRadius. only(topLeft: Radius. circular(25.0), topRight: Radius. circular(25.0)),
-                            //  ),
-
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: Column(
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    showModalBottomSheet<void>(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0)),
-                                      ),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(
-                                                              15.0),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              15.0)),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                colors: <Color>[
-                                                  Color(0xff573666),
-                                                  Color(0xff1B1B2A)
-                                                ], // red to yellow
-                                                // repeats the gradient over the canvas
-                                              ),
-                                            ),
-                                            child: Column(children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        30, 51, 30, 0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Row(children: [
-                                                      Text(
-                                                        'Add Other Charges',
-                                                        style: TextStyle(
-                                                          fontFamily: 'Arial',
-                                                          fontSize: 20,
-                                                          color: const Color(
-                                                              0xffffffff),
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                      ),
-                                                      SizedBox(width: 10),
-                                                      Container(
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          100)),
-                                                          child: Icon(Icons.add,
-                                                              color: Colors
-                                                                  .green)),
-                                                    ]),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Icon(
-                                                          Icons.close_outlined,
-                                                          color: Colors.white),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 41),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('Charge Name',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                            Container(
-                                                              decoration: new BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      new BorderRadius
-                                                                          .all(new Radius
-                                                                              .circular(
-                                                                          10))),
-                                                              height: 40,
-                                                              child:
-                                                                  TextFormField(
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        contentPadding: const EdgeInsets.only(
-                                                                            left:
-                                                                                8.0,
-                                                                            bottom:
-                                                                                1.0,
-                                                                            top:
-                                                                                1.0),
-                                                                        fillColor:
-                                                                            Colors.white,
-                                                                        border:
-                                                                            OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10.0),
-                                                                        ),
-                                                                      ),
-                                                                      controller:
-                                                                          chargename),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('Charges',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                            Container(
-                                                              decoration: new BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      new BorderRadius
-                                                                          .all(new Radius
-                                                                              .circular(
-                                                                          10))),
-                                                              height: 40,
-                                                              child:
-                                                                  TextFormField(
-                                                                      autofocus:
-                                                                          true,
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        //        floatingLabelBehavior: FloatingLabelBehavior.always,
-                                                                        contentPadding: const EdgeInsets.only(
-                                                                            left:
-                                                                                8.0,
-                                                                            bottom:
-                                                                                1.0,
-                                                                            top:
-                                                                                1.0),
-                                                                         suffixIcon: Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 21,)),  // Image.asset("assets/images/rupeesign.png",height: 5,width: 5,),
-                                                                        
-                                                                        // suffixIconConstraints: BoxConstraints(
-                                                                          
-                                                                        //   minHeight: 21,
-                                                                        //   minWidth: 16
-                                                                        // ),
-                                                                        fillColor:
-                                                                            Colors.white,
-                                                                        border:
-                                                                            OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10.0),
-                                                                        ),
-                                                                      ),
-                                                                      controller:
-                                                                          chargevalue),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  othercharges.add(OtherCharges(
-                                                      chargename.text
-                                                          .toString(),
-                                                      double.parse(
-                                                          chargevalue.text)));
-
-                                                  chargevalue.text = '';
-                                                  chargename.text = '';
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: 80,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: Text(
-                                                      'ADD',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 16,
-                                                        color: const Color(
-                                                            0xff3f3d56),
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ]));
-                                      },
-                                    );
+                                    buildOtherCharegesShowModalBottomSheet(
+                                        context);
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -2284,7 +1850,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(left:4.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 4.0),
                                             child: Text(
                                               'Other Charges',
                                               style: TextStyle(
@@ -2323,388 +1890,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                         topLeft: Radius.circular(20.0),
                                         topRight: Radius.circular(15.0)),
                                     onTap: () {
-                                      showModalBottomSheet<void>(
-                                        context: context,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(15.0),
-                                              topRight: Radius.circular(15.0)),
-                                        ),
-                                        //                            shape: RoundedRectangleBorder(
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: new BorderRadius
-                                                        .only(
-                                                    topLeft:
-                                                        const Radius.circular(
-                                                            15.0),
-                                                    topRight:
-                                                        const Radius.circular(
-                                                            15.0)),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  colors: <Color>[
-                                                    Color(0xff573666),
-                                                    Color(0xff1B1B2A)
-                                                  ], // red to yellow
-                                                  // repeats the gradient over the canvas
-                                                ),
-                                              ),
-                                              child: Column(children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          30, 51, 30, 0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        'Discount',
-                                                        style: TextStyle(
-                                                          fontFamily: 'Arial',
-                                                          fontSize: 20,
-                                                          color: const Color(
-                                                              0xffffffff),
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Icon(
-                                                            Icons
-                                                                .close_outlined,
-                                                            color:
-                                                                Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 41),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Container(
-                                                      //color: Colors.white,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      //height: 50,
-                                                      child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                  'Discount Rate',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .white)),
-                                                              SizedBox(
-                                                                  height: 13),
-                                                              Container(
-                                                                decoration: new BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10))),
-                                                                height: 40,
-                                                                child:
-                                                                    TextFormField(
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                              suffixIcon: Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.percent,color:purpleForapp ,size: 21,)),
-                                                                         
-                                                                          contentPadding: const EdgeInsets.only(
-                                                                              left: 8.0,
-                                                                              bottom: 1.0,
-                                                                              top: 1.0),
-                                                                          fillColor:
-                                                                              Colors.white,
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10.0),
-                                                                          ),
-                                                                        ),
-                                                                        onChanged:
-                                                                            (value) {
-                                                                          setState(
-                                                                              () {
-                                                                            totalAmountforDiscount =
-                                                                                0;
-                                                                            totalforDicount();
-                                                                            print('on changed trigred');
-
-                                                                            discountedAmount.text =
-                                                                                (totalAmountforDiscount * int.tryParse(discountrate.text) / 100).toStringAsFixed(2);
-                                                                            print(totalAmountforDiscount.toString());
-                                                                          });
-                                                                        },
-                                                                        controller:
-                                                                            discountrate),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ),
-                                                    Container(
-                                                      //color: Colors.white,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      //height: 50,
-                                                      child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                  'Discounted Amount',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .white)),
-                                                              SizedBox(
-                                                                  height: 13),
-                                                              Container(
-                                                                decoration: new BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10))),
-                                                                height: 40,
-                                                                child:
-                                                                    TextFormField(
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                              
-                                                                              suffixIcon: Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
-                                                                          contentPadding: const EdgeInsets.only(
-                                                                              left: 8.0,
-                                                                              bottom: 1.0,
-                                                                              top: 1.0),
-                                                                          fillColor:
-                                                                              Colors.white,
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10.0),
-                                                                          ),
-                                                                        ),
-                                                                        controller:
-                                                                            discountedAmount),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                InkWell(
-                                                  onTap: () {
-                                                     Navigator.pop(context);
-                                                    },
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    width: 110,
-                                                    height: 41,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              4),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10.0),
-                                                      child: Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                          fontFamily: 'Arial',
-                                                          fontSize: 16,
-                                                          color: const Color(
-                                                              0xff3f3d56),
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ]));
-
-                                          //  Container(
-                                          //     decoration: BoxDecoration(
-                                          //       borderRadius: BorderRadius.only(
-                                          //           topLeft:
-                                          //               Radius.circular(15.0),
-                                          //           topRight:
-                                          //               Radius.circular(15.0)),
-                                          //       gradient: LinearGradient(
-                                          //         begin: Alignment.topCenter,
-                                          //         colors: <Color>[
-                                          //           Color(0xff573666),
-                                          //           Color(0xff1B1B2A)
-                                          //         ], // red to yellow
-                                          //         // repeats the gradient over the canvas
-                                          //       ),
-                                          //     ),
-                                          //     child: Column(children: [
-                                          //       Padding(
-                                          //         padding: const EdgeInsets.all(
-                                          //             10.0),
-                                          //         child: Text(
-                                          //           'Discount',
-                                          //           style: TextStyle(
-                                          //             fontFamily: 'Arial',
-                                          //             fontSize: 24,
-                                          //             color: const Color(
-                                          //                 0xffffffff),
-                                          //           ),
-                                          //           textAlign: TextAlign.left,
-                                          //         ),
-                                          //       ),
-                                          //       SizedBox(
-                                          //         height: 10,
-                                          //       ),
-                                          //       Text(
-                                          //         'Discount Rate',
-                                          //         style: TextStyle(
-                                          //           fontFamily: 'Arial',
-                                          //           fontSize: 12,
-                                          //           color:
-                                          //               const Color(0xffffffff),
-                                          //         ),
-                                          //         textAlign: TextAlign.left,
-                                          //       ),
-                                          //       SizedBox(
-                                          //         height: 10,
-                                          //       ),
-                                          //       Row(
-                                          //         mainAxisAlignment:
-                                          //             MainAxisAlignment.center,
-                                          //         children: [
-                                          //           Container(
-                                          //             color: Colors.white,
-                                          //             width:
-                                          //                 MediaQuery.of(context)
-                                          //                         .size
-                                          //                         .width *
-                                          //                     0.4,
-                                          //             height: 50,
-                                          //             child: Padding(
-                                          //               padding:
-                                          //                   const EdgeInsets
-                                          //                       .all(8.0),
-                                          //               child: TextFormField(
-                                          //                   keyboardType:
-                                          //                       TextInputType
-                                          //                           .number,
-                                          //                   controller:
-                                          //                       discountrate),
-                                          //             ),
-                                          //           ),
-                                          //           Container(
-                                          //             color: Colors.white,
-                                          //             height: 50,
-                                          //             child: Text('%'),
-                                          //           ),
-                                          //         ],
-                                          //       ),
-                                          //       SizedBox(
-                                          //         height: 10,
-                                          //       ),
-                                          //       InkWell(
-                                          //         onTap: () {
-                                          //           if (discountrate
-                                          //               .text.isNotEmpty)
-                                          //             Navigator.pop(context);
-                                          //           else
-                                          //             Fluttertoast.showToast(
-                                          //               msg: 'Enter Value',
-                                          //               toastLength:
-                                          //                   Toast.LENGTH_SHORT,
-                                          //               backgroundColor:
-                                          //                   const Color(
-                                          //                       0xff3f3d56),
-                                          //             );
-                                          //         },
-                                          //         child: Container(
-                                          //           alignment: Alignment.center,
-                                          //           width: 80,
-                                          //           decoration: BoxDecoration(
-                                          //             color: Colors.white,
-                                          //             borderRadius:
-                                          //                 BorderRadius.circular(
-                                          //                     4),
-                                          //           ),
-                                          //           child: Padding(
-                                          //             padding:
-                                          //                 const EdgeInsets.all(
-                                          //                     10.0),
-                                          //             child: Text(
-                                          //               'ADD',
-                                          //               style: TextStyle(
-                                          //                 fontFamily: 'Arial',
-                                          //                 fontSize: 16,
-                                          //                 color: const Color(
-                                          //                     0xff3f3d56),
-                                          //                 fontWeight:
-                                          //                     FontWeight.w700,
-                                          //               ),
-                                          //               textAlign:
-                                          //                   TextAlign.left,
-                                          //             ),
-                                          //           ),
-                                          //         ),
-                                          //       )
-                                          //     ]));
-                                        },
-                                      );
+                                      buildDiscountShowModalBottomSheet(
+                                          context, totalforDicount);
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width *
@@ -2722,13 +1909,15 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(left:4.0),
+                                              padding: const EdgeInsets.only(
+                                                  left: 4.0),
                                               child: Text(
                                                 'Discount',
                                                 style: TextStyle(
                                                   fontFamily: 'Arial',
                                                   fontSize: 14,
-                                                  color: const Color(0xff2f2e41),
+                                                  color:
+                                                      const Color(0xff2f2e41),
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                                 textAlign: TextAlign.left,
@@ -2753,273 +1942,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    showModalBottomSheet<void>(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0)),
-                                      ),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(
-                                                              15.0),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              15.0)),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                colors: <Color>[
-                                                  Color(0xff573666),
-                                                  Color(0xff1B1B2A)
-                                                ], // red to yellow
-                                                // repeats the gradient over the canvas
-                                              ),
-                                            ),
-                                            child: Column(children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        25, 44, 25, 0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'TCS (Tax Collected at Service)',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 20,
-                                                        color: const Color(
-                                                            0xffffffff),
-                                                      ),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Icon(
-                                                          Icons.close_outlined,
-                                                          color: Colors.white),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 42),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('TCS Rate',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                            Container(
-                                                              decoration: new BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      new BorderRadius
-                                                                          .all(new Radius
-                                                                              .circular(
-                                                                          10))),
-                                                              height: 40,
-                                                              child:
-                                                                  TextFormField(
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        contentPadding: const EdgeInsets.only(
-                                                                            left:
-                                                                                8.0,
-                                                                            bottom:
-                                                                                1.0,
-                                                                            top:
-                                                                                1.0),
-                                                                        fillColor:
-                                                                            Colors.white,
-                                                                        border:
-                                                                            OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10.0),
-                                                                        ),
-                                                                      ),
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(
-                                                                            () {
-                                                                          totalAmountforTcs =
-                                                                              0;
-                                                                              totalForTcs();
-                                                                     
-                                                                          tcsAmount.text =
-                                                                              (int.tryParse(tcs.text) * totalAmountforTcs / 100).toStringAsFixed(2);
-                                                                          print(tcsAmount.toString() +
-                                                                              'tcsamount');
-                                                                          // totalAmountforDiscount =
-                                                                          //     0;
-                                                                          //   totalforDicount();
-                                                                          //   print('on changed trigred');
-
-                                                                          //   discountedAmount.text =
-                                                                          //       (totalAmountforDiscount * int.tryParse(discountrate.text) / 100).toString();
-                                                                          //   print(totalAmountforDiscount.toString());
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                          tcs),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('TCS Amount',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                            Container(
-                                                              decoration: new BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      new BorderRadius
-                                                                          .all(new Radius
-                                                                              .circular(
-                                                                          10))),
-                                                              height: 40,
-                                                              child:
-                                                                  TextFormField(
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                             suffixIcon: Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
-                                                                        contentPadding: const EdgeInsets.only(
-                                                                            left:
-                                                                                8.0,
-                                                                            bottom:
-                                                                                1.0,
-                                                                            top:
-                                                                                1.0),
-                                                                        fillColor:
-                                                                            Colors.white,
-                                                                        border:
-                                                                            OutlineInputBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10.0),
-                                                                        ),
-                                                                      ),
-                                                                      controller:
-                                                                          tcsAmount),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  if (tcs.text.isNotEmpty)
-                                                    Navigator.pop(context);
-                                                  else
-                                                    Fluttertoast.showToast(
-                                                        msg: 'Enter Value',
-                                                        toastLength:
-                                                            Toast.LENGTH_SHORT,
-                                                        backgroundColor:
-                                                            Colors.black12,
-                                                        textColor: const Color(
-                                                            0xff3f3d56));
-                                                },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: 110,
-                                                  height: 41,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: Text(
-                                                      'ADD',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 16,
-                                                        color: const Color(
-                                                            0xff3f3d56),
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ]));
-                                      },
-                                    );
+                                    buildTCSShowModalBottomSheet(
+                                        context, totalForTcs);
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -3036,7 +1960,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(left:4.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 4.0),
                                             child: Text(
                                               'TCS',
                                               style: TextStyle(
@@ -3069,388 +1994,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       topLeft: const Radius.circular(15.0),
                                       topRight: const Radius.circular(15.0)),
                                   onTap: () {
-                                    showModalBottomSheet<void>(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0)),
-                                      ),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(
-                                                              15.0),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              15.0)),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                colors: <Color>[
-                                                  Color(0xff573666),
-                                                  Color(0xff1B1B2A)
-                                                ], // red to yellow
-                                                // repeats the gradient over the canvas
-                                              ),
-                                            ),
-                                            child: Column(children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        30, 51, 30, 0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Round Off',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 20,
-                                                        color: const Color(
-                                                            0xffffffff),
-                                                      ),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Icon(
-                                                          Icons.close_outlined,
-                                                          color: Colors.white),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 41),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('Round off',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                           Row(
-                                                        children: [
-                                                          Container(
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100)),
-                                                              child: InkWell(
-                                                                onTap: () {setState(() {
-                                                                  
-                                                                });
-                                                                 roundoffamount
-                                                                      .text = (double.tryParse(roundoffamount
-                                                                              .text) +
-                                                                          0.1
-                                                                      //int.tryParse(gxValues.roundoffamount.text)
-                                                                      )
-                                                                      .toStringAsFixed(2);
-                                                                },
-                                                                child: Icon(
-                                                                    Icons.add,
-                                                                    color: Colors
-                                                                        .green),
-                                                              )),
-                                                          SizedBox(width: 20),
-                                                          Container(
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100)),
-                                                              child: InkWell(
-                                                                onTap: () {
-                                                                  roundoffamount
-                                                                      .text = (double.tryParse(roundoffamount
-                                                                              .text) -
-                                                                          0.1
-                                                                      //int.tryParse(gxValues.roundoffamount.text) /
-
-                                                                      )
-                                                                      .toStringAsFixed(2);
-                                                                setState(() {
-                                                                  
-                                                                });
-                                                                },
-                                                                child: Icon(
-                                                                    Icons
-                                                                        .remove,
-                                                                    color: Colors
-                                                                        .red),
-                                                              )),
-                                                        ],
-                                                      )
-                                                          ],
-                                                        )),
-                                                  ),
-                                                  Container(
-                                                    //color: Colors.white,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    //height: 50,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text('Amount',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .white)),
-                                                            SizedBox(
-                                                                height: 13),
-                                                            Container(
-                                                                decoration: new BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10))),
-                                                                height: 40,
-                                                                child:
-                                                                    TextFormField(
-                                                                  decoration:
-                                                                      InputDecoration(
-                                                                         suffixIcon: Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:purpleForapp ,size: 21,)),
-                                                                    contentPadding: const EdgeInsets
-                                                                            .only(
-                                                                        left:
-                                                                            8.0,
-                                                                        bottom:
-                                                                            1.0,
-                                                                        top:
-                                                                            1.0),
-                                                                    fillColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    border:
-                                                                        OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10.0),
-                                                                    ),
-                                                                  ),
-                                                                  controller:
-                                                                      roundoffamount,
-                                                                )),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: 110,
-                                                  height: 41,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: Text(
-                                                      'ADD',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Arial',
-                                                        fontSize: 16,
-                                                        color: const Color(
-                                                            0xff3f3d56),
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ]));
-
-                                        // Container(
-                                        //     decoration: BoxDecoration(
-                                        //       borderRadius:
-                                        //           new BorderRadius.only(
-                                        //               topLeft:
-                                        //                   const Radius.circular(
-                                        //                       15.0),
-                                        //               topRight:
-                                        //                   const Radius.circular(
-                                        //                       15.0)),
-                                        //       gradient: LinearGradient(
-                                        //         begin: Alignment.topCenter,
-                                        //         colors: <Color>[
-                                        //           Color(0xff573666),
-                                        //           Color(0xff1B1B2A)
-                                        //         ], // red to yellow
-                                        //         // repeats the gradient over the canvas
-                                        //       ),
-                                        //     ),
-                                        //     child: Column(children: [
-                                        //       Padding(
-                                        //         padding:
-                                        //             const EdgeInsets.all(10.0),
-                                        //         child: Text(
-                                        //           'Round Off',
-                                        //           style: TextStyle(
-                                        //             fontFamily: 'Arial',
-                                        //             fontSize: 24,
-                                        //             color:
-                                        //                 const Color(0xffffffff),
-                                        //           ),
-                                        //           textAlign: TextAlign.left,
-                                        //         ),
-                                        //       ),
-                                        //       Text(
-                                        //         'Amount',
-                                        //         style: TextStyle(
-                                        //           fontFamily: 'Arial',
-                                        //           fontSize: 12,
-                                        //           color:
-                                        //               const Color(0xffffffff),
-                                        //         ),
-                                        //         textAlign: TextAlign.left,
-                                        //       ),
-                                        //       Row(
-                                        //         mainAxisAlignment:
-                                        //             MainAxisAlignment.center,
-                                        //         children: [
-                                        //           Container(
-                                        //             decoration: BoxDecoration(
-                                        //                 color: Colors.white,
-                                        //                 borderRadius:
-                                        //                     BorderRadius
-                                        //                         .circular(8)),
-                                        //             width:
-                                        //                 MediaQuery.of(context)
-                                        //                         .size
-                                        //                         .width *
-                                        //                     0.4,
-                                        //             height: 50,
-                                        //             child: Padding(
-                                        //               padding:
-                                        //                   const EdgeInsets.all(
-                                        //                       8.0),
-                                        //               child: TextFormField(
-                                        //                   controller:
-                                        //                       roundoffamount),
-                                        //             ),
-                                        //           ),
-                                        //         ],
-                                        //       ),
-                                        //       SizedBox(
-                                        //         height: 10,
-                                        //       ),
-                                        //       InkWell(
-                                        //         onTap: () {
-                                        //           if (roundoffamount
-                                        //               .text.isNotEmpty)
-                                        //             Navigator.pop(context);
-                                        //           else
-                                        //             Fluttertoast.showToast(
-                                        //                 msg: 'Enter Value',
-                                        //                 toastLength:
-                                        //                     Toast.LENGTH_SHORT,
-                                        //                 backgroundColor:
-                                        //                     Colors.black12,
-                                        //                 textColor: const Color(
-                                        //                     0xff3f3d56));
-                                        //         },
-                                        //         child: Container(
-                                        //           alignment: Alignment.center,
-                                        //           width: 80,
-                                        //           decoration: BoxDecoration(
-                                        //             color: Colors.white,
-                                        //             borderRadius:
-                                        //                 BorderRadius.circular(
-                                        //                     4),
-                                        //           ),
-                                        //           child: Padding(
-                                        //             padding:
-                                        //                 const EdgeInsets.all(
-                                        //                     10.0),
-                                        //             child: Text(
-                                        //               'ADD',
-                                        //               style: TextStyle(
-                                        //                 fontFamily: 'Arial',
-                                        //                 fontSize: 16,
-                                        //                 color: const Color(
-                                        //                     0xff3f3d56),
-                                        //                 fontWeight:
-                                        //                     FontWeight.w700,
-                                        //               ),
-                                        //               textAlign: TextAlign.left,
-                                        //             ),
-                                        //           ),
-                                        //         ),
-                                        //       )
-                                        //     ]));
-                                      },
-                                    );
+                                    buildRoundOffShowModalBottomSheet(context);
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -3468,7 +2012,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(left:4.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 4.0),
                                             child: Text(
                                               'Round Off',
                                               style: TextStyle(
@@ -3496,7 +2041,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               ],
                             ),
                           ),
-                        
                           Column(
                             children: [
                               othercharges.length > 0
@@ -3523,11 +2067,10 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                 padding:
                                                     const EdgeInsets.all(8.0),
                                                 child: Row(
-                                                
                                                   children: [
                                                     Expanded(
-                                                      flex:2,
-                                                                                                          child: Text(
+                                                      flex: 2,
+                                                      child: Text(
                                                         othercharges[index]
                                                             .otherchargename
                                                         //+
@@ -3542,15 +2085,20 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                                           color: const Color(
                                                               0xcc2f2e41),
                                                         ),
-                                                        textAlign: TextAlign.left,
+                                                        textAlign:
+                                                            TextAlign.left,
                                                       ),
                                                     ),
-                                                         Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
-                                  
-                                       
+                                                    Container(
+                                                        width: 20,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: FaIcon(
+                                                          FontAwesomeIcons
+                                                              .rupeeSign,
+                                                          color: Colors.green,
+                                                          size: 14,
+                                                        )),
                                                     Text(
                                                       othercharges[index]
                                                           .otherchargevalue
@@ -3604,26 +2152,28 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                          Expanded(
-                                            flex: 2,
-                                                                                      child: Text(
-                                            'Discount       '  ,
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            'Discount       ',
                                             style: TextStyle(
                                               fontFamily: 'Arial',
                                               fontSize: 12,
                                               color: const Color(0xcc2f2e41),
                                             ),
                                             textAlign: TextAlign.left,
-                                        ),
                                           ),
-                                              Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
-                                  
+                                        ),
+                                        Container(
+                                            width: 20,
+                                            alignment: Alignment.center,
+                                            child: FaIcon(
+                                              FontAwesomeIcons.rupeeSign,
+                                              color: Colors.green,
+                                              size: 14,
+                                            )),
                                         Text(
-                                        
-                                              discountedAmount.text,
+                                          discountedAmount.text,
                                           style: TextStyle(
                                             fontFamily: 'Arial',
                                             fontSize: 12,
@@ -3631,7 +2181,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                           ),
                                           textAlign: TextAlign.left,
                                         ),
-                                       ],
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -3649,8 +2199,8 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       children: [
                                         Expanded(
                                           flex: 2,
-                                                                                  child: Text(
-                                            'TCS' ,
+                                          child: Text(
+                                            'TCS',
                                             style: TextStyle(
                                               fontFamily: 'Arial',
                                               fontSize: 12,
@@ -3659,11 +2209,14 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             textAlign: TextAlign.left,
                                           ),
                                         ),
-                                          Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
-                                  
+                                        Container(
+                                            width: 20,
+                                            alignment: Alignment.center,
+                                            child: FaIcon(
+                                              FontAwesomeIcons.rupeeSign,
+                                              color: Colors.green,
+                                              size: 14,
+                                            )),
                                         Text(
                                           tcsAmount.text.toString(),
                                           style: TextStyle(
@@ -3691,9 +2244,9 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                       children: [
                                         Expanded(
                                           flex: 2,
-                                                                                  child: Text(
-                                            'Round Off' ,
-                                          style: TextStyle(
+                                          child: Text(
+                                            'Round Off',
+                                            style: TextStyle(
                                               fontFamily: 'Arial',
                                               fontSize: 12,
                                               color: const Color(0xcc2f2e41),
@@ -3701,15 +2254,16 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                             textAlign: TextAlign.left,
                                           ),
                                         ),
-                                         Container(
-                                                                                width: 20,
-                                                                                alignment: Alignment.center,
-                                                                                child: FaIcon(FontAwesomeIcons.rupeeSign,color:Colors.green ,size: 14,)),
-                                  
-                                      
+                                        Container(
+                                            width: 20,
+                                            alignment: Alignment.center,
+                                            child: FaIcon(
+                                              FontAwesomeIcons.rupeeSign,
+                                              color: Colors.green,
+                                              size: 14,
+                                            )),
                                         Text(
-                                          
-                                              roundoffamount.text,
+                                          roundoffamount.text,
                                           style: TextStyle(
                                             fontFamily: 'Arial',
                                             fontSize: 12,
@@ -3726,8 +2280,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                           ),
                         ],
                       ),
-                    
-                    
+
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Text(
@@ -3802,15 +2355,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                         ],
                       ),
 
-                      // Eachrow(
-                      //     tracnsportdocno,
-                      //     "Transporter Doc/Bilty No",
-                      //     TextInputType.text,
-                      //     null,
-                      //     tdate,
-                      //     'Date',
-                      //     TextInputType.datetime,
-                      //     null),
+                   
                       SizedBox(
                         height: 10,
                       ),
@@ -3852,9 +2397,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration:
                                       CoustumInputDecorationWidget("Mode")
                                           .decoration(),
-                                  // InputDecoration(
-                                  //   labelText: "Mode",
-                                  // ),
+                                
                                   items: vehiclemodes.map((String value) {
                                     return new DropdownMenuItem<String>(
                                       value: value,
@@ -3923,12 +2466,7 @@ class _InvoiceMainState extends State<InvoiceMain> {
                                   decoration:
                                       CoustumInputDecorationWidget("From")
                                           .decoration(),
-                                  //  InputDecoration(
-                                  //   labelText: "from",
-                                  //   fillColor: Colors.white,
-                                  // ),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
+                             validator: (value) {
                                     if (value.isEmpty) {
                                       return null;
                                     }
@@ -3949,31 +2487,6 @@ class _InvoiceMainState extends State<InvoiceMain> {
                               print(invoiceStyle +
                                   '============================here');
 
-                              // Future.delayed(new Duration(milliseconds: 10),
-                              //     () {
-                              // if (widget.i == null) {
-
-                              // if (sign == null
-                              //     stamp == null
-                              //     logo == null) {
-
-                              //   FocusScope.of(context).unfocus();
-                              //   Flushbar(
-                              //     backgroundColor:
-                              //         Color.fromRGBO(47, 46, 65, 1),
-                              //     message: 'Please upload sign/stamp/logo',
-                              //     icon: Icon(
-                              //       Icons.cancel_outlined,
-                              //       size: 28,
-                              //       color: Colors.green.shade300,
-                              //     ),
-                              //     leftBarIndicatorColor: Colors.blue.shade300,
-                              //     duration: Duration(seconds: 3),
-                              //   )..show(context);
-                              //   downloadURLExample();
-                              //   downloadURLExamplesign();
-                              //   downloadURLExamplestamp();
-                              // } else {
                               setState(() {
                                 invoiceGenrated = false;
                               });
@@ -4032,5 +2545,927 @@ class _InvoiceMainState extends State<InvoiceMain> {
                   ],
                 ),
               ));
+  }
+
+   void addproducts(int j) {
+      var newProduct =
+          new InvoiceProduct('', '', '', '', '', '', '', '', '', '', '');
+      for (var i = 0; i < j; i++) {
+        setState(() {
+          newProduct =
+              new InvoiceProduct('', '', '', '', '', '', '', '', '', '', '');
+          print(t[i].productCode.text);
+          newProduct.productCode = t[i].productCode.text;
+          newProduct.productName = t[i].productName.text;
+          newProduct.hsncode = t[i].hsncode.text;
+          newProduct.quantity = t[i].quantity.text;
+          newProduct.sellingrate = t[i].sellingrate.text;
+          newProduct.taxamount = t[i].taxamount.text;
+          newProduct.taxrate = t[i].taxrate.text;
+          newProduct.unit = t[i].unit.text;
+          newProduct.totalamount = t[i].totalamount.text;
+          newProduct.focornot = t[i].focornot;
+          //  int baseamount
+          newProduct.baseTotalAmount = (double.tryParse(t[i].quantity.text) *
+                  double.tryParse(t[i].sellingrate.text))
+              .toString();
+          listOfProducts.insert(i, newProduct);
+        });
+
+        print(newProduct.productCode);
+        print(listOfProducts.first);
+      }
+    }
+
+   
+    Future<Null> invoiceStyleDetails(String uid) async {
+      final db = FirebaseFirestore.instance;
+      {
+        await db
+            .collection("userData")
+            .doc(uid)
+            .collection("invoiceStyle")
+            .doc("invoiceStyle")
+            .get()
+            .then((valuee) {
+          setState(() {
+            invoiceStyle = valuee.data()['invoiceStyle'] == null
+                ? ''
+                : valuee.data()['invoiceStyle'];
+          });
+        });
+      }
+    }
+
+    totalForTcs() {
+      for (int i = 0; i < noofproducts; i++) {
+        print('noofproducts in for loop' + noofproducts.toString());
+
+        totalAmountforTcs =
+            totalAmountforTcs + double.tryParse(t[i].totalamount.text);
+      }
+    }
+
+    totalforDicount() {
+      for (int i = 0; i < noofproducts; i++) {
+        print('noofproducts in for loop' + noofproducts.toString());
+
+        totalAmountforDiscount =
+            totalAmountforDiscount + double.tryParse(t[i].totalamount.text);
+      }
+    }
+
+    Future<void> generateInvoice() async {
+      final db = FirebaseFirestore.instance;
+      //mohit genrate invoice
+      print('genrate Invoice Triggred ');
+
+      addproducts(noofproducts);
+
+      print(widget.uid.toString() + 'mohit here the uid in genrate fun');
+      print(newInvoice.toString() + 'mohit here the invoice text');
+
+      newInvoice.invoiceno = invoiceno.text;
+      newInvoice.bname = bname.text;
+      newInvoice.bphone = bphone.text;
+      newInvoice.taxtype = taxtype.text;
+      newInvoice.bgstn = bgstn.text;
+      newInvoice.bdate = bdate;
+      newInvoice.listOfProducts = listOfProducts;
+      newInvoice.bcity = bcity.text;
+      newInvoice.bstate = bstate.text;
+      newInvoice.bcountry = bcountry.text;
+      newInvoice.bpin = bpin.text;
+      newInvoice.sname = sname.text;
+      newInvoice.sphone = sphone.text;
+      newInvoice.sgstn = sgstn.text;
+      newInvoice.sdate = sdate;
+      newInvoice.scity = scity.text;
+      newInvoice.sstate = sstate.text;
+      newInvoice.scountry = scountry.text;
+      newInvoice.spin = spin.text;
+      newInvoice.from = from.text;
+      newInvoice.transporterid = transporterid.text;
+      newInvoice.transportername = transportername.text;
+      newInvoice.tracnsportdocno = tracnsportdocno.text;
+      newInvoice.tdate = tdate;
+      newInvoice.vehiclemode = vehiclemode.text;
+      newInvoice.vehicleno = vehicleno.text;
+      newInvoice.othercharges = othercharges;
+      newInvoice.discount = discountrate.text;
+      newInvoice.tcs = tcs.text;
+      newInvoice.roundoff = roundoffamount.text;
+
+      return db
+          .collection("userData")
+          .doc(widget.uid)
+          .collection("Invoice")
+          .doc(invoiceno.text)
+          .set(
+            newInvoice.toJson(),
+          )
+          .then((value) => setState(() {
+                invoiceGenrated = true;
+                invoiceStyle == 'pdf2'
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PdfViewer2(
+                                widget.uid,
+                                generalInvoiceornot,
+                                invoiceno.text,
+                                sign,
+                                stamp,
+                                logo)))
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PdfViewer(
+                                widget.uid,
+                                generalInvoiceornot,
+                                invoiceno.text,
+                                sign,
+                                stamp,
+                                logo)));
+              }));
+    }
+
+    Future<Null> _selectDate(BuildContext context, DateTime dateTime) async {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          initialDatePickerMode: DatePickerMode.day,
+          firstDate: DateTime(2015),
+          lastDate: DateTime(2101));
+      if (picked != null)
+        setState(() {
+          sdate = picked;
+        });
+    }
+
+    Future<Null> _selectDate1(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          initialDatePickerMode: DatePickerMode.day,
+          firstDate: DateTime(2015),
+          lastDate: DateTime(2101));
+      if (picked != null)
+        setState(() {
+          bdate = picked;
+        });
+    }
+
+
+
+  Future<void> buildRoundOffShowModalBottomSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+      ),
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(15.0),
+                  topRight: const Radius.circular(15.0)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: <Color>[
+                  Color(0xff573666),
+                  Color(0xff1B1B2A)
+                ], // red to yellow
+                // repeats the gradient over the canvas
+              ),
+            ),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 51, 30, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Round Off',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 20,
+                        color: const Color(0xffffffff),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close_outlined, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 41),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Round off',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Row(
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(100)),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {});
+                                        roundoffamount.text = (double.tryParse(
+                                                    roundoffamount.text) +
+                                                0.1
+                                            //int.tryParse(gxValues.roundoffamount.text)
+                                            )
+                                            .toStringAsFixed(2);
+                                      },
+                                      child:
+                                          Icon(Icons.add, color: Colors.green),
+                                    )),
+                                SizedBox(width: 20),
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(100)),
+                                    child: InkWell(
+                                      onTap: () {
+                                        roundoffamount.text = (double.tryParse(
+                                                    roundoffamount.text) -
+                                                0.1
+                                            //int.tryParse(gxValues.roundoffamount.text) /
+
+                                            )
+                                            .toStringAsFixed(2);
+                                        setState(() {});
+                                      },
+                                      child:
+                                          Icon(Icons.remove, color: Colors.red),
+                                    )),
+                              ],
+                            )
+                          ],
+                        )),
+                  ),
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Amount',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                                decoration: new BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: new BorderRadius.all(
+                                        new Radius.circular(10))),
+                                height: 40,
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                        width: 20,
+                                        alignment: Alignment.center,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.rupeeSign,
+                                          color: purpleForapp,
+                                          size: 21,
+                                        )),
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  controller: roundoffamount,
+                                )),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 110,
+                  height: 41,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'ADD',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 16,
+                        color: const Color(0xff3f3d56),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+            ]));
+      },
+    );
+  }
+
+  Future<void> buildTCSShowModalBottomSheet(
+      BuildContext context, totalForTcs()) {
+    return showModalBottomSheet<void>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+      ),
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(15.0),
+                  topRight: const Radius.circular(15.0)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: <Color>[
+                  Color(0xff573666),
+                  Color(0xff1B1B2A)
+                ], // red to yellow
+                // repeats the gradient over the canvas
+              ),
+            ),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(25, 44, 25, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'TCS (Tax Collected at Service)',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 20,
+                        color: const Color(0xffffffff),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close_outlined, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 42),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('TCS Rate',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      totalAmountforTcs = 0;
+                                      totalForTcs();
+
+                                      tcsAmount.text = (int.tryParse(tcs.text) *
+                                              totalAmountforTcs /
+                                              100)
+                                          .toStringAsFixed(2);
+                                      print(tcsAmount.toString() + 'tcsamount');
+                                      // totalAmountforDiscount =
+                                      //     0;
+                                      //   totalforDicount();
+                                      //   print('on changed trigred');
+
+                                      //   discountedAmount.text =
+                                      //       (totalAmountforDiscount * int.tryParse(discountrate.text) / 100).toString();
+                                      //   print(totalAmountforDiscount.toString());
+                                    });
+                                  },
+                                  controller: tcs),
+                            ),
+                          ],
+                        )),
+                  ),
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('TCS Amount',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                        width: 20,
+                                        alignment: Alignment.center,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.rupeeSign,
+                                          color: purpleForapp,
+                                          size: 21,
+                                        )),
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  controller: tcsAmount),
+                            ),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  if (tcs.text.isNotEmpty)
+                    Navigator.pop(context);
+                  else
+                    Fluttertoast.showToast(
+                        msg: 'Enter Value',
+                        toastLength: Toast.LENGTH_SHORT,
+                        backgroundColor: Colors.black12,
+                        textColor: const Color(0xff3f3d56));
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 110,
+                  height: 41,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'ADD',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 16,
+                        color: const Color(0xff3f3d56),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+            ]));
+      },
+    );
+  }
+
+  Future<void> buildDiscountShowModalBottomSheet(
+      BuildContext context, totalforDicount()) {
+    return showModalBottomSheet<void>(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+      ),
+      isScrollControlled: true,
+      //                            shape: RoundedRectangleBorder(
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(15.0),
+                  topRight: const Radius.circular(15.0)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: <Color>[
+                  Color(0xff573666),
+                  Color(0xff1B1B2A)
+                ], // red to yellow
+                // repeats the gradient over the canvas
+              ),
+            ),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 51, 30, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Discount',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 20,
+                        color: const Color(0xffffffff),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close_outlined, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 41),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Discount Rate',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                        width: 20,
+                                        alignment: Alignment.center,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.percent,
+                                          color: purpleForapp,
+                                          size: 21,
+                                        )),
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      totalAmountforDiscount = 0;
+                                      totalforDicount();
+                                      print('on changed trigred');
+
+                                      discountedAmount
+                                          .text = (totalAmountforDiscount *
+                                              int.tryParse(discountrate.text) /
+                                              100)
+                                          .toStringAsFixed(2);
+                                      print(totalAmountforDiscount.toString());
+                                    });
+                                  },
+                                  controller: discountrate),
+                            ),
+                          ],
+                        )),
+                  ),
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Discounted Amount',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                        width: 20,
+                                        alignment: Alignment.center,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.rupeeSign,
+                                          color: purpleForapp,
+                                          size: 21,
+                                        )),
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  controller: discountedAmount),
+                            ),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 110,
+                  height: 41,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'ADD',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 16,
+                        color: const Color(0xff3f3d56),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+            ]));
+      },
+    );
+  }
+
+  Future<void> buildOtherCharegesShowModalBottomSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+      ),
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(15.0),
+                  topRight: const Radius.circular(15.0)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: <Color>[
+                  Color(0xff573666),
+                  Color(0xff1B1B2A)
+                ], // red to yellow
+                // repeats the gradient over the canvas
+              ),
+            ),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 51, 30, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
+                      Text(
+                        'Add Other Charges',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 20,
+                          color: const Color(0xffffffff),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(width: 10),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(100)),
+                          child: Icon(Icons.add, color: Colors.green)),
+                    ]),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close_outlined, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 41),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Charge Name',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  controller: chargename),
+                            ),
+                          ],
+                        )),
+                  ),
+                  Container(
+                    //color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    //height: 50,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Charges',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                            SizedBox(height: 13),
+                            Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(10))),
+                              height: 40,
+                              child: TextFormField(
+                                  autofocus: true,
+                                  decoration: InputDecoration(
+                                    //        floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 8.0, bottom: 1.0, top: 1.0),
+                                    suffixIcon: Container(
+                                        width: 20,
+                                        alignment: Alignment.center,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.rupeeSign,
+                                          color: Colors.green,
+                                          size: 21,
+                                        )), // Image.asset("assets/images/rupeesign.png",height: 5,width: 5,),
+
+                                    // suffixIconConstraints: BoxConstraints(
+
+                                    //   minHeight: 21,
+                                    //   minWidth: 16
+                                    // ),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  controller: chargevalue),
+                            ),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  othercharges.add(OtherCharges(chargename.text.toString(),
+                      double.parse(chargevalue.text)));
+
+                  chargevalue.text = '';
+                  chargename.text = '';
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'ADD',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 16,
+                        color: const Color(0xff3f3d56),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+            ]));
+      },
+    );
   }
 }

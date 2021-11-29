@@ -6,7 +6,7 @@ import 'package:digitalbillbook/Invoicestyle.dart';
 import 'package:digitalbillbook/businessinfo.dart';
 import 'package:digitalbillbook/customwidgets/homepageicon.dart';
 import 'package:digitalbillbook/ewaybill/ewaybill1.dart';
-import 'package:digitalbillbook/invoices/invoicefirst.dart';
+import 'package:digitalbillbook/invoices/invoiceTypies.dart';
 import 'package:digitalbillbook/notification/notification.dart';
 import 'package:digitalbillbook/parties/parties1.dart';
 import 'package:digitalbillbook/plan/plandetails.dart';

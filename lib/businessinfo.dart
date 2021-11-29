@@ -356,7 +356,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
 
   final _keyForm1 = GlobalKey<FormState>();
 
-  bool _edit = true;
+  bool _edit = false;
 
   @override
   Widget build(BuildContext context) {

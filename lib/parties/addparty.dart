@@ -455,9 +455,9 @@ class _AddPartyState extends State<AddParty> {
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.45,
                     child: TextFormField(
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(6),
-                      ],
+                      // inputFormatters: [
+                      //   LengthLimitingTextInputFormatter(6),
+                      // ],
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       decoration:
